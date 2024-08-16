@@ -6,6 +6,14 @@
         "basic":  {
             "title": "Wall Hedge",
             "text": "Water, then fertilize with bone powder."
+        },
+        "l":  {
+            "title": "Elle Hedge",
+            "text": "Water, then fertilize with ground silicon dust."
+        },
+        "zigzag":  {
+            "title": "Ziggy Hedge",
+            "text": "Water, then fertilize with five pears."
         }
     }
 }
