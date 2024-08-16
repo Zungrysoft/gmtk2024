@@ -56,6 +56,12 @@ class Level extends Thing {
     const tileCoord = [Math.floor(x / this.tileSize), Math.floor(y / this.tileSize)]
     return Boolean(this.tileGrids[0][tileCoord])
   }
+
+  getTileAt (x, y) {
+    const { tileSize } = this
+    const tileCoord = [Math.floor(x / tileSize), Math.floor(y / tileSize)]
+    return this.tileGrids[0][tileCoord]
+  }
 }
 
 class Test extends Thing {

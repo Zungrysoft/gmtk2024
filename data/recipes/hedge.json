@@ -1,0 +1,19 @@
+{
+    "title": "Hedge Plant",
+    "description": "Grows when given water and shrivels when denied water",
+    "soilRequirements": 2,
+    "growingRequirements": {
+        "basic":  {
+            "title": "Wall Hedge",
+            "text": "Water, then fertilize with bone powder."
+        },
+        "l":  {
+            "title": "Elle Hedge",
+            "text": "Water, then fertilize with ground silicon dust."
+        },
+        "zigzag":  {
+            "title": "Ziggy Hedge",
+            "text": "Water, then fertilize with five pears."
+        }
+    }
+}
