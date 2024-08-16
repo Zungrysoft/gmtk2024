@@ -3,10 +3,16 @@ import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Plant from './plant.js'
 
-export default class Hedge extends Plant {
+export default class PlantHedge extends Plant {
     validTileTypes = [2]
     hedgeGrowth = 0
-    isSprout = false
+
+    constructor (pos, variant, isSprout) {
+        super(pos, variant, isSprout)
+        if (!this.isSprout) {
+            this.hedgeGrowth = 1
+        }
+    }
 
     collide(other) {
         if (this.isSprout) {
@@ -54,13 +60,6 @@ export default class Hedge extends Plant {
                 {direction: 'left', length: 6},
             ]
         }
-        return [
-            {direction: 'up', length: 1},
-            {direction: 'left', length: 2},
-            {direction: 'up', length: 3},
-            {direction: 'right', length: 4},
-            {direction: 'down', length: 2},
-        ]
         return [{direction: 'up', length: 5}]
     }
 
@@ -106,7 +105,6 @@ export default class Hedge extends Plant {
             ctx.save()
             ctx.fillStyle = 'green'
             ctx.fillRect(e[0], e[1], e[2] - e[0], e[3] - e[1])
-            // console.log([e[0], e[1], e[2] - e[0], e[3] - e[1]])
             ctx.restore()
         }
       }

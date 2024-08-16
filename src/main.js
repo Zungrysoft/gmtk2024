@@ -3,7 +3,7 @@ import * as u from 'utils'
 import * as webgl from 'webgl'
 import Thing from 'thing'
 import Player from './player.js'
-import Hedge from './hedge.js'
+import PlantHedge from './planthedge.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -27,11 +27,21 @@ class Level extends Thing {
 
     const data = JSON.parse(inputText)
 
+    console.log(data)
+
     // The level tile data are stored as chunks, so we can convert it
     // to a spatial grid to make it easier to work with
     this.tileGrids = data.layers.map(({ grid }) => {
       return u.chunkGridToSpatialGrid(grid)
     })
+
+    // Spawn level things
+    const things = data.layers[0].things
+    for (const thing of things) {
+      if (thing.name === 'plantHedge') {
+        game.addThing(new PlantHedge(thing.position, thing.data?.variant ?? 'basic'))
+      }
+    }
 
     // Set this Thing's name to level so that it can be accessed by
     // other Things
@@ -69,5 +79,4 @@ class Level extends Thing {
 game.setScene(() => {
   game.addThing(new Level(game.assets.levels.level1))
   game.addThing(new Player())
-  game.addThing(new Hedge([6, 0]))
 })

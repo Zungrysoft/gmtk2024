@@ -8,10 +8,12 @@ export default class Plant extends Thing {
     timeSinceWatered = 0
     variant = 'basic'
 
-    constructor (pos) {
+    constructor (pos, variant, isSprout) {
         super()
         this.position = pos
-      }
+        this.variant = variant
+        this.isSprout = isSprout
+    }
   
     canBePlantedAt(pos) {
         const tileType = game.getThing('level').getTileAt(pos)
