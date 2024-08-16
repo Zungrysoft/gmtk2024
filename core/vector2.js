@@ -91,3 +91,15 @@ export function vectorToAngle (vector) {
 export function angleTowards ([x1, y1], [x2, y2]) {
   return Math.atan2(y2 - y1, x2 - x1)
 }
+
+export function directionToVector(d) {
+  const directions = {
+    up: [0, -1],
+    north: [0, -1],
+    down: [0, 1],
+    south: [0, 1],
+    left: [-1, 0],
+    west: [-1, 0],
+  }
+  return directions[d] || [1, 0]
+}
