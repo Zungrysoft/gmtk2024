@@ -51,12 +51,18 @@ class Level extends Thing {
   draw () {
     const { ctx } = game
     const { tileSize } = this
+    const tileValues = {
+      1: '#75592f',
+      2: '#330517',
+      3: '#b2b2b8',
+      4: '#1d1687',
+    }
 
     // Render the grid tiles as black for now
     ctx.save()
-    ctx.fillStyle ='black'
-    for (const [coordString, _tileValue] of Object.entries(this.tileGrids[0])) {
+    for (const [coordString, tileValue] of Object.entries(this.tileGrids[0])) {
       const coord = coordString.split(',').map(x => Number(x) * tileSize)
+      ctx.fillStyle = tileValues[tileValue] ?? 'black'
       ctx.fillRect(coord[0], coord[1], tileSize, tileSize)
     }
     ctx.restore()
