@@ -163,42 +163,32 @@ export default class Thing {
     )
   }
 
-  move (dx = this.velocity[0], dy = this.velocity[1], stepSize = 1) {
+  move (iterations = 16) {
+    const dx = this.velocity[0] / iterations
+    const dy = this.velocity[1] / iterations
+
     for (const key in this.contactDirections) {
       this.contactDirections[key] = false
     }
 
-    const { sign } = u
-    const movementPushback = 0.0001
-
-    while (Math.round(dx * 1000)) {
-      const step = sign(dx) * Math.min(Math.abs(dx), stepSize)
-      if (this.checkCollision(this.position[0] + step, this.position[1])) {
+    for (let i = 0; i < iterations; i += 1) {
+      if (this.checkCollision(this.position[0] + dx, this.position[1])) {
+        if (u.sign(dx) > 0) { this.contactDirections.right = true }
+        if (u.sign(dx) < 0) { this.contactDirections.left = true }
         this.velocity[0] = 0
-        this.position[0] = (
-          Math.round(this.position[0]) - sign(dx) * movementPushback
-        )
-        if (sign(dx) > 0) this.contactDirections.right = true
-        if (sign(dx) < 0) this.contactDirections.left = true
         break
       }
-      this.position[0] += step
-      dx -= step
+      this.position[0] += dx
     }
 
-    while (Math.round(dy * 1000)) {
-      const step = sign(dy) * Math.min(Math.abs(dy), stepSize)
-      if (this.checkCollision(this.position[0], this.position[1] + step)) {
+    for (let i = 0; i < iterations; i += 1) {
+      if (this.checkCollision(this.position[0], this.position[1] + dy)) {
+        if (u.sign(dy) > 0) { this.contactDirections.down = true }
+        if (u.sign(dy) < 0) { this.contactDirections.up = true }
         this.velocity[1] = 0
-        this.position[1] = (
-          Math.round(this.position[1]) - sign(dy) * movementPushback
-        )
-        if (sign(dy) > 0) this.contactDirections.down = true
-        if (sign(dy) < 0) this.contactDirections.up = true
         break
       }
-      this.position[1] += step
-      dy -= step
+      this.position[1] += dy
     }
   }
 

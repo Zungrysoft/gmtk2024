@@ -153,7 +153,10 @@ export default class Scene {
     ctx.translate(width / 2, height / 2)
     ctx.scale(...camera.scale)
     ctx.rotate(camera.rotation)
-    ctx.translate(-Math.round(camera.position[0]), -Math.round(camera.position[1]))
+    ctx.translate(
+      -Math.round(camera.position[0] * camera.scale[0]) / camera.scale[0],
+      -Math.round(camera.position[1] * camera.scale[1]) / camera.scale[1]
+    )
 
     for (const layer of this.layerOrder) {
       for (const thing of this.layers[layer]) {
