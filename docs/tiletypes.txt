@@ -1,0 +1,12 @@
+0 - air
+1 - plain dirt
+2 - muddy soil
+3 - snowy soil
+4 - magical soil
+
+13 - evil soil
+
+16 - stone
+17 - gravel
+
+
