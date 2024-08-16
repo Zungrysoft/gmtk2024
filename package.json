@@ -1,0 +1,10 @@
+{
+  "name": "Program",
+  "main": "index.html",
+  "chromium-args": "--enable-logging=stderr",
+  "window": {
+    "position": "center",
+    "width": 1280,
+    "height": 800
+  }
+}
