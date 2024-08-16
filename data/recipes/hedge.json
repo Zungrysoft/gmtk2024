@@ -1,0 +1,11 @@
+{
+    "title": "Hedge Plant",
+    "description": "Grows when given water and shrivels when denied water",
+    "soilRequirements": 2,
+    "growingRequirements": {
+        "basic":  {
+            "title": "Wall Hedge",
+            "text": "Water, then fertilize with bone powder."
+        }
+    }
+}

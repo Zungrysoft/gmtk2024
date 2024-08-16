@@ -1,0 +1,11 @@
+{
+    "title": "Pear Plant",
+    "description": "Produces even more delicious (and therefore more valuable) pears",
+    "soilRequirements": 1,
+    "growingRequirements": {
+        "basic":  {
+            "title": "",
+            "text": "1) Water every ten seconds. Do this five times.\n2) After watering, fertilize with three apples."
+        }
+    }
+}

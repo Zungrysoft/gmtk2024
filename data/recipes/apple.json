@@ -1,0 +1,11 @@
+{
+    "title": "Apple Plant",
+    "description": "Produces delicious (and sellable) apples",
+    "soilRequirements": 1,
+    "growingRequirements": {
+        "basic":  {
+            "title": "",
+            "text": "Water every ten seconds. Do this five times."
+        }
+    }
+}
