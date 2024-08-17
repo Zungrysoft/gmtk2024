@@ -27,8 +27,6 @@ class Level extends Thing {
 
     const data = JSON.parse(inputText)
 
-    console.log(data)
-
     // The level tile data are stored as chunks, so we can convert it
     // to a spatial grid to make it easier to work with
     this.tileGrids = data.layers.map(({ grid }) => {
