@@ -163,8 +163,8 @@ export default class Player extends Thing {
     }
 
     // Use tool
-    if (game.keysPressed.KeyA || game.buttonsPressed[2]) {
-      this.useTool(true)
+    if (game.keysDown.KeyA || game.buttonsDown[2]) {
+      this.useTool(game.keysPressed.KeyA || game.buttonsPressed[2])
     }
 
     // Apply scaling
@@ -172,7 +172,7 @@ export default class Player extends Thing {
     this.scale[1] = this.squash[1] / 48
   }
 
-  useTool(tool) {
+  useTool(pressed) {
     const selectedTool = this.getSelectedTool()
 
     // Watering Can: waters plants in a small circle in front of the player 
@@ -192,12 +192,12 @@ export default class Player extends Thing {
 
       // Do collision check
       for (const plant of plants) {
-        if (plant.collide(aabb, offset)) {
+        if (plant.collideWithAabb(aabb, offset)) {
           plant.water()
         }
       }
-      
 
+      console.log("Watering!")
     }
   }
 
