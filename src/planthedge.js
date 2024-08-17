@@ -21,7 +21,7 @@ export default class PlantHedge extends Plant {
 
     if (!this.isSprout) {
       // Grow and shrivel in response to water
-      const growthSpeed = 0.02
+      const growthSpeed = 0.04
       // If this just sprouted, grow to minimum size of 1
       if (this.hedgeGrowth < 1) {
         this.hedgeGrowth += growthSpeed
@@ -33,7 +33,7 @@ export default class PlantHedge extends Plant {
         this.hitboxCache = null
       }
       // If this has not been watered for a few seconds, it should shrivel until it reachers min size
-      else if (this.timeSinceWatered > 120) {
+      else if (this.timeSinceWatered > 180) {
         this.hedgeGrowth = u.clamp(this.hedgeGrowth - growthSpeed, 1, this.getMaxHedgeGrowth())
         this.hitboxCache = null
       }
