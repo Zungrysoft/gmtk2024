@@ -80,7 +80,6 @@ export default class Player extends Thing {
     // Jump when on ground, and cancel your jump early if you release
     // space. Buffer times for pressing space too early (jumpBuffer)
     // and too late (coyoteTime)
-    console.log(game.buttonsPressed)
     this.jumpBuffer -= 1
     if (game.keysPressed.Space || game.buttonsPressed[0]) {
       this.jumpBuffer = 6
