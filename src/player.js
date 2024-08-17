@@ -1,5 +1,6 @@
 import * as game from 'game'
 import * as u from 'utils'
+import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Plant from './plant.js'
 
@@ -165,16 +166,21 @@ export default class Player extends Thing {
       const waterCenter = vec2.add(this.position, offset)
       const waterRadius = 3
       const aabb = [
-        waterCenter[0] - waterRadius,
-        waterCenter[1] - waterRadius,
-        waterCenter[0] + waterRadius,
-        waterCenter[1] + waterRadius,
+        -waterRadius,
+        -waterRadius,
+        waterRadius,
+        waterRadius,
       ]
 
       // Get all plants nearby (broad-phase collision)
-      game.getThingsNear(...waterCenter, waterRadius).filter(e => e instanceof Plant)
+      const plants = game.getThingsNear(...waterCenter, waterRadius).filter(e => e instanceof Plant)
 
       // Do collision check
+      for (const plant of plants) {
+        if (plant.collide(aabb, offset)) {
+          plant.water()
+        }
+      }
       
 
     }
