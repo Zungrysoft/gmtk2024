@@ -355,7 +355,7 @@ export default class Player extends Thing {
 
     for (const plant of this.getAllOverlaps()) {
       if (!(plant instanceof Plant)) { continue }
-      const plantHit = plant.collide(this)
+      const plantHit = plant.collideWithThing(this, [x, y])
       if (plantHit) {
         return true
       }
