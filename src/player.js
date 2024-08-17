@@ -8,7 +8,17 @@ export default class Player extends Thing {
   sprite = game.assets.images.guy
   animations = {
     idle: {
-      frames: [0],
+      frames: [0, 1],
+      speed: 0.04,
+      frameSize: 96
+    },
+    run: {
+      frames: [2],
+      speed: 0,
+      frameSize: 96
+    },
+    walk: {
+      frames: [3],
       speed: 0,
       frameSize: 96
     }
@@ -66,6 +76,11 @@ export default class Player extends Thing {
       this.position[1] + this.cameraOffset[1]
     ]
     game.getCamera2D().scale = [48, 48] // Make one world unit one tile
+
+    this.animation = Math.abs(this.velocity[0]) < 0.165 ? 'walk' : 'run'
+    if (Math.abs(this.velocity[0]) < 0.08) {
+      this.animation = 'idle'
+    }
 
     const onGround = this.contactDirections.down
     const friction = 0.7
@@ -346,7 +361,7 @@ export default class Player extends Thing {
 
     for (const plant of this.getAllOverlaps()) {
       if (!(plant instanceof Plant)) { continue }
-      const plantHit = plant.collide(this)
+      const plantHit = plant.collideWithThing(this, [x, y])
       if (plantHit) {
         return true
       }
