@@ -55,7 +55,11 @@ export default class Thing {
 
   onUnload () {}
 
-  setTimer (time, action, name = crypto.randomUUID()) {
+  after (time, action) {
+    this.#timers[crypto.randomUUID()] = { time, start: time, action }
+  }
+
+  setTimer (name, time, action = () => {}) {
     this.#timers[name] = { time, start: time, action }
   }
 

@@ -19,6 +19,12 @@ export default class Player extends Thing {
   direction = 1
   cameraOffset = [0, 0]
   squash = [1, 1]
+  money = 20
+
+  constructor () {
+    super()
+    game.setThingName(this, 'player')
+  }
 
   update () {
     // If trapped inside something solid, like when getting pushed by
@@ -132,6 +138,17 @@ export default class Player extends Thing {
     // looks like it's taking off from the ground when the player
     // jumps
     this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 32, true))
+  }
+
+  postDraw () {
+    if (this.isPaused) { return }
+    const { ctx } = game
+    ctx.save()
+    ctx.fillStyle = 'white'
+    ctx.font = 'italic bold 64px Arial'
+    ctx.translate(64, 128)
+    ctx.fillText(`${this.money}$`, 0, 0)
+    ctx.restore()
   }
 
   // Get the player unstuck when trapped in a collision

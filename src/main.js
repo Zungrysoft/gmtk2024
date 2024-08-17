@@ -4,6 +4,7 @@ import * as webgl from 'webgl'
 import Thing from 'thing'
 import Player from './player.js'
 import PlantHedge from './planthedge.js'
+import Shop from './shop.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -82,5 +83,6 @@ class Level extends Thing {
 
 game.setScene(() => {
   game.addThing(new Level(game.assets.levels.level1))
+  game.addThing(new Shop())
   game.addThing(new Player())
 })
