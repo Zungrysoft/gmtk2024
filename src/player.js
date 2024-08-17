@@ -326,20 +326,17 @@ export default class Player extends Thing {
       return true
     }
 
-    const hedgeHits = (
-      this.getAllOverlaps()
-      .filter(x => x instanceof PlantHedge)
-      .some(hedge => (
-        hedge.getHitbox().some(hitbox => (
-          x >= hitbox[0] &&
-          y >= hitbox[1] &&
-          x <= hitbox[2] &&
-          y <= hitbox[3]
-        ))
+    for (const hedge of this.getAllOverlaps()) {
+      if (!(hedge instanceof PlantHedge)) { continue }
+      const hedgeHit = hedge.getHitbox().some(hitbox => (
+        x >= hitbox[0] &&
+        y >= hitbox[1] &&
+        x <= hitbox[2] &&
+        y <= hitbox[3]
       ))
-    )
-    if (hedgeHits) {
-      return true
+      if (hedgeHit) {
+        return true
+      }
     }
   }
 

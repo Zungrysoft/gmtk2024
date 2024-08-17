@@ -168,6 +168,10 @@ export default class Thing {
   }
 
   move (iterations = 16) {
+    if (this.velocity[0] === 0 && this.velocity[1] === 0) {
+      return
+    }
+
     const dx = this.velocity[0] / iterations
     const dy = this.velocity[1] / iterations
 
