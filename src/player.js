@@ -19,6 +19,13 @@ export default class Player extends Thing {
   direction = 1
   cameraOffset = [0, 0]
   squash = [1, 1]
+  ownedTools = ['sickle', 'seedPacketHedge', 'seedPacketApple', 'wateringCan', 'waterGun']
+  selectedTools = {
+    seedPacket: '',
+    wateringDevice: '',
+    trimmer: 'sickle',
+  }
+  selectedToolCategory = 'trimmer'
 
   update () {
     // If trapped inside something solid, like when getting pushed by
@@ -114,6 +121,25 @@ export default class Player extends Thing {
     if (onGround) {
       this.velocity[0] *= friction
     }
+    
+    // ==============
+    // Player actions
+    // ==============
+
+    // Switch tool category
+    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
+      this.cycleToolCategory()
+    }
+
+    // Switch sub tool
+    if (game.keysPressed.KeyQ || game.buttonsPressed[5]) {
+      this.cycleTool(false)
+    }
+
+    // Switch sub tool reverse
+    if (game.keysPressed.KeyE || game.buttonsPressed[4]) {
+      this.cycleTool(true)
+    }
 
     // Debug: water all plants button
     if (game.keysDown.KeyJ) {
@@ -125,6 +151,129 @@ export default class Player extends Thing {
     // Apply scaling
     this.scale[0] = this.direction * this.squash[0] / 48
     this.scale[1] = this.squash[1] / 48
+  }
+
+  unlockTool (tool, toolMode) {
+    if (!this.ownedTools.includes(tool)) {
+      this.ownedTools.push(tool)
+      this.setSelectedTool
+    }
+    
+    if (tool === 'wateringDevice') {
+      this.wateringDevice
+    }
+
+    // TODO: Play ITEM GET animation and sound
+  }
+
+  getToolCategories () {
+    return {
+      seedPacket: ['seedPacketApple', 'seedPacketPear', 'seedPacketHedge'],
+      wateringDevice: ['wateringCan', 'waterGun', 'hose'],
+      trimmer: ['sickle'],
+    }
+  }
+
+  getToolCategory (tool) {
+    const toolCategories = this.getToolCategories()
+    for (const toolCategory in toolCategories) {
+      const toolsInCategory = toolCategories[toolCategory]
+      if (toolsInCategory.includes(tool)) {
+        return toolCategory
+      }
+    }
+  }
+
+  getSelectedTool () {
+    return this.selectedTools[this.selectedToolCategory]
+  }
+
+  setSelectedTool (tool) {
+    const category = this.getToolCategory(tool)
+    if (category) {
+      this.selectedToolCategory = category
+      this.selectedTools['category'] = tool
+    }
+    else {
+      console.warn("Tried to select invalid tool " + tool)
+    }
+  }
+
+  getOwnedToolCategories() {
+    // Returns a set
+    const toolCategories = this.getToolCategories()
+    const ownedToolCategories = new Set()
+    for (const toolCategory in toolCategories) {
+      const toolsInCategory = toolCategories[toolCategory]
+      if (new Set(toolsInCategory).intersection(new Set(this.ownedTools)).size > 0) {
+        ownedToolCategories.add(toolCategory)
+      }
+    }
+    return ownedToolCategories
+  }
+
+  getOwnedToolsInCategory (category) {
+    return this.getToolCategories()[category]
+  }
+
+  cycleToolCategory () {
+    // Count how many tool categories we have tools in
+    const toolCategories = this.getToolCategories()
+    const ownedToolCategories = this.getOwnedToolCategories()
+
+    // If we only have one or zero tool categories, there is nothing for this key press to do
+    if (ownedToolCategories.size <= 1) {
+      // TODO: Play error sound
+      return
+    }
+    
+    // Cycle to next tool category
+    let foundMyTool = false
+    const toolCategoriesList = [...Object.keys(toolCategories), ...Object.keys(toolCategories)]
+    for (const toolCategory of toolCategoriesList) {
+      if (foundMyTool && ownedToolCategories.has(toolCategory)) {
+        this.selectedToolCategory = toolCategory
+        break
+      }
+      if (toolCategory === this.selectedToolCategory) {
+        foundMyTool = true
+      }
+    }
+
+    // Confirm a tool is selected in that category
+    if (!this.ownedTools.includes(this.getSelectedTool())) {
+      this.selectedTools[this.selectedToolCategory] = this.getOwnedToolsInCategory(this.selectedToolCategory)[0]
+    }
+
+    // TODO: Play item cycle sound and remove console log
+    console.log(this.getSelectedTool())
+  }
+
+  cycleTool (reverse=false) {
+    const toolsInCategory = this.getToolCategories()[this.selectedToolCategory]
+    const ownedToolsInCategory = new Set(toolsInCategory).intersection(new Set(this.ownedTools))
+
+    // If we only have one or zero tools in this category, there is nothing for this key press to do
+    if (ownedToolsInCategory.size <= 1) {
+      // TODO: Play error sound
+      return
+    }
+
+    // Cycle to next tool in category
+    let foundMyTool = false
+    const toolsList = reverse ? [...toolsInCategory, ...toolsInCategory].reverse() : [...toolsInCategory, ...toolsInCategory]
+    for (const tool of toolsList) {
+      if (foundMyTool && this.ownedTools.includes(tool)) {
+        this.selectedTools[this.selectedToolCategory] = tool
+        break
+      }
+      if (tool === this.getSelectedTool()) {
+        foundMyTool = true
+      }
+    }
+
+    // TODO: Play item cycle sound and remove console log
+    console.log(this.getSelectedTool())
   }
 
   draw () {
