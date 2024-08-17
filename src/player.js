@@ -20,6 +20,16 @@ export default class Player extends Thing {
       frames: [3],
       speed: 0,
       frameSize: 96
+    },
+    jump: {
+      frames: [4],
+      speed: 0,
+      frameSize: 96
+    },
+    fall: {
+      frames: [5],
+      speed: 0,
+      frameSize: 96
     }
   }
   aabb = [-0.5, -1, 0.5, 1]
@@ -36,6 +46,7 @@ export default class Player extends Thing {
   }
   selectedToolCategory = 'trimmer'
   money = 20
+  runFrames = 0
 
   constructor () {
     super()
@@ -76,9 +87,25 @@ export default class Player extends Thing {
     ]
     game.getCamera2D().scale = [48, 48] // Make one world unit one tile
 
+    // Switch running / walking / idle animation depending on speed
     this.animation = Math.abs(this.velocity[0]) < 0.165 ? 'walk' : 'run'
     if (Math.abs(this.velocity[0]) < 0.08) {
       this.animation = 'idle'
+      this.runFrames = 0
+    } else {
+      this.runFrames += 1
+    }
+    if (this.velocity[1] < 0) {
+      this.animation = 'jump'
+    }
+    if (this.velocity[1] > 0) {
+      this.animation = 'fall'
+    }
+
+    // Chug along when running
+    if (this.runFrames > 0) {
+      const s = Math.sin(this.runFrames * Math.PI * 2 / 10)
+      this.squash[1] = u.map(s, -1, 1, 1, 0.95, true)
     }
 
     const onGround = this.contactDirections.down
