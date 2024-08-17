@@ -2,6 +2,7 @@ import * as game from 'game'
 import * as u from 'utils'
 import Thing from 'thing'
 import Plant from './plant.js'
+import PlantHedge from './planthedge.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -12,7 +13,7 @@ export default class Player extends Thing {
       frameSize: 96
     }
   }
-  scale = [1 / 48, 1 / 48]
+  aabb = [-0.5, -1, 0.5, 1]
   jumpBuffer = 0
   coyoteFrames = 0
   direction = 1
@@ -131,6 +132,23 @@ export default class Player extends Thing {
 
   checkCollision (x, y, z) {
     if (super.checkCollision(x, y, z)) {
+      return true
+    }
+
+    const hedgeHits = (
+      this.getAllOverlaps()
+      .filter(x => x instanceof PlantHedge)
+      .some(hedge => (
+        hedge.getHitbox().some(hitbox => (
+          this.position[0] >= hitbox[0] &&
+          this.position[1] >= hitbox[1] &&
+          this.position[0] <= hitbox[2] &&
+          this.position[1] <= hitbox[3]
+        ))
+      ))
+    )
+
+    if (hedgeHits) {
       return true
     }
 
