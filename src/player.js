@@ -358,6 +358,12 @@ export default class Player extends Thing {
     if (game.getThing('level').checkWorldTileCollision(x, y)) {
       return true
     }
+  }
+
+  checkCollision (x = this.position[0], y = this.position[1], z = 0) {
+    if (super.checkCollision(x, y, z)) {
+      return true
+    }
 
     for (const plant of this.getAllOverlaps()) {
       if (!(plant instanceof Plant)) { continue }
@@ -365,12 +371,6 @@ export default class Player extends Thing {
       if (plantHit) {
         return true
       }
-    }
-  }
-
-  checkCollision (x = this.position[0], y = this.position[1], z = 0) {
-    if (super.checkCollision(x, y, z)) {
-      return true
     }
 
     const w = 0.25
