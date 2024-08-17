@@ -147,6 +147,11 @@ export default class Player extends Thing {
       this.cycleTool(true)
     }
 
+    // Use tool
+    if (game.keysPressed.KeyA || game.buttonsPressed[2]) {
+      this.useTool(true)
+    }
+
     // Debug: water all plants button
     if (game.keysDown.KeyJ) {
       for (const plant of game.getThings().filter(x => x instanceof Plant)) {
@@ -159,14 +164,14 @@ export default class Player extends Thing {
     this.scale[1] = this.squash[1] / 48
   }
 
+  useTool(tool) {
+    // TODO
+  }
+
   unlockTool (tool, toolMode) {
     if (!this.ownedTools.includes(tool)) {
       this.ownedTools.push(tool)
-      this.setSelectedTool
-    }
-    
-    if (tool === 'wateringDevice') {
-      this.wateringDevice
+      this.setSelectedTool(tool)
     }
 
     // TODO: Play ITEM GET animation and sound
