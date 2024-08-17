@@ -21,6 +21,10 @@ export default class Player extends Thing {
   squash = [1, 1]
 
   update () {
+    // If trapped inside something solid, like when getting pushed by
+    // a hedge or something, try to get unstuck
+    this.getUnstuck()
+
     // Using the default move() method in Thing which handles movement
     // and collision detection as defined by the checkCollision()
     // method
@@ -67,7 +71,7 @@ export default class Player extends Thing {
     // Coyote frames
     this.coyoteFrames -= 1
     if (onGround) {
-      if (this.coyoteFrames < 5) {
+      if (this.coyoteFrames < 3) {
         this.squash[1] = 0.5
       }
       this.coyoteFrames = 6
@@ -130,8 +134,24 @@ export default class Player extends Thing {
     this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 32, true))
   }
 
-  checkCollision (x, y, z) {
-    if (super.checkCollision(x, y, z)) {
+  // Get the player unstuck when trapped in a collision
+  getUnstuck () {
+    const [xLast, yLast] = this.position
+    let a = 0
+    let r = 1 / 16
+    while (this.checkCollision()) {
+      this.position[0] = xLast + Math.cos(a) * r
+      this.position[1] = yLast + Math.sin(a) * r
+      a += Math.PI * 2 / 4
+      if (a > Math.PI * 2) {
+        a -= Math.PI * 2
+        r += r < 0.25 ? 1 / 48 : 0.25
+      }
+    }
+  }
+
+  checkPointCollision (x, y) {
+    if (game.getThing('level').checkWorldTileCollision(x, y)) {
       return true
     }
 
@@ -140,15 +160,20 @@ export default class Player extends Thing {
       .filter(x => x instanceof PlantHedge)
       .some(hedge => (
         hedge.getHitbox().some(hitbox => (
-          this.position[0] >= hitbox[0] &&
-          this.position[1] >= hitbox[1] &&
-          this.position[0] <= hitbox[2] &&
-          this.position[1] <= hitbox[3]
+          x >= hitbox[0] &&
+          y >= hitbox[1] &&
+          x <= hitbox[2] &&
+          y <= hitbox[3]
         ))
       ))
     )
-
     if (hedgeHits) {
+      return true
+    }
+  }
+
+  checkCollision (x = this.position[0], y = this.position[1], z = 0) {
+    if (super.checkCollision(x, y, z)) {
       return true
     }
 
@@ -160,14 +185,14 @@ export default class Player extends Thing {
     // player's bounding box with the level's tile grid to simulate a
     // real bounding box collision with the world
     return (
-      game.getThing('level').checkWorldTileCollision(x + w, y) ||
-      game.getThing('level').checkWorldTileCollision(x - w, y) ||
-      game.getThing('level').checkWorldTileCollision(x, y + h) ||
-      game.getThing('level').checkWorldTileCollision(x, y - h + headRoom) ||
-      game.getThing('level').checkWorldTileCollision(x + w, y + h) ||
-      game.getThing('level').checkWorldTileCollision(x - w, y + h) ||
-      game.getThing('level').checkWorldTileCollision(x + w, y - h + headRoom) ||
-      game.getThing('level').checkWorldTileCollision(x - w, y - h + headRoom)
+      this.checkPointCollision(x + w, y) ||
+      this.checkPointCollision(x - w, y) ||
+      this.checkPointCollision(x, y + h) ||
+      this.checkPointCollision(x, y - h + headRoom) ||
+      this.checkPointCollision(x + w, y + h) ||
+      this.checkPointCollision(x - w, y + h) ||
+      this.checkPointCollision(x + w, y - h + headRoom) ||
+      this.checkPointCollision(x - w, y - h + headRoom)
     )
   }
 }
