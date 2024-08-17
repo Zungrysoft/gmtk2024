@@ -177,9 +177,9 @@ export default class Player extends Thing {
 
     // Watering Can: waters plants in a small circle in front of the player 
     if (selectedTool === 'wateringCan') {
-      const offset = [0.9 * this.direction, -0.2]
+      const offset = [0.9 * this.direction, 0.4]
       const waterCenter = vec2.add(this.position, offset)
-      const waterRadius = 3
+      const waterRadius = 0.8
       const aabb = [
         -waterRadius,
         -waterRadius,
@@ -192,12 +192,10 @@ export default class Player extends Thing {
 
       // Do collision check
       for (const plant of plants) {
-        if (plant.collideWithAabb(aabb, offset)) {
+        if (plant.collideWithAabb(aabb, waterCenter)) {
           plant.water()
         }
       }
-
-      console.log("Watering!")
     }
   }
 
