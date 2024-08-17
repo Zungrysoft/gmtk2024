@@ -26,6 +26,12 @@ export default class Player extends Thing {
     trimmer: 'sickle',
   }
   selectedToolCategory = 'trimmer'
+  money = 20
+
+  constructor () {
+    super()
+    game.setThingName(this, 'player')
+  }
 
   update () {
     // If trapped inside something solid, like when getting pushed by
@@ -62,8 +68,8 @@ export default class Player extends Thing {
     game.getCamera2D().scale = [48, 48] // Make one world unit one tile
 
     const onGround = this.contactDirections.down
-    const friction = 0.8
-    const groundAcceleration = 2.5 / 48
+    const friction = 0.7
+    const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration
 
@@ -81,7 +87,7 @@ export default class Player extends Thing {
       if (this.coyoteFrames < 3) {
         this.squash[1] = 0.5
       }
-      this.coyoteFrames = 6
+      this.coyoteFrames = 8
     }
 
     // Jump when on ground, and cancel your jump early if you release
@@ -89,7 +95,7 @@ export default class Player extends Thing {
     // and too late (coyoteTime)
     this.jumpBuffer -= 1
     if (game.keysPressed.Space || game.buttonsPressed[0]) {
-      this.jumpBuffer = 6
+      this.jumpBuffer = 10
     }
     if (this.jumpBuffer > 0 && this.coyoteFrames > 0) {
       this.velocity[1] = -0.41
@@ -281,6 +287,17 @@ export default class Player extends Thing {
     // looks like it's taking off from the ground when the player
     // jumps
     this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 32, true))
+  }
+
+  postDraw () {
+    if (this.isPaused) { return }
+    const { ctx } = game
+    ctx.save()
+    ctx.fillStyle = 'white'
+    ctx.font = 'italic bold 64px Arial'
+    ctx.translate(64, 128)
+    ctx.fillText(`${this.money}$`, 0, 0)
+    ctx.restore()
   }
 
   // Get the player unstuck when trapped in a collision
