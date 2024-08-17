@@ -55,8 +55,8 @@ export default class Player extends Thing {
     game.getCamera2D().scale = [48, 48] // Make one world unit one tile
 
     const onGround = this.contactDirections.down
-    const friction = 0.8
-    const groundAcceleration = 2.5 / 48
+    const friction = 0.7
+    const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration
 
@@ -74,7 +74,7 @@ export default class Player extends Thing {
       if (this.coyoteFrames < 3) {
         this.squash[1] = 0.5
       }
-      this.coyoteFrames = 6
+      this.coyoteFrames = 8
     }
 
     // Jump when on ground, and cancel your jump early if you release
@@ -82,7 +82,7 @@ export default class Player extends Thing {
     // and too late (coyoteTime)
     this.jumpBuffer -= 1
     if (game.keysPressed.Space) {
-      this.jumpBuffer = 6
+      this.jumpBuffer = 10
     }
     if (this.jumpBuffer > 0 && this.coyoteFrames > 0) {
       this.velocity[1] = -0.41
