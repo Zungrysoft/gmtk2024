@@ -141,8 +141,8 @@ export default class Thing {
     )
     // Make sure to render the sprite at the nearest pixel
     ctx.translate(
-      Math.floor(x / scale[0]) * scale[0],
-      Math.floor(y / scale[1]) * scale[1]
+      Math.round(x / scale[0]) * scale[0],
+      Math.round(y / scale[1]) * scale[1]
     )
     ctx.scale(...scale)
     ctx.rotate(this.rotation)

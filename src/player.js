@@ -23,15 +23,25 @@ export default class Player extends Thing {
       frameSize: 96
     },
     jump: {
-      frames: [4],
+      frames: [8],
       speed: 0,
       frameSize: 96
     },
     fall: {
-      frames: [5],
+      frames: [9],
       speed: 0,
       frameSize: 96
-    }
+    },
+    runJump: {
+      frames: [10],
+      speed: 0,
+      frameSize: 96
+    },
+    runFall: {
+      frames: [11],
+      speed: 0,
+      frameSize: 96
+    },
   }
   aabb = [-0.5, -1, 0.5, 1]
   jumpBuffer = 0
@@ -88,8 +98,10 @@ export default class Player extends Thing {
     ]
     game.getCamera2D().scale = [48, 48] // Make one world unit one tile
 
+    const runThreshold = 0.165
+
     // Switch running / walking / idle animation depending on speed
-    this.animation = Math.abs(this.velocity[0]) < 0.165 ? 'walk' : 'run'
+    this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'walk' : 'run'
     if (Math.abs(this.velocity[0]) < 0.08) {
       this.animation = 'idle'
       this.runFrames = 0
@@ -97,16 +109,17 @@ export default class Player extends Thing {
       this.runFrames += 1
     }
     if (this.velocity[1] < 0) {
-      this.animation = 'jump'
+      this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'jump' : 'runJump'
     }
     if (this.velocity[1] > 0) {
-      this.animation = 'fall'
+      //this.animation = 'fall'
+      this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
     }
 
     // Chug along when running
     if (this.runFrames > 0) {
       const s = Math.sin(this.runFrames * Math.PI * 2 / 10)
-      this.squash[1] = u.map(s, -1, 1, 1, 0.95, true)
+      this.squash[1] = u.map(s, -1, 1, 1, 0.93, true)
     }
 
     const onGround = this.contactDirections.down
