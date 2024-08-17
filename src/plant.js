@@ -1,4 +1,5 @@
 import * as game from 'game'
+import * as u from 'utils'
 import Thing from 'thing'
 
 export default class Plant extends Thing {
@@ -51,8 +52,23 @@ export default class Plant extends Thing {
     isBeingWatered() {
         return this.timeSinceWatered <= 1
     }
+
+    getHitboxes() {
+        return []
+    }
  
     collide(other) {
+        if (this.isSprout) {
+          return false
+        }
+        
+        for (const box of this.getHitboxes()) {
+            const collided = u.checkAabbIntersection(box, other.aabb, [0, 0], other.position)
+            if (collided) {
+                return true
+            }
+        }
+
         return false
-    }
+      }
 }

@@ -15,12 +15,6 @@ export default class PlantHedge extends Plant {
     }
   }
 
-  collide(other) {
-    if (this.isSprout) {
-      return false
-    }
-  }
-
   update() {
     super.update()
 
@@ -64,7 +58,7 @@ export default class PlantHedge extends Plant {
     return [{direction: 'up', length: 5}]
   }
 
-  getHitbox() {
+  getHitboxes() {
     // List of collision boxes
     // Each element is of the form [x1, y1, x2, y2]
     const shape = this.getShape()
@@ -102,7 +96,7 @@ export default class PlantHedge extends Plant {
     const { ctx } = game
 
     // Green rectangles for now
-    for (const e of this.getHitbox()) {
+    for (const e of this.getHitboxes()) {
       ctx.save()
       ctx.fillStyle = 'green'
       ctx.fillRect(e[0], e[1], e[2] - e[0], e[3] - e[1])
