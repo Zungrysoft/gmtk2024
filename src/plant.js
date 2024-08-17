@@ -1,10 +1,18 @@
 import * as game from 'game'
+import Thing from 'thing'
 
 export default class Plant extends Thing {
     validTileTypes = []
-    sprite = game.assets.images.guy
-    animations = {
-      idle: { frames: [0], speed: 0, frameSize: 128 }
+    isSprout = true
+    isPotted = false
+    timeSinceWatered = 0
+    variant = 'basic'
+
+    constructor (pos, variant, isSprout) {
+        super()
+        this.position = pos
+        this.variant = variant
+        this.isSprout = isSprout
     }
   
     canBePlantedAt(pos) {
@@ -14,21 +22,37 @@ export default class Plant extends Thing {
         // Must be planted in an air tile and on a non-air tile
         if (tileType === 0 && soilType > 0) {
             // Can be planted on any tile
-            if (self.validSoilTypes.includes('any')) {
+            if (this.validSoilTypes.includes('any')) {
                 return true
             }
             
             // Can be planted on any soil tile
-            if (self.validSoilTypes.includes('anySoil') && soilType < 16) {
+            if (this.validSoilTypes.includes('anySoil') && soilType < 16) {
                 return true
             }
             
             // Has specific soil requirements
-            if (self.validSoilTypes.includes(soilType)) {
+            if (this.validSoilTypes.includes(soilType)) {
                 return true
             }
         }
 
+        return false
+    }
+
+    update() {
+        this.timeSinceWatered ++
+    }
+
+    water() {
+        this.timeSinceWatered = 0
+    }
+
+    isBeingWatered() {
+        return this.timeSinceWatered <= 1
+    }
+ 
+    collide(other) {
         return false
     }
 }
