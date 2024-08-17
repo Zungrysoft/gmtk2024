@@ -338,13 +338,12 @@ export default class Player extends Thing {
       return true
     }
 
-    const hedgeHits = (
-      this.getAllOverlaps()
-      .filter(x => x instanceof Plant)
-      .some(plant => (plant.collide(this)))
-    )
-    if (hedgeHits) {
-      return true
+    for (const plant of this.getAllOverlaps()) {
+      if (!(plant instanceof Plant)) { continue }
+      const plantHit = plant.collide(this)
+      if (plantHit) {
+        return true
+      }
     }
   }
 

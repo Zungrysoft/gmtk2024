@@ -7,6 +7,7 @@ export default class PlantHedge extends Plant {
   validTileTypes = [2]
   hedgeGrowth = 0
   aabb = [-10, -10, 10, 10]
+  hitboxCache = null
 
   constructor (pos, variant, isSprout) {
     super(pos, variant, isSprout)
@@ -24,14 +25,17 @@ export default class PlantHedge extends Plant {
       // If this just sprouted, grow to minimum size of 1
       if (this.hedgeGrowth < 1) {
         this.hedgeGrowth += growthSpeed
+        this.hitboxCache = null
       }
       // If this is being actively watered, it should grow until it reaches max size
       else if (this.isBeingWatered()) {
         this.hedgeGrowth = u.clamp(this.hedgeGrowth + growthSpeed, 1, this.getMaxHedgeGrowth())
+        this.hitboxCache = null
       }
       // If this has not been watered for a few seconds, it should shrivel until it reachers min size
       else if (this.timeSinceWatered > 120) {
         this.hedgeGrowth = u.clamp(this.hedgeGrowth - growthSpeed, 1, this.getMaxHedgeGrowth())
+        this.hitboxCache = null
       }
 
       // TODO: Don't grow any further if it is stuck
@@ -59,6 +63,8 @@ export default class PlantHedge extends Plant {
   }
 
   getHitboxes() {
+    if (this.hitboxCache) { return this.hitboxCache }
+
     // List of collision boxes
     // Each element is of the form [x1, y1, x2, y2]
     const shape = this.getShape()
@@ -89,6 +95,9 @@ export default class PlantHedge extends Plant {
       }
       curPos = vec2.add(curPos, vec2.scale(delta, segLength))
     }
+
+    this.hitboxCache = ret
+
     return ret
   }
 
