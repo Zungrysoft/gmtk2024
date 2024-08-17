@@ -93,7 +93,15 @@ class SpatialHash {
     const end = this.cellCoord(x + width, y + height)
     for (let x = start[0]; x <= end[0]; x++) {
       for (let y = start[1]; y <= end[1]; y++) {
-        results.push(...(this.hash[[x, y]] ?? []))
+        const hashItems = this.hash[[x, y]]
+
+        // Make sure not to add things twice, as things can be
+        // overlapping multiple spatial grid cells
+        if (!hashItems) { continue }
+        for (const item of hashItems) {
+          if (results.includes(item)) { continue }
+          results.push(item)
+        }
       }
     }
     return results
