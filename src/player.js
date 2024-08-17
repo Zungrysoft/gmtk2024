@@ -2,7 +2,6 @@ import * as game from 'game'
 import * as u from 'utils'
 import Thing from 'thing'
 import Plant from './plant.js'
-import PlantHedge from './planthedge.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -167,20 +166,33 @@ export default class Player extends Thing {
       this.useTool(true)
     }
 
-    // Debug: water all plants button
-    if (game.keysDown.KeyJ) {
-      for (const plant of game.getThings().filter(x => x instanceof Plant)) {
-        plant.water()
-      }
-    }
-
     // Apply scaling
     this.scale[0] = this.direction * this.squash[0] / 48
     this.scale[1] = this.squash[1] / 48
   }
 
   useTool(tool) {
-    // TODO
+    const selectedTool = this.getSelectedTool()
+
+    // Watering Can: waters plants in a small circle in front of the player 
+    if (selectedTool === 'wateringCan') {
+      const offset = [0.9 * this.direction, -0.2]
+      const waterCenter = vec2.add(this.position, offset)
+      const waterRadius = 3
+      const aabb = [
+        waterCenter[0] - waterRadius,
+        waterCenter[1] - waterRadius,
+        waterCenter[0] + waterRadius,
+        waterCenter[1] + waterRadius,
+      ]
+
+      // Get all plants nearby (broad-phase collision)
+      game.getThingsNear(...waterCenter, waterRadius).filter(e => e instanceof Plant)
+
+      // Do collision check
+      
+
+    }
   }
 
   unlockTool (tool, toolMode) {
@@ -341,15 +353,10 @@ export default class Player extends Thing {
       return true
     }
 
-    for (const hedge of this.getAllOverlaps()) {
-      if (!(hedge instanceof PlantHedge)) { continue }
-      const hedgeHit = hedge.getHitbox().some(hitbox => (
-        x >= hitbox[0] &&
-        y >= hitbox[1] &&
-        x <= hitbox[2] &&
-        y <= hitbox[3]
-      ))
-      if (hedgeHit) {
+    for (const plant of this.getAllOverlaps()) {
+      if (!(plant instanceof Plant)) { continue }
+      const plantHit = plant.collide(this)
+      if (plantHit) {
         return true
       }
     }
