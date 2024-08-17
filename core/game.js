@@ -13,6 +13,9 @@ export const gamepads = []
 export const keysDown = {}
 export const lastKeysDown = {}
 export const keysPressed = {}
+export const buttonsDown = {}
+export const lastButtonsDown = {}
+export const buttonsPressed = {}
 
 export const mouse = {
   position: [0, 0],
@@ -265,6 +268,32 @@ function updateHandler () {
   mouse.delta[1] = 0
   mouse.scrollDelta[0] = 0
   mouse.scrollDelta[1] = 0
+
+  // Update buttons down
+  for (const button in buttonsDown) delete buttonsDown[button]
+  if (navigator?.getGamepads) {
+    for (const [i, gamepad] of Object.entries(navigator.getGamepads())) {
+      gamepads[i] = gamepad
+
+      if (gamepad?.buttons) {
+        for (const [i, button] of Object.entries(gamepad.buttons)) {
+          if (button.pressed) {
+            buttonsDown[i] = true
+          }
+        }
+      }
+    }
+  }
+
+  // update buttons pressed
+  for (const button in buttonsPressed) delete buttonsPressed[button]
+  for (const button in buttonsDown) {
+    if (!lastButtonsDown[button]) buttonsPressed[button] = true
+  }
+
+  // update last buttons down
+  for (const button in lastButtonsDown) delete lastButtonsDown[button]
+  for (const button in buttonsDown) lastButtonsDown[button] = true
 
   // Successfully updated, we should rerender
   return true

@@ -81,7 +81,7 @@ export default class Player extends Thing {
     // space. Buffer times for pressing space too early (jumpBuffer)
     // and too late (coyoteTime)
     this.jumpBuffer -= 1
-    if (game.keysPressed.Space) {
+    if (game.keysPressed.Space || game.buttonsPressed[0]) {
       this.jumpBuffer = 10
     }
     if (this.jumpBuffer > 0 && this.coyoteFrames > 0) {
@@ -91,19 +91,19 @@ export default class Player extends Thing {
       this.squash[1] = 1.5
       this.squash[0] = 0.5
     }
-    if (!game.keysDown.Space && this.velocity[1] < 0) {
+    if (!(game.keysDown.Space || game.buttonsDown[0]) && this.velocity[1] < 0) {
       this.velocity[1] *= 0.7
     }
 
     // Move left and right, on ground speed is naturally clamped by
     // friction but in the air we have to artificially clamp it
-    if (game.keysDown.ArrowRight) {
+    if (game.keysDown.ArrowRight || game.buttonsDown[15]) {
       this.velocity[0] += acceleration
       if (!onGround) {
         this.velocity[0] = Math.min(this.velocity[0], maxSpeed)
       }
     }
-    if (game.keysDown.ArrowLeft) {
+    if (game.keysDown.ArrowLeft || game.buttonsDown[14]) {
       this.velocity[0] -= acceleration
       if (!onGround) {
         this.velocity[0] = Math.max(this.velocity[0], -maxSpeed)
