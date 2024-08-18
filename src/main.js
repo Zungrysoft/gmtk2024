@@ -21,7 +21,12 @@ game.assets.images = await game.loadImages({
   waterDroplet: 'images/waterDroplet.png',
   wateringCan: 'images/wateringcan.png',
   ground: 'images/ground.png',
-  caveBackground: 'images/cavebackground.png'
+  dirt1: 'images/dirt1.png',
+  dirt2: 'images/dirt2.png',
+  dirt3: 'images/dirt3.png',
+  dirt4: 'images/dirt4.png',
+  hedgeTest: 'images/hedgetest.png',
+  caveBackground: 'images/cavebackground1.png'
 })
 
 game.assets.levels = await game.loadText({
@@ -31,6 +36,14 @@ game.assets.levels = await game.loadText({
 game.assets.data = await game.loadJson({
   seedSoilRequirements: 'data/seedSoilRequirements.json'
 })
+
+const tileValues = {
+  1: game.assets.images.dirt1,
+  2: game.assets.images.dirt2, //'#330517',
+  3: game.assets.images.dirt3, //'#b2b2b8',
+  4: game.assets.images.dirt4, //'#1d1687',
+  16: game.assets.images.ground
+}
 
 class Level extends Thing {
   tileGrids = []
@@ -63,29 +76,26 @@ class Level extends Thing {
   draw () {
     const { ctx } = game
     const { tileSize } = this
-    const tileValues = {
-      1: '#75592f',
-      2: '#330517',
-      3: '#b2b2b8',
-      4: '#1d1687',
-    }
 
     // Render the grid tiles as black for now
     for (const [coordString, tileValue] of Object.entries(this.tileGrids[0])) {
       const coord = coordString.split(',').map(x => Number(x) * tileSize)
-      if (tileValue === 16) {
+      const tileVisual = tileValues[tileValue]
+
+      if (typeof tileVisual === 'string') {
         ctx.save()
-        ctx.translate(coord[0], coord[1])
-        ctx.translate(-8 / 48, -8 / 48)
-        ctx.scale(1 / 48, 1 / 48)
-        ctx.drawImage(game.assets.images.ground, 0, 0)
-        ctx.restore()
-      } else {
-        ctx.save()
-        ctx.fillStyle = tileValues[tileValue] ?? 'black'
+        ctx.fillStyle = tileVisual
         ctx.fillRect(coord[0], coord[1], tileSize, tileSize)
         ctx.restore()
+        continue
       }
+
+      ctx.save()
+      ctx.translate(coord[0], coord[1])
+      ctx.translate(-8 / 48, -8 / 48)
+      ctx.scale(1 / 48, 1 / 48)
+      ctx.drawImage(tileVisual, 0, 0)
+      ctx.restore()
     }
   }
 
