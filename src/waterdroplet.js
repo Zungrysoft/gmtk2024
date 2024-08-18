@@ -8,14 +8,15 @@ export default class WaterDroplet extends Thing {
   lifeTime = 300
   scale = 1/48
   
-  constructor (position) {
+  constructor (position, intensity) {
     super()
     this.position = [...position]
 
     const rot = Math.random() * Math.PI * 2
     const vel = vec2.angleToVector(rot)
-    const r = u.map(Math.random(), 0, 1, 0.1, 0.3)
+    const r = u.map(Math.random(), 0, 1, 0.1, 0.3) * intensity
     this.velocity = vec2.scale(vel, r)
+    this.scale *= intensity
   }
 
   update () {

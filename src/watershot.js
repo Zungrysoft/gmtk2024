@@ -7,15 +7,14 @@ import WaterDroplet from './waterdroplet.js'
 import WaterDeliverer from './waterDeliverer.js'
 
 export default class WaterShot extends Thing {
-  sprite = game.assets.images.waterShot
   aabb = [-0.3, -0.3, 0.3, 0.3]
   lifeTime = 300
   scale = 1/48
   
-  constructor (position, direction) {
+  constructor (position, direction, scale, speed, spread) {
     super()
     this.position = [...position]
-    this.velocity = direction > 0 ? [0.6, -0.1] : [-0.6, -0.1]
+    this.velocity = direction > 0 ? [speed, -0.1] : [-speed, -0.1]
 
     // const r1 = Math.random()
     // const r2 = Math.random()
@@ -26,9 +25,24 @@ export default class WaterShot extends Thing {
     // Randomly vary velocity
     const r1 = Math.random()
     const r2 = Math.random()
-    const vx = (Math.sqrt(r1)*2 - 1) * 0.06
-    const vy = (Math.sqrt(r2)*2 - 1) * 0.03
+    const vx = (Math.sqrt(r1)*2 - 1) * spread * direction
+    const vy = (Math.sqrt(r2)*2 - 1) * spread * 0.5
     this.velocity = vec2.add(this.velocity, [vx, vy])
+
+    // Randomly vary position
+    const dx = (Math.random()*2 - 1) * speed * 0.5
+    this.position = vec2.add(this.position, [dx, 0])
+
+    this.scaleMultiplier = scale
+    this.scale *= this.scaleMultiplier
+
+    // Fast water shots need a more speedy-looking sprite
+    if (speed > 0.3) {
+      this.sprite = game.assets.images.waterShotFast
+    }
+    else {
+      this.sprite = game.assets.images.waterShotSlow
+    }
   }
 
   update () {
@@ -63,8 +77,8 @@ export default class WaterShot extends Thing {
   }
 
   spawnDroplets() {
-    for (let i = 0; i < 8; i ++) {
-      game.addThing(new WaterDroplet(this.position))
+    for (let i = 0; i < 8*this.scaleMultiplier; i ++) {
+      game.addThing(new WaterDroplet(this.position, Math.sqrt(this.scaleMultiplier)))
     }
   }
 }

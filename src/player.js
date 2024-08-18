@@ -69,7 +69,7 @@ export default class Player extends Thing {
   money = 20
   depth = 10
   runFrames = 0
-  wateringDeviceCooldown = 0
+  wateringDeviceCooldowns = [0, 0, 0]
   isPlacementPositionActive = false
 
   constructor () {
@@ -251,7 +251,9 @@ export default class Player extends Thing {
 
     // Time trackers
     this.time ++
-    this.wateringDeviceCooldown = Math.max(this.wateringDeviceCooldown - 1, 0)
+    for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
+      this.wateringDeviceCooldowns[i] = Math.max(this.wateringDeviceCooldowns[i] - 1, 0)
+    }
   }
 
   useTool(pressed) {
@@ -259,33 +261,28 @@ export default class Player extends Thing {
 
     // Watering Can: waters plants in a small circle in front of the player 
     if (selectedTool === 'wateringCan') {
-      const offset = [0.9 * this.direction, 0.4]
-      const waterCenter = vec2.add(this.position, offset)
-      const waterRadius = 0.8
-      const aabb = [
-        -waterRadius,
-        -waterRadius,
-        waterRadius,
-        waterRadius,
-      ]
-
-      // Get all plants nearby (broad-phase collision)
-      const plants = game.getThingsNear(...waterCenter, waterRadius).filter(e => e instanceof Plant)
-
-      // Do collision check
-      for (const plant of plants) {
-        if (plant.overlapWithAabb(aabb, waterCenter)) {
-          plant.water()
+      for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
+        if (this.wateringDeviceCooldowns[i] === 0) {
+          this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
+          const pos = vec2.add(this.position, vec2.scale([1.6, 0], this.direction))
+          game.addThing(new WaterShot(pos, this.direction, 0.6, 0.05 + Math.abs(this.velocity[0]), 0.06))
+          break
         }
       }
     }
 
-    if (selectedTool === 'waterGun') {
-      if (this.wateringDeviceCooldown === 0) {
-        this.wateringDeviceCooldown = Math.floor(Math.random() * 3 + 2)
-        game.addThing(new WaterShot(this.position, this.direction))
+    // Water gun: Long range water delivery
+    else if (selectedTool === 'waterGun') {
+      for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
+        if (this.wateringDeviceCooldowns[i] === 0) {
+          this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 8 + 2)
+          game.addThing(new WaterShot(this.position, this.direction, 1, 0.6 + Math.abs(this.velocity[0]), 0.05))
+          break
+        }
       }
     }
+
+    
 
     // Seed packet: plants new plants
     else if (selectedTool.includes('seedPacket')) {
