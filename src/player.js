@@ -8,6 +8,7 @@ import PlantHedge from './planthedge.js'
 import WaterShot from './watershot.js'
 import PlantApple from './plantapple.js'
 import PlantClock from './plantclock.js'
+import PlantOrange from './plantorange.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -61,6 +62,7 @@ export default class Player extends Thing {
     'seedPacketHedge',
     'seedPacketApple',
     'seedPacketClock',
+    'seedPacketOrange',
     'wateringCan',
     'waterGun'
   ]
@@ -332,6 +334,7 @@ export default class Player extends Thing {
         // Create Thing based on seed packet type
         if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos))
         if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos))
+        if (selectedTool === 'seedPacketOrange') game.addThing(new PlantOrange(placementPos))
         if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
       }
     }

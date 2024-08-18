@@ -4,12 +4,12 @@ import * as vec2 from 'vector2'
 import PlantFruit from './plantfruit.js'
 import Fertilizer from './fertilizer.js'
 
-export default class PlantApple extends PlantFruit {
-  sprite = game.assets.images.plantAppleSprout
+export default class PlantOrange extends PlantFruit {
+  sprite = game.assets.images.plantOrangeSprout
   grownSprite = game.assets.images.plantApple
-  waterInterval = 600
-  requiredWaterIterations = 3
-  requiredFertilizer = 1
+  waterInterval = 480
+  requiredWaterIterations = 5
+  requiredFertilizer = 3
   waterTimer = 0
   waterIterations = 0
   consumedFertilizer = 0
@@ -17,7 +17,7 @@ export default class PlantApple extends PlantFruit {
   growUp() {
     super.growUp()
     
-    this.linkedFruit = new Fertilizer(vec2.add(this.position, this.fruitGrowOffset), 'apple', true)
+    this.linkedFruit = new Fertilizer(vec2.add(this.position, this.fruitGrowOffset), 'orange', true)
     game.addThing(this.linkedFruit)
   }
 
@@ -51,7 +51,7 @@ export default class PlantApple extends PlantFruit {
 
       // Consume fertilizer
       if (this.consumedFertilizer < this.requiredFertilizer) {
-        if (this.consumeFertilizer('ash')) {
+        if (this.consumeFertilizer('apple')) {
           this.consumedFertilizer ++
           this.createFertilizerParticles()
         }
