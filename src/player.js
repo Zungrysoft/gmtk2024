@@ -5,7 +5,7 @@ import * as collisionutils from './collisionutils.js'
 import Thing from 'thing'
 import Plant from './plant.js'
 import PlantHedge from './planthedge.js'
-import WaterShot from './waterShot.js'
+import WaterShot from './watershot.js'
 import PlantApple from './plantapple.js'
 
 export default class Player extends Thing {
@@ -297,32 +297,30 @@ export default class Player extends Thing {
   useTool(pressed) {
     const selectedTool = this.getSelectedTool()
 
-    // Watering Can: waters plants in a small circle in front of the player 
+    // Watering Can: Wpills water in front of the player
     if (selectedTool === 'wateringCan') {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
           const pos = vec2.add(this.position, vec2.scale([1.6, 0], this.direction))
-          game.addThing(new WaterShot(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06))
+          this.shootWater(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06)
           break
         }
       }
     }
 
-    // Water gun: Long range water delivery
+    // Water gun: Long range water delivery apparatus
     else if (selectedTool === 'waterGun') {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 8 + 2)
-          game.addThing(new WaterShot(this.position, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05))
+          this.shootWater(this.position, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05)
           break
         }
       }
     }
 
-    
-
-    // Seed packet: plants new plants
+    // Seed packet: Plants new plants
     else if (selectedTool.includes('seedPacket')) {
       const placementPos = this.getPlacementPosition()
       const tileReqs = game.assets.data.seedSoilRequirements[selectedTool] ?? 'anySoil'
@@ -333,6 +331,28 @@ export default class Player extends Thing {
         if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos, 'basic', true))
       }
     }
+  }
+
+  shootWater(position, direction, scale, speed, spread) {
+    // const r1 = Math.random()
+    // const r2 = Math.random()
+    // const vx = (Math.sqrt(r1)*2 - 1) * 0.06
+    // const vy = (Math.sqrt(r2)*2 - 1) * 0.06
+    // this.velocity = vec2.add(this.velocity, [vx, vy])
+
+    // Randomly vary velocity
+    let vel = direction > 0 ? [speed, -0.1] : [-speed, -0.1]
+    const r1 = Math.random()
+    const r2 = Math.random()
+    const vx = (Math.sqrt(r1)*2 - 1) * spread * direction
+    const vy = (Math.sqrt(r2)*2 - 1) * spread * 0.5
+    vel = vec2.add(vel, [vx, vy])
+
+    // Randomly vary position
+    const dx = (Math.random()*2 - 1) * speed * 0.5
+    const pos = vec2.add(position, [dx, 0])
+
+    game.addThing(new WaterShot(pos, vel, scale))
   }
 
   getPlacementPosition() {

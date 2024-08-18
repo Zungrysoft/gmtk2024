@@ -4,7 +4,7 @@ import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Plant from './plant.js'
 import WaterDroplet from './waterdroplet.js'
-import WaterDeliverer from './waterDeliverer.js'
+import WaterDeliverer from './waterdeliverer.js'
 
 export default class WaterShot extends Thing {
   sprite = game.assets.images.waterShotSpeed1
@@ -15,27 +15,10 @@ export default class WaterShot extends Thing {
   lifeTime = 300
   scale = 1/48
 
-  constructor (position, direction, scale, speed, spread) {
+  constructor (position, velocity, scale) {
     super()
     this.position = [...position]
-    this.velocity = direction > 0 ? [speed, -0.1] : [-speed, -0.1]
-
-    // const r1 = Math.random()
-    // const r2 = Math.random()
-    // const vx = (Math.sqrt(r1)*2 - 1) * 0.06
-    // const vy = (Math.sqrt(r2)*2 - 1) * 0.06
-    // this.velocity = vec2.add(this.velocity, [vx, vy])
-
-    // Randomly vary velocity
-    const r1 = Math.random()
-    const r2 = Math.random()
-    const vx = (Math.sqrt(r1)*2 - 1) * spread * direction
-    const vy = (Math.sqrt(r2)*2 - 1) * spread * 0.5
-    this.velocity = vec2.add(this.velocity, [vx, vy])
-
-    // Randomly vary position
-    const dx = (Math.random()*2 - 1) * speed * 0.5
-    this.position = vec2.add(this.position, [dx, 0])
+    this.velocity = [...velocity]
 
     this.scaleMultiplier = scale
     this.scale *= this.scaleMultiplier

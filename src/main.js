@@ -8,6 +8,7 @@ import Shop from './shop.js'
 import Background from './background.js'
 import Apple from './apple.js'
 import SellZone from './sellzone.js'
+import Sprinkler from './sprinkler.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -41,7 +42,8 @@ game.assets.images = await game.loadImages({
   hedgeBottomMarkRight: 'images/hedgeBottomMarkRight.png',
   hedgeBottomMarkLeft: 'images/hedgeBottomMarkLeft.png',
   caveBackground: 'images/cavebackground1.png',
-  apple: 'images/apple.png'
+  apple: 'images/apple.png',
+  sprinkler: 'images/sprinkler.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -80,6 +82,9 @@ class Level extends Thing {
     for (const thing of things) {
       if (thing.name === 'plantHedge') {
         game.addThing(new PlantHedge(thing.position, thing.data?.variant ?? 'basic'))
+      }
+      if (thing.name === 'sprinkler') {
+        game.addThing(new Sprinkler(thing.position))
       }
     }
 
