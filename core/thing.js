@@ -134,12 +134,17 @@ export default class Thing {
     const { ctx } = game
 
     ctx.save()
-    ctx.translate(x, y)
-    if (typeof this.scale === 'number') {
-      ctx.scale(this.scale, this.scale)
-    } else {
-      ctx.scale(...this.scale)
-    }
+    const scale = (
+      typeof this.scale === 'number'
+      ? [this.scale, this.scale]
+      : this.scale
+    )
+    // Make sure to render the sprite at the nearest pixel
+    ctx.translate(
+      Math.round(x / scale[0]) * scale[0],
+      Math.round(y / scale[1]) * scale[1]
+    )
+    ctx.scale(...scale)
     ctx.rotate(this.rotation)
     ctx.translate(xOffset, yOffset)
     this.drawSpriteFrame(this.sprite, frame, anim.frameSize || 64)
