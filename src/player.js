@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
+import * as collisionutils from './collisionutils.js'
 import Thing from 'thing'
 import Plant from './plant.js'
 import PlantHedge from './planthedge.js'
@@ -71,6 +72,7 @@ export default class Player extends Thing {
   runFrames = 0
   wateringDeviceCooldowns = [0, 0, 0]
   placementPositionIndicatorScale = 1
+  pickup = null // The thing you're currently picking up
 
   constructor () {
     super()
@@ -88,6 +90,11 @@ export default class Player extends Thing {
     this.updateTimers()
     this.move()
     this.animate()
+
+    if (this.pickup) {
+      this.pickup.position[0] = this.position[0] + this.direction
+      this.pickup.position[1] = this.position[1]
+    }
 
     // Un-squash and stretch
     this.squash[0] = u.lerp(this.squash[0], 1, 0.15)
@@ -139,7 +146,7 @@ export default class Player extends Thing {
     }
 
     const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
-    const holdingItem = this.getSelectedTool() === 'wateringCan'
+    const holdingItem = this.pickup || this.getSelectedTool() === 'wateringCan'
     if (usingItem || holdingItem) {
       this.animation = 'grab'
     }
@@ -223,7 +230,18 @@ export default class Player extends Thing {
 
     // Switch tool category
     if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
-      this.cycleToolCategory()
+      const lastPickup = this.pickup
+      let nextPickup
+      for (const thing of this.getAllOverlaps()) {
+        if (thing.isPickupable && thing !== this.pickup) {
+          nextPickup = thing
+          break
+        }
+      }
+      this.pickup = nextPickup
+      if (!this.pickup && !lastPickup) {
+        this.cycleToolCategory()
+      }
     }
 
     // Switch sub tool
@@ -387,6 +405,9 @@ export default class Player extends Thing {
   }
 
   getSelectedTool () {
+    if (this.pickup) {
+      return 'pickup'
+    }
     return this.selectedTools[this.selectedToolCategory]
   }
 
@@ -559,31 +580,6 @@ export default class Player extends Thing {
     if (super.checkCollision(x, y, z)) {
       return true
     }
-
-    for (const plant of this.getAllOverlaps()) {
-      if (!(plant instanceof Plant)) { continue }
-      const plantHit = plant.collideWithThing(this, [x, y])
-      if (plantHit) {
-        return true
-      }
-    }
-
-    const w = 0.25
-    const h = 1
-    const headRoom = 0.4 // A little headroom to make low ceilings easier
-
-    // Doing a bunch of point collisions around the perimeter of the
-    // player's bounding box with the level's tile grid to simulate a
-    // real bounding box collision with the world
-    return (
-      this.checkPointCollision(x + w, y) ||
-      this.checkPointCollision(x - w, y) ||
-      this.checkPointCollision(x, y + h) ||
-      this.checkPointCollision(x, y - h + headRoom) ||
-      this.checkPointCollision(x + w, y + h) ||
-      this.checkPointCollision(x - w, y + h) ||
-      this.checkPointCollision(x + w, y - h + headRoom) ||
-      this.checkPointCollision(x - w, y - h + headRoom)
-    )
+    return collisionutils.checkCollision(this.aabb, x, y)
   }
 }
