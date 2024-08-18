@@ -269,12 +269,13 @@ export default class Player extends Thing {
       this.useTool(game.keysPressed.KeyA || game.buttonsPressed[2])
     }
 
-    if (onGround && Math.abs(this.velocity[0]) < runThreshold && this.getSelectedTool().includes('seedPacket')) {
-      this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.17, 1.3)
+    if (onGround && this.getSelectedTool().includes('seedPacket')) {
+      this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.2, 1.3)
     }
     else {
-      this.placementPositionIndicatorScale = Math.max(this.placementPositionIndicatorScale - 0.17, -0.6)
+      this.placementPositionIndicatorScale = Math.max(this.placementPositionIndicatorScale - 0.2, -0.6)
     }
+    this.placementPositionIndicatorFollow = Math.abs(this.velocity[0]) >= 0.1
 
     // Apply scaling
     this.scale[0] = this.direction * this.squash[0] / 48
@@ -328,24 +329,21 @@ export default class Player extends Thing {
   }
 
   getPlacementPosition() {
-    let yDelta = 0
-    if (game.keysDown.ArrowUp || game.buttonsDown[12]) {
-      yDelta --
-    }
-    if (game.keysDown.ArrowDown || game.buttonsDown[13]) {
-      yDelta ++
-    }
-
     return [
-      Math.floor(this.position[0] + (1.1 * this.direction)),
-      Math.floor(this.position[1] + 0.5 + yDelta),
+      Math.floor(this.position[0]),
+      Math.floor(this.position[1] + 0.5),
     ]
   }
 
   updatePlacementPositionVisual() {
-    const pp = this.getPlacementPosition()
+    const pp = vec2.add(this.getPlacementPosition(), [0, 1])
+    let lerpRate = 0.3
+    if (this.placementPositionIndicatorFollow) {
+      pp[0] = this.position[0] - 0.5
+      lerpRate = 0.6
+    }
     if (this.placementPositionVisual) {
-      this.placementPositionVisual = vec2.lerp(this.placementPositionVisual, pp, 0.2)
+      this.placementPositionVisual = vec2.lerp(this.placementPositionVisual, pp, lerpRate)
     }
     else {
       this.placementPositionVisual = pp
@@ -522,10 +520,10 @@ export default class Player extends Thing {
       this.placementPositionVisual &&
       this.getSelectedTool().includes('seedPacket')
     ) {
-      let sprite = game.assets.images.selectionBox
+      let sprite = game.assets.images.plantingIndicator
       const tileReqs = game.assets.data.seedSoilRequirements[this.getSelectedTool()] ?? 'anySoil'
       if (!this.canBePlantedAt(this.getPlacementPosition(), tileReqs)) {
-        sprite = game.assets.images.selectionBoxError
+        sprite = game.assets.images.plantingIndicatorError
       }
       const sc = u.clamp(this.placementPositionIndicatorScale, 0, 1)
       ctx.save()

@@ -39,7 +39,7 @@ export default class PlantHedge extends Plant {
         this.hitboxCache = null
       }
       // If this has not been watered for a few seconds, it should shrivel until it reachers min size
-      else if (this.timeSinceWatered > 180) {
+      else if (this.timeSinceWatered > 240) {
         this.hedgeGrowth = u.clamp(this.hedgeGrowth - growthSpeed, 1, this.getMaxHedgeGrowth())
         this.hitboxCache = null
       }

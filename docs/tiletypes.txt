@@ -1,8 +1,8 @@
 0 - air
-1 - plain dirt
+1 - basic soil
 2 - muddy soil
-3 - snowy soil
-4 - magical soil
+3 - clay soil
+4 - rocky soil
 
 13 - evil soil
 
