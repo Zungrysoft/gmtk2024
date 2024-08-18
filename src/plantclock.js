@@ -27,10 +27,12 @@ export default class PlantClock extends Plant {
         this.clockTime = 0
 
         // Toggle all nearby devices
-        const effectRadius = 5
+        const effectRadius = 5.5
         const devices = game.getThingsNear(...this.position, effectRadius).filter(e => e.isDevice)
         for (const device of devices) {
-          device.enabled = !device.enabled
+          if (vec2.distance(this.position, device.position) <= effectRadius) {
+            device.enabled = !device.enabled
+          }
         }
         game.addThing(new TimeRing(vec2.add(this.position, [0.5, 0.5]), effectRadius))
       }
