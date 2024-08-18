@@ -30,6 +30,7 @@ game.assets.images = await game.loadImages({
   waterShotSpeed3: 'images/waterShotSpeed3.png',
   waterShotSpeed4: 'images/waterShotSpeed4.png',
   waterDroplet: 'images/waterDroplet.png',
+  fertilizerParticle: 'images/fertilizerParticle.png',
   timeRing: 'images/timeRing.png',
   wateringCan: 'images/wateringcan.png',
   ground: 'images/ground.png',
@@ -67,7 +68,7 @@ game.assets.levels = await game.loadText({
 })
 
 game.assets.data = await game.loadJson({
-  seedSoilRequirements: 'data/seedSoilRequirements.json',
+  plantingRequirements: 'data/plantingRequirements.json',
   toolCategories: 'data/toolCategories.json',
 })
 

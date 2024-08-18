@@ -3,6 +3,7 @@ import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Fertilizer from './fertilizer.js'
+import FertilizerParticle from './fertilizeParticle.js'
 
 export default class Plant extends Thing {
   validTileTypes = []
@@ -96,6 +97,7 @@ export default class Plant extends Thing {
         this.overlapWithThing(thing) &&
         thing.type === type &&
         !thing.isPickedUp() &&
+        !thing.isDead &&
         thing.contactDirections.down
       ) {
         thing.isDead = true
@@ -103,6 +105,12 @@ export default class Plant extends Thing {
       }
     }
     return false
+  }
+
+  createFertilizerParticles(count=6, intensity=1) {
+    for (let i = 0; i < count; i ++) {
+      game.addThing(new FertilizerParticle(vec2.add(this.position, [0.5, 0.5]), intensity))
+    }
   }
 
   setTimerDisplay(n) {

@@ -1,0 +1,18 @@
+{
+    "seedPacketApple": {
+        "soil": ["anySoil"],
+        "spacing": 1
+    },
+    "seedPacketPear": {
+        "soil": ["anySoil"],
+        "spacing": 1
+    },
+    "seedPacketHedge": {
+        "soil": [2],
+        "spacing": 0
+    },
+    "seedPacketClock": {
+        "soil": ["anySoil"],
+        "spacing": 0
+    }
+}

@@ -325,7 +325,7 @@ export default class Player extends Thing {
     // Seed packet: Plants new plants
     else if (selectedTool.includes('seedPacket')) {
       const placementPos = this.getPlacementPosition()
-      const tileReqs = game.assets.data.seedSoilRequirements[selectedTool] ?? 'anySoil'
+      const tileReqs = game.assets.data.plantingRequirements[selectedTool]
       // Check tile type
       if (this.canBePlantedAt(placementPos, tileReqs)) {
         // Create Thing based on seed packet type
@@ -380,7 +380,9 @@ export default class Player extends Thing {
     }
   }
 
-  canBePlantedAt(pos, validTileTypes) {
+  canBePlantedAt(pos, plantingRequirements) {
+    const validTileTypes = plantingRequirements.soil ?? 'anySoil'
+    const spacing = plantingRequirements.spacing ?? 0
     const tileType = game.getThing('level').getTileAt(...pos)
     const soilType = game.getThing('level').getTileAt(pos[0], pos[1]+1)
 
@@ -561,7 +563,7 @@ export default class Player extends Thing {
       this.getSelectedTool().includes('seedPacket')
     ) {
       let sprite = game.assets.images.plantingIndicator
-      const tileReqs = game.assets.data.seedSoilRequirements[this.getSelectedTool()] ?? 'anySoil'
+      const tileReqs = game.assets.data.plantingRequirements[this.getSelectedTool()]
       if (!this.canBePlantedAt(this.getPlacementPosition(), tileReqs)) {
         sprite = game.assets.images.plantingIndicatorError
       }

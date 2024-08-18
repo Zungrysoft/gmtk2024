@@ -52,6 +52,7 @@ export default class PlantApple extends PlantFruit {
       // Consume fertilizer
       if (this.consumeFertilizer('ash')) {
         this.consumedFertilizer ++
+        this.createFertilizerParticles()
       }
 
       // Grow up
