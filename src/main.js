@@ -17,6 +17,7 @@ game.assets.images = await game.loadImages({
   plantHedgeSprout: 'images/hedgeSprout.png',
   selectionBox: 'images/selectionBox.png',
   waterShot: 'images/waterShot.png',
+  waterDroplet: 'images/waterDroplet.png',
   wateringCan: 'images/wateringcan.png',
   ground: 'images/ground.png'
 })

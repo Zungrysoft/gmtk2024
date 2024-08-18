@@ -281,7 +281,7 @@ export default class Player extends Thing {
 
     if (selectedTool === 'waterGun') {
       if (this.wateringDeviceCooldown === 0) {
-        this.wateringDeviceCooldown = 3
+        this.wateringDeviceCooldown = Math.floor(Math.random() * 3 + 2)
         game.addThing(new WaterShot(this.position, this.direction))
       }
     }
