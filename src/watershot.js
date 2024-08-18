@@ -7,6 +7,7 @@ import WaterDroplet from './waterdroplet.js'
 import WaterDeliverer from './waterDeliverer.js'
 
 export default class WaterShot extends Thing {
+  sprite = game.assets.images.waterShotSpeed1
   aabb = [-0.3, -0.3, 0.3, 0.3]
   lifeTime = 300
   scale = 1/48
@@ -35,14 +36,6 @@ export default class WaterShot extends Thing {
 
     this.scaleMultiplier = scale
     this.scale *= this.scaleMultiplier
-
-    // Fast water shots need a more speedy-looking sprite
-    if (speed > 0.3) {
-      this.sprite = game.assets.images.waterShotFast
-    }
-    else {
-      this.sprite = game.assets.images.waterShotSlow
-    }
   }
 
   update () {
@@ -52,6 +45,21 @@ export default class WaterShot extends Thing {
 
     // Match rotation to velocity
     this.rotation = vec2.vectorToAngle(this.velocity)
+
+    // Match sprite to speed
+    const speed = vec2.magnitude(this.velocity)
+    if (speed > 0.5) {
+      this.sprite = game.assets.images.waterShotSpeed4
+    }
+    else if (speed > 0.3) {
+      this.sprite = game.assets.images.waterShotSpeed3
+    }
+    else if (speed > 0.1) {
+      this.sprite = game.assets.images.waterShotSpeed2
+    }
+    else {
+      this.sprite = game.assets.images.waterShotSpeed1
+    }
 
     // Detect plants and water them
     const plants = game.getThingsNear(...this.position, 1).filter(e => e instanceof Plant)
