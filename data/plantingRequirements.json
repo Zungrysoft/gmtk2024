@@ -1,18 +1,14 @@
 {
     "seedPacketApple": {
-        "soil": ["anySoil"],
-        "spacing": 1
+        "soil": ["anySoil"]
     },
     "seedPacketPear": {
-        "soil": ["anySoil"],
-        "spacing": 1
+        "soil": ["anySoil"]
     },
     "seedPacketHedge": {
-        "soil": [2],
-        "spacing": 0
+        "soil": [2]
     },
     "seedPacketClock": {
-        "soil": ["anySoil"],
-        "spacing": 0
+        "soil": ["anySoil"]
     }
 }

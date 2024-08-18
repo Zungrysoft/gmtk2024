@@ -1,5 +1,7 @@
 import * as game from 'game'
+import * as u from 'utils'
 import Plant from './plant.js'
+import LaserField from './laserfield.js'
 
 export function checkWorldPointCollision (x, y) {
   if (game.getThing('level').checkWorldTileCollision(x, y)) {
@@ -7,12 +9,19 @@ export function checkWorldPointCollision (x, y) {
   }
 }
 
-export function checkCollision (aabb, x, y) {
-  for (const plant of game.getThingsInAabb(aabb, [x, y])) {
-    if (!(plant instanceof Plant)) { continue }
-    const plantHit = plant.collideWithAabb(aabb, [x, y])
-    if (plantHit) {
-      return true
+export function checkCollision (aabb, x, y, collideWithLaserField=false) {
+  for (const thing of game.getThingsInAabb(aabb, [x, y])) {
+    if (thing instanceof Plant) {
+      const plantHit = thing.collideWithAabb(aabb, [x, y])
+      if (plantHit) {
+        return true
+      }
+    }
+    if (thing instanceof LaserField && collideWithLaserField === true) {
+      const collided = u.checkAabbIntersection(aabb, thing.aabb, [x, y], thing.position)
+      if (collided) {
+        return true
+      }
     }
   }
 

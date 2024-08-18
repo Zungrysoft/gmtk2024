@@ -10,6 +10,7 @@ import SellZone from './sellzone.js'
 import Sprinkler from './sprinkler.js'
 import Deployer from './deployer.js'
 import Fertilizer from './fertilizer.js'
+import LaserField from './laserfield.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -61,6 +62,7 @@ game.assets.images = await game.loadImages({
   timer7: 'images/timer7.png',
   timer8: 'images/timer8.png',
   timer9: 'images/timer9.png',
+  laserField: 'images/laserField2.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -109,6 +111,9 @@ class Level extends Thing {
       if (thing.name === 'deployer') {
         game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
       }
+      if (thing.name === 'laserField') {
+        game.addThing(new LaserField(pos, thing.data?.size ?? [1, 1]))
+      }
     }
 
     // Set this Thing's name to level so that it can be accessed by
@@ -152,6 +157,12 @@ class Level extends Thing {
   getTileAt (x, y) {
     const tileCoord = [Math.floor(x / this.tileSize), Math.floor(y / this.tileSize)]
     return this.tileGrids[0][tileCoord] ?? 0
+  }
+
+  // Used by plants to check if they are clear to grow somewhere
+  isTileClear() {
+    const tileCoord = [Math.floor(x / this.tileSize), Math.floor(y / this.tileSize)]
+
   }
 }
 

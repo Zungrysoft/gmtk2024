@@ -13,7 +13,7 @@ export default class FertilizerParticle extends Thing {
 
     const rot = Math.random() * Math.PI * 2
     const vel = vec2.angleToVector(rot)
-    const r = u.map(Math.random(), 0, 1, 0.1, 0.3) * intensity
+    const r = u.map(Math.random(), 0, 1, 0.1, 0.2) * intensity
     this.velocity = vec2.scale(vel, r)
     this.scale *= intensity
 
@@ -22,7 +22,7 @@ export default class FertilizerParticle extends Thing {
 
   update () {
     this.position = vec2.add(this.position, this.velocity)
-    this.velocity = vec2.lerp(this.velocity, [0, 0], 0.06)
+    this.velocity = vec2.lerp(this.velocity, [0, 0], 0.13)
     this.scale -= (1/48)/30
     this.rotation += this.rotSpeed
     if (this.scale <= 0) {

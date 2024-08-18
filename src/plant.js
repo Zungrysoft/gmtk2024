@@ -3,7 +3,7 @@ import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Fertilizer from './fertilizer.js'
-import FertilizerParticle from './fertilizeParticle.js'
+import FertilizerParticle from './fertilizerParticle.js'
 
 export default class Plant extends Thing {
   validTileTypes = []
