@@ -20,13 +20,13 @@ export default class SellZone extends Thing {
     const player = game.getThing('player')
     for (const thing of this.getAllOverlaps()) {
       if (
-        thing.price &&
+        thing.value &&
         player.pickup !== thing &&
         thing.contactDirections.down
       ) {
         thing.isDead = true
-        player.money += thing.price
-        game.addThing(new MoneyPopup(thing.price, [...this.position]))
+        player.money += thing.value
+        game.addThing(new MoneyPopup(thing.value, [...this.position]))
       }
     }
   }

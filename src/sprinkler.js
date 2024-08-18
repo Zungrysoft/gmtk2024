@@ -11,14 +11,12 @@ export default class Sprinkler extends Pickupable {
   }
   sprinklerTimer = 0
   enabled = true
-  isDevice = true
 
   update() {
     super.update()
 
     // Sprinkle water
-    const isPickedUp = game.getThing('player').pickup === this
-    if (this.enabled && !isPickedUp) {
+    if (this.enabled && !this.isPickedUp()) {
       this.sprinklerTimer ++
       if (this.sprinklerTimer % 3 === 0) {
         const vel = vec2.scale(vec2.normalize([
@@ -28,6 +26,12 @@ export default class Sprinkler extends Pickupable {
         game.addThing(new WaterShot(this.position, vel, 0.4))
       }
     }
-    
+    if (this.isPickedUp()) {
+      this.enabled = true
+    }
+  }
+
+  deviceTrigger() {
+    this.enabled = !this.enabled
   }
 }

@@ -1,9 +1,8 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
-import Plant from './plant.js'
 import PlantFruit from './plantfruit.js'
-import Apple from './apple.js'
+import Fertilizer from './fertilizer.js'
 
 export default class PlantApple extends PlantFruit {
   sprite = game.assets.images.plantAppleSprout
@@ -12,7 +11,7 @@ export default class PlantApple extends PlantFruit {
   growUp() {
     super.growUp()
     
-    this.linkedFruit = new Apple(vec2.add(this.position, this.fruitGrowOffset), true)
+    this.linkedFruit = new Fertilizer(vec2.add(this.position, this.fruitGrowOffset), 'apple', true)
     game.addThing(this.linkedFruit)
   }
 

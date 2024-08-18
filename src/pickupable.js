@@ -1,5 +1,6 @@
 import * as collisionutils from './collisionutils.js'
 import * as vec2 from 'vector2'
+import * as game from 'game'
 import Thing from 'thing'
 
 export default class Pickupable extends Thing {
@@ -51,5 +52,9 @@ export default class Pickupable extends Thing {
       return true
     }
     return collisionutils.checkCollision(this.aabb, x, y)
+  }
+
+  isPickedUp () {
+    return game.getThing('player').pickup === this
   }
 }

@@ -85,4 +85,8 @@ export default class Plant extends Thing {
 
     return false
   }
+
+  consumeFertilizer(type) {
+
+  }
 }

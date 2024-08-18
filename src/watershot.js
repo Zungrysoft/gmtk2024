@@ -40,7 +40,7 @@ export default class WaterShot extends Thing {
     else if (speed > 0.3) {
       this.sprite = game.assets.images.waterShotSpeed3
     }
-    else if (speed > 0.1) {
+    else if (speed > 0.15) {
       this.sprite = game.assets.images.waterShotSpeed2
     }
     else {

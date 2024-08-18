@@ -6,9 +6,10 @@ import Player from './player.js'
 import PlantHedge from './planthedge.js'
 import Shop from './shop.js'
 import Background from './background.js'
-import Apple from './apple.js'
 import SellZone from './sellzone.js'
 import Sprinkler from './sprinkler.js'
+import Deployer from './deployer.js'
+import Fertilizer from './fertilizer.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -29,6 +30,7 @@ game.assets.images = await game.loadImages({
   waterShotSpeed3: 'images/waterShotSpeed3.png',
   waterShotSpeed4: 'images/waterShotSpeed4.png',
   waterDroplet: 'images/waterDroplet.png',
+  timeRing: 'images/timeRing.png',
   wateringCan: 'images/wateringcan.png',
   ground: 'images/ground.png',
   dirt1: 'images/dirt1.png',
@@ -46,7 +48,8 @@ game.assets.images = await game.loadImages({
   caveBackground: 'images/cavebackground1.png',
   apple: 'images/apple.png',
   sprinkler: 'images/sprinkler.png',
-  timeRing: 'images/timeRing.png',
+  ash: 'images/ash.png',
+  deployer: 'images/deployer.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -84,11 +87,15 @@ class Level extends Thing {
     // Spawn level things
     const things = data.layers[0].things
     for (const thing of things) {
+      const pos = [Math.floor(thing.position[0]), Math.floor(thing.position[1])]
       if (thing.name === 'plantHedge') {
-        game.addThing(new PlantHedge(thing.position, thing.data?.variant ?? 'basic', false))
+        game.addThing(new PlantHedge(pos, thing.data?.variant ?? 'basic', false))
       }
       if (thing.name === 'sprinkler') {
-        game.addThing(new Sprinkler(thing.position))
+        game.addThing(new Sprinkler(pos))
+      }
+      if (thing.name === 'deployer') {
+        game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
       }
     }
 
@@ -140,7 +147,7 @@ game.setScene(() => {
   game.addThing(new Level(game.assets.levels.level1))
   game.addThing(new Background())
   game.addThing(new Shop())
-  game.addThing(new Apple())
+  game.addThing(new Fertilizer([3, 0], 'apple'))
   game.addThing(new SellZone([10, 8]))
   game.addThing(new Player())
 })
