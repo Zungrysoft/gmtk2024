@@ -70,6 +70,7 @@ export default class Player extends Thing {
   depth = 10
   runFrames = 0
   wateringDeviceCooldown = 0
+  isPlacementPositionActive = false
 
   constructor () {
     super()
@@ -238,6 +239,10 @@ export default class Player extends Thing {
     if (game.keysDown.KeyA || game.buttonsDown[2]) {
       this.useTool(game.keysPressed.KeyA || game.buttonsPressed[2])
     }
+
+    this.isPlacementPositionActive = (
+      onGround && Math.abs(this.velocity[0]) < runThreshold
+    )
 
     // Apply scaling
     this.scale[0] = this.direction * this.squash[0] / 48
@@ -489,7 +494,11 @@ export default class Player extends Thing {
 
     // Selection box for planting seeds
     this.updatePlacementPositionVisual()
-    if (this.placementPositionVisual && this.getSelectedTool().includes('seedPacket')) {
+    if (
+      this.placementPositionVisual &&
+      this.isPlacementPositionActive &&
+      this.getSelectedTool().includes('seedPacket')
+    ) {
       ctx.save()
       ctx.globalAlpha = u.map(Math.sin(this.time / 10), -1, 1, 0.3, 0.8)
       ctx.drawImage(game.assets.images.selectionBox, ...this.placementPositionVisual, 1, 1)

@@ -18,6 +18,7 @@ game.assets.images = await game.loadImages({
   selectionBox: 'images/selectionBox.png',
   waterShot: 'images/waterShot.png',
   wateringCan: 'images/wateringcan.png',
+  ground: 'images/ground.png'
 })
 
 game.assets.levels = await game.loadText({
@@ -67,13 +68,22 @@ class Level extends Thing {
     }
 
     // Render the grid tiles as black for now
-    ctx.save()
     for (const [coordString, tileValue] of Object.entries(this.tileGrids[0])) {
       const coord = coordString.split(',').map(x => Number(x) * tileSize)
-      ctx.fillStyle = tileValues[tileValue] ?? 'black'
-      ctx.fillRect(coord[0], coord[1], tileSize, tileSize)
+      if (tileValue === 16) {
+        ctx.save()
+        ctx.translate(coord[0], coord[1])
+        ctx.translate(-8 / 48, -8 / 48)
+        ctx.scale(1 / 48, 1 / 48)
+        ctx.drawImage(game.assets.images.ground, 0, 0)
+        ctx.restore()
+      } else {
+        ctx.save()
+        ctx.fillStyle = tileValues[tileValue] ?? 'black'
+        ctx.fillRect(coord[0], coord[1], tileSize, tileSize)
+        ctx.restore()
+      }
     }
-    ctx.restore()
   }
 
   // Given a world-space coordinate, check the tile-space position to
