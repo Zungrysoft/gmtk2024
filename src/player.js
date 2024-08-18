@@ -70,7 +70,7 @@ export default class Player extends Thing {
   depth = 10
   runFrames = 0
   wateringDeviceCooldowns = [0, 0, 0]
-  isPlacementPositionActive = false
+  placementPositionIndicatorScale = 1
 
   constructor () {
     super()
@@ -145,7 +145,7 @@ export default class Player extends Thing {
     }
 
     const onGround = this.contactDirections.down
-    const friction = holdingItem ? 0.65 : 0.7
+    const friction = holdingItem || usingItem ? 0.65 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration
@@ -241,9 +241,12 @@ export default class Player extends Thing {
       this.useTool(game.keysPressed.KeyA || game.buttonsPressed[2])
     }
 
-    this.isPlacementPositionActive = (
-      onGround && Math.abs(this.velocity[0]) < runThreshold
-    )
+    if (onGround && Math.abs(this.velocity[0]) < runThreshold && this.getSelectedTool().includes('seedPacket')) {
+      this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.17, 1.3)
+    }
+    else {
+      this.placementPositionIndicatorScale = Math.max(this.placementPositionIndicatorScale - 0.17, -0.6)
+    }
 
     // Apply scaling
     this.scale[0] = this.direction * this.squash[0] / 48
@@ -276,7 +279,7 @@ export default class Player extends Thing {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 8 + 2)
-          game.addThing(new WaterShot(this.position, this.direction, 1, 0.6 + this.velocity[0] * this.direction, 0.05))
+          game.addThing(new WaterShot(this.position, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05))
           break
         }
       }
@@ -290,26 +293,8 @@ export default class Player extends Thing {
       const tileReqs = game.assets.data.seedSoilRequirements[selectedTool] ?? 'anySoil'
       // Check tile type
       if (this.canBePlantedAt(placementPos, tileReqs)) {
-        // Can't plant on top of another plant
-        // Sprouts are always 1x1, so only check that square
-
-        let collided = false
-        const plants = game.getThingsNear(...placementPos, 1).filter(e => e instanceof Plant)
-        for (const plant of plants) {
-          if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], placementPos)) {
-            collided = true
-            break
-          }
-          if (plant.position[0] === placementPos[0] && plant.position[1] === placementPos[1]) {
-            collided = true
-            break
-          }
-        }
-        if (!collided) {
-          // Create Thing based on seed packet type
-          if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos, 'basic', true))
-        }
-        
+        // Create Thing based on seed packet type
+        if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos, 'basic', true))
       }
     }
   }
@@ -346,18 +331,28 @@ export default class Player extends Thing {
     // Must be planted in an air tile and on a non-air tile
     if (tileType === 0 && soilType > 0) {
       // Can be planted on any tile
-      if (validTileTypes.includes('any')) {
-        return true
-      }
-
-      // Can be planted on any soil tile
-      if (validTileTypes.includes('anySoil') && soilType < 16) {
-        return true
-      }
-
-      // Has specific soil requirements
-      if (validTileTypes.includes(soilType)) {
-        return true
+      if (
+        validTileTypes.includes('any') ||
+        (validTileTypes.includes('anySoil') && soilType < 16) ||
+        validTileTypes.includes(soilType)
+      ) {
+        // Can't plant on top of another plant
+        // Sprouts are always 1x1, so only check that square
+        let collided = false
+        const plants = game.getThingsNear(...pos, 1).filter(e => e instanceof Plant)
+        for (const plant of plants) {
+          if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], pos)) {
+            collided = true
+            break
+          }
+          if (plant.position[0] === pos[0] && plant.position[1] === pos[1]) {
+            collided = true
+            break
+          }
+        }
+        if (!collided) {
+          return true
+        }
       }
     }
 
@@ -494,12 +489,22 @@ export default class Player extends Thing {
     this.updatePlacementPositionVisual()
     if (
       this.placementPositionVisual &&
-      this.isPlacementPositionActive &&
       this.getSelectedTool().includes('seedPacket')
     ) {
+      let sprite = game.assets.images.selectionBox
+      const tileReqs = game.assets.data.seedSoilRequirements[this.getSelectedTool()] ?? 'anySoil'
+      if (!this.canBePlantedAt(this.getPlacementPosition(), tileReqs)) {
+        sprite = game.assets.images.selectionBoxError
+      }
+      const sc = u.clamp(this.placementPositionIndicatorScale, 0, 1)
       ctx.save()
-      ctx.globalAlpha = u.map(Math.sin(this.time / 10), -1, 1, 0.3, 0.8)
-      ctx.drawImage(game.assets.images.selectionBox, ...this.placementPositionVisual, 1, 1)
+      ctx.drawImage(
+        sprite,
+        ...vec2.add(this.placementPositionVisual, [0.5-sc/2, 0.5-sc/2]),
+        sc,
+        sc,
+      )
+      ctx.globalAlpha = u.map(Math.sin(this.time / 10), -1, 1, 0.6, 0.5)
       ctx.restore()
     }
 

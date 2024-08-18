@@ -16,6 +16,7 @@ game.assets.images = await game.loadImages({
   guy: 'images/guy3.png',
   plantHedgeSprout: 'images/hedgeSprout.png',
   selectionBox: 'images/selectionBox.png',
+  selectionBoxError: 'images/selectionBoxError.png',
   waterShotSpeed1: 'images/waterShotSpeed1.png',
   waterShotSpeed2: 'images/waterShotSpeed2.png',
   waterShotSpeed3: 'images/waterShotSpeed3.png',
