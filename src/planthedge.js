@@ -14,13 +14,17 @@ export default class PlantHedge extends Plant {
     if (!this.isSprout) {
       this.hedgeGrowth = 1
     }
-    console.log("HEDGE CREATED")
   }
 
   update() {
     super.update()
 
-    if (!this.isSprout) {
+    if (this.isSprout) {
+      if (this.isBeingWatered()) {
+        this.isSprout = false
+      }
+    }
+    else {
       // Grow and shrivel in response to water
       const growthSpeed = 0.04
       // If this just sprouted, grow to minimum size of 1
@@ -63,14 +67,18 @@ export default class PlantHedge extends Plant {
     return [{direction: 'up', length: 5}]
   }
 
-  getHitboxes() {
+  getHitBoxes() {
     if (this.hitboxCache) { return this.hitboxCache }
 
     // List of collision boxes
     // Each element is of the form [x1, y1, x2, y2]
+    if (this.isSprout) {
+      this.hitboxCache = []
+      return this.hitboxCache
+    }
     const shape = this.getShape()
     let lengthLeft = this.hedgeGrowth
-    let curPos = [...this.position]
+    let curPos = vec2.add(this.position, [0, 1])
     let ret = []
     for (const seg of shape) {
       const delta = vec2.directionToVector(seg.direction)
@@ -98,8 +106,14 @@ export default class PlantHedge extends Plant {
     }
 
     this.hitboxCache = ret
+    return this.hitboxCache
+  }
 
-    return ret
+  getOverlapBoxes() {
+    return [
+      ...this.getHitBoxes(),
+      [this.position[0], this.position[1], this.position[0] + 1, this.position[1] + 1]
+    ]
   }
 
   draw () {
@@ -112,7 +126,7 @@ export default class PlantHedge extends Plant {
       ctx.restore()
     }
     else {
-      for (const e of this.getHitboxes()) {
+      for (const e of this.getHitBoxes()) {
         ctx.save()
         ctx.fillStyle = 'green'
         ctx.fillRect(e[0], e[1], e[2] - e[0], e[3] - e[1])

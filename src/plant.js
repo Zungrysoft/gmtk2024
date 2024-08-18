@@ -6,7 +6,7 @@ export default class Plant extends Thing {
   validTileTypes = []
   isSprout = true
   isPotted = false
-  timeSinceWatered = 0
+  timeSinceWatered = Number.MAX_SAFE_INTEGER
   variant = 'basic'
   animations = {
     idle: {
@@ -35,8 +35,12 @@ export default class Plant extends Thing {
     return this.timeSinceWatered <= 1
   }
 
-  getHitboxes() {
+  getHitBoxes() {
     return []
+  }
+
+  getOverlapBoxes() {
+    return this.getHitBoxes()
   }
 
   collideWithThing (other, position = [undefined, undefined]) {
@@ -46,11 +50,24 @@ export default class Plant extends Thing {
   }
 
   collideWithAabb (aabb, position = [0, 0]) {
-    if (this.isSprout) {
-      return false
+    for (const box of this.getHitBoxes()) {
+      const collided = u.checkAabbIntersection(box, aabb, [0, 0], position)
+      if (collided) {
+        return true
+      }
     }
 
-    for (const box of this.getHitboxes()) {
+    return false
+  }
+
+  overlapWithThing (other, position = [undefined, undefined]) {
+    if (position[0] === undefined) { position[0] = other.position[0] }
+    if (position[1] === undefined) { position[1] = other.position[1] }
+    return this.overlapWithAabb(other.aabb, position)
+  }
+
+  overlapWithAabb (aabb, position = [0, 0]) {
+    for (const box of this.getOverlapBoxes()) {
       const collided = u.checkAabbIntersection(box, aabb, [0, 0], position)
       if (collided) {
         return true
