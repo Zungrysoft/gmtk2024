@@ -20,7 +20,7 @@ game.assets.images = await game.loadImages({
   waterDroplet: 'images/waterDroplet.png',
   wateringCan: 'images/wateringcan.png',
   ground: 'images/ground.png',
-  caveBackground: 'images/cavebackground.png'
+  caveBackground: 'images/cavebackground1.png'
 })
 
 game.assets.levels = await game.loadText({
