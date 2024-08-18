@@ -45,7 +45,7 @@ export default class Player extends Thing {
       frameSize: 96
     },
   }
-  aabb = [-0.5, -1, 0.5, 1]
+  aabb = [-0.5, -0.5, 0.5, 1]
   jumpBuffer = 0
   time = 0
   coyoteFrames = 0
