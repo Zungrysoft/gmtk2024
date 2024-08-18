@@ -138,8 +138,14 @@ export default class Player extends Thing {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
     }
 
+    const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
+    const holdingItem = this.getSelectedTool() === 'wateringCan'
+    if (usingItem || holdingItem) {
+      this.animation = 'grab'
+    }
+
     const onGround = this.contactDirections.down
-    const friction = 0.7
+    const friction = holdingItem ? 0.65 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration
@@ -183,11 +189,6 @@ export default class Player extends Thing {
     }
     if (!(game.keysDown.Space || game.buttonsDown[0]) && this.velocity[1] < 0) {
       this.velocity[1] *= 0.7
-    }
-
-    const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
-    if (usingItem || this.getSelectedTool() === 'wateringCan') {
-      this.animation = 'grab'
     }
 
     // Move left and right, on ground speed is naturally clamped by
@@ -509,6 +510,8 @@ export default class Player extends Thing {
     if (this.getSelectedTool() === 'wateringCan') {
       ctx.save()
       ctx.translate(...this.position)
+      ctx.scale(...this.squash)
+      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
       ctx.translate(this.direction, 0.15)
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)

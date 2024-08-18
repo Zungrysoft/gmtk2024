@@ -470,3 +470,12 @@ export function memoize (fn, maxEntries = 1024) {
     return cache.get(args.at(-1))
   }
 }
+
+export function createPatternFromImage (image) {
+  const patternCanvas = document.createElement('canvas')
+  patternCanvas.width = image.width
+  patternCanvas.height = image.height
+  const patternCtx = patternCanvas.getContext('2d')
+  patternCtx.drawImage(image, 0, 0)
+  return patternCtx.createPattern(patternCanvas, 'repeat')
+}
