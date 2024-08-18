@@ -9,7 +9,7 @@ export default class PlantClock extends Plant {
   hitboxCache = null
   sprite = game.assets.images.plantClockSprout
   grownSprite = game.assets.images.plantClock
-  interval = 60 * 3
+  interval = 60 * 10
   clockTime = 0
 
   update() {
