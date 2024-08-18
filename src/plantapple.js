@@ -55,8 +55,6 @@ export default class PlantApple extends PlantFruit {
       }
 
       // Grow up
-      console.log(this.waterIterations)
-      console.log(this.consumedFertilizer)
       if (this.waterIterations >= this.requiredWaterIterations) {
         if (this.consumedFertilizer >= this.requiredFertilizer) {
           this.growUp()

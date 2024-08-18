@@ -82,6 +82,7 @@ const tileValues = {
 class Level extends Thing {
   tileGrids = []
   tileSize = 1
+  depth = -10
 
   constructor (inputText) {
     super()

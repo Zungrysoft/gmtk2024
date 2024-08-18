@@ -117,7 +117,7 @@ export default class Plant extends Thing {
     // This draw function is just for adding common UI elements all plants may want
     const { ctx } = game
 
-    const iconPos = vec2.add(this.position, [0, -1])
+    const iconPos = vec2.add(this.position, [0, 1])
 
     if (this.icon === 'timer') {
       const segments = 9
