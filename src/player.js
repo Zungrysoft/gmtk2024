@@ -509,6 +509,8 @@ export default class Player extends Thing {
     if (this.getSelectedTool() === 'wateringCan') {
       ctx.save()
       ctx.translate(...this.position)
+      ctx.scale(...this.squash)
+      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
       ctx.translate(this.direction, 0.15)
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)
