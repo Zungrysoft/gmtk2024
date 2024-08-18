@@ -47,7 +47,7 @@ export default class Player extends Thing {
     },
     grab: { frames: [4], speed: 0, frameSize: 96 },
   }
-  aabb = [-0.25, -0.25, 0.5, 1]
+  aabb = [-0.25, -0.25, 0.25, 1]
   jumpBuffer = 0
   time = 0
   coyoteFrames = 0
@@ -92,7 +92,12 @@ export default class Player extends Thing {
     this.animate()
 
     if (this.pickup) {
-      this.pickup.position[0] = this.position[0] + this.direction
+      const snappiness = 0.7
+      this.pickup.position[0] = u.lerp(
+        this.pickup.position[0],
+        this.position[0] + this.direction,
+        snappiness
+      )
       this.pickup.position[1] = this.position[1]
     }
 
@@ -232,7 +237,12 @@ export default class Player extends Thing {
     if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
       const lastPickup = this.pickup
       let nextPickup
-      for (const thing of this.getAllOverlaps()) {
+      const grabPosition = [
+        this.position[0] + this.direction * 0.5,
+        this.position[1]
+      ]
+      const grabAabb = [-0.5, -0.5, 0.5, 1]
+      for (const thing of game.getThingsInAabb(grabAabb, grabPosition)) {
         if (thing.isPickupable && thing !== this.pickup) {
           nextPickup = thing
           break

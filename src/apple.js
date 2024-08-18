@@ -18,6 +18,19 @@ export default class Apple extends Thing {
   }
 
   update () {
+    const [xLast, yLast] = this.position
+    let a = 0
+    let r = 1 / 16
+    while (this.checkCollision()) {
+      this.position[0] = xLast + Math.cos(a) * r
+      this.position[1] = yLast + Math.sin(a) * r
+      a += Math.PI * 2 / 4
+      if (a > Math.PI * 2) {
+        a -= Math.PI * 2
+        r += r < 0.25 ? 1 / 48 : 0.25
+      }
+    }
+
     super.update()
     this.velocity[1] += 0.005
     if (this.contactDirections.down) {
