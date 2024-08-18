@@ -12,8 +12,8 @@ export default class PlantHedge extends Plant {
   hedgePatternSide = u.createPatternFromImage(game.assets.images.hedgeSide)
   depth = 2
 
-  constructor (pos, variant, isSprout) {
-    super(pos, variant, isSprout)
+  constructor (pos, variant, isSprout, isIndestructible) {
+    super(pos, variant, isSprout, isIndestructible)
     if (!this.isSprout) {
       this.hedgeGrowth = 1
     }
@@ -129,6 +129,8 @@ export default class PlantHedge extends Plant {
   }
 
   draw () {
+    super.draw()
+
     const { ctx } = game
 
     if (this.isSprout) {
@@ -181,7 +183,5 @@ export default class PlantHedge extends Plant {
         ctx.restore()
       }
     }
-    
-    super.draw()
   }
 }

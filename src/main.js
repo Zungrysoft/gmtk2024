@@ -63,6 +63,7 @@ game.assets.images = await game.loadImages({
   timer8: 'images/timer8.png',
   timer9: 'images/timer9.png',
   laserField: 'images/laserField2.png',
+  roots: 'images/roots.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -103,7 +104,12 @@ class Level extends Thing {
     for (const thing of things) {
       const pos = [Math.floor(thing.position[0]), Math.floor(thing.position[1])]
       if (thing.name === 'plantHedge') {
-        game.addThing(new PlantHedge(pos, thing.data?.variant ?? 'basic', false))
+        game.addThing(new PlantHedge(
+          pos,
+          thing.data?.variant ?? 'basic',
+          thing.data?.isSprout ?? false,
+          thing.data?.isIndestructible ?? true,
+        ))
       }
       if (thing.name === 'sprinkler') {
         game.addThing(new Sprinkler(pos))

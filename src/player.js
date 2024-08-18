@@ -241,9 +241,8 @@ export default class Player extends Thing {
     // Player actions
     // ==============
 
-    // Switch tool category
-    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
-      const lastPickup = this.pickup
+    // Grab objects
+    if (game.keysPressed.KeyD || game.buttonsPressed[1]) {
       let nextPickup
       const grabPosition = [
         this.position[0] + this.direction * 0.5,
@@ -257,9 +256,11 @@ export default class Player extends Thing {
         }
       }
       this.pickup = nextPickup
-      if (!this.pickup && !lastPickup) {
-        this.cycleToolCategory()
-      }
+    }
+
+    // Switch tool category
+    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
+      this.cycleToolCategory()
     }
 
     // Switch sub tool

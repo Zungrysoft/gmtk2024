@@ -20,12 +20,14 @@ export default class Plant extends Thing {
   }
   depth = -1
   timerDisplay = 0
+  isIndestructible = false
 
-  constructor (pos, variant='basic', isSprout=true) {
+  constructor (pos, variant='basic', isSprout=true, isIndestructible=false) {
     super()
     this.position = pos
     this.variant = variant
     this.isSprout = isSprout
+    this.isIndestructible = isIndestructible
   }
 
   update() {
@@ -125,16 +127,23 @@ export default class Plant extends Thing {
     // This draw function is just for adding common UI elements all plants may want
     const { ctx } = game
 
-    const iconPos = vec2.add(this.position, [0, 1])
+    ctx.save()
+
+    if (this.isIndestructible) {
+      ctx.save()
+      ctx.translate(0, 1)
+      ctx.drawImage(game.assets.images.roots, ...this.position, 1, 2)
+      ctx.restore()
+    }
 
     if (this.icon === 'timer') {
+      ctx.translate(0, 1)
       const segments = 9
       const segment = Math.ceil(u.clamp(this.timerDisplay, 0, 1) * segments)
       const timerImage = game.assets.images["timer" + segment]
-
-      ctx.save()
-      ctx.drawImage(timerImage, ...iconPos, 1, 1)
-      ctx.restore()
+      ctx.drawImage(timerImage, ...this.position, 1, 1)
     }
+
+    ctx.restore()
   }
 }
