@@ -7,6 +7,12 @@ import Fertilizer from './fertilizer.js'
 export default class PlantApple extends PlantFruit {
   sprite = game.assets.images.plantAppleSprout
   grownSprite = game.assets.images.plantApple
+  waterInterval = 600
+  requiredWaterIterations = 3
+  requiredFertilizer = 1
+  waterTimer = 0
+  waterIterations = 0
+  consumedFertilizer = 0
 
   growUp() {
     super.growUp()
@@ -15,13 +21,50 @@ export default class PlantApple extends PlantFruit {
     game.addThing(this.linkedFruit)
   }
 
+  revertToSprout() {
+    super.revertToSprout()
+
+    this.consumedFertilizer = 0
+    this.waterIterations = 0
+    this.waterTimer = 0
+  }
+
   update() {
     super.update()
 
     if (this.isSprout) {
-      if (this.isBeingWatered()) {
-        this.growUp()
+      // Timer display
+      this.waterTimer = Math.max(this.waterTimer - 1, 0)
+      if (this.waterIterations > 0 && this.waterIterations < this.requiredWaterIterations) {
+        this.setTimerDisplay(this.waterTimer / this.waterInterval)
+        this.setIcon('timer')
       }
+      else {
+        this.setIcon(null)
+      }
+
+      // Is watered
+      if (this.isBeingWatered() && this.waterTimer === 0) {
+        this.waterTimer = this.waterInterval
+        this.waterIterations += 1
+      }
+
+      // Consume fertilizer
+      if (this.consumeFertilizer('ash')) {
+        this.consumedFertilizer ++
+      }
+
+      // Grow up
+      console.log(this.waterIterations)
+      console.log(this.consumedFertilizer)
+      if (this.waterIterations >= this.requiredWaterIterations) {
+        if (this.consumedFertilizer >= this.requiredFertilizer) {
+          this.growUp()
+        }
+      }
+    }
+    else {
+      this.setIcon(null)
     }
   }
 }

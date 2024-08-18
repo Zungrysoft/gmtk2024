@@ -60,5 +60,7 @@ export default class PlantClock extends Plant {
       ctx.drawImage(this.grownSprite, ...vec2.add(this.position, [-0.5, -1]), 2, 2)
       ctx.restore()
     }
+    
+    super.draw()
   }
 }

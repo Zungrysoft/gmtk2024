@@ -50,6 +50,16 @@ game.assets.images = await game.loadImages({
   sprinkler: 'images/sprinkler.png',
   ash: 'images/ash.png',
   deployer: 'images/deployer.png',
+  timer0: 'images/timer0.png',
+  timer1: 'images/timer1.png',
+  timer2: 'images/timer2.png',
+  timer3: 'images/timer3.png',
+  timer4: 'images/timer4.png',
+  timer5: 'images/timer5.png',
+  timer6: 'images/timer6.png',
+  timer7: 'images/timer7.png',
+  timer8: 'images/timer8.png',
+  timer9: 'images/timer9.png',
 })
 
 game.assets.levels = await game.loadText({

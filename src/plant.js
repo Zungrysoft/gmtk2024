@@ -1,6 +1,8 @@
 import * as game from 'game'
 import * as u from 'utils'
+import * as vec2 from 'vector2'
 import Thing from 'thing'
+import Fertilizer from './fertilizer.js'
 
 export default class Plant extends Thing {
   validTileTypes = []
@@ -16,6 +18,7 @@ export default class Plant extends Thing {
     },
   }
   depth = -1
+  timerDisplay = 0
 
   constructor (pos, variant='basic', isSprout=true) {
     super()
@@ -87,6 +90,43 @@ export default class Plant extends Thing {
   }
 
   consumeFertilizer(type) {
+    const fertilizers = game.getThingsNear(...this.position, 2).filter(x => x instanceof Fertilizer)
+    for (const thing of fertilizers) {
+      if (
+        this.overlapWithThing(thing) &&
+        thing.type === type &&
+        !thing.isPickedUp() &&
+        thing.contactDirections.down
+      ) {
+        thing.isDead = true
+        return true
+      }
+    }
+    return false
+  }
 
+  setTimerDisplay(n) {
+    this.timerDisplay = n
+  }
+
+  setIcon(n) {
+    this.icon = n
+  }
+
+  draw() {
+    // This draw function is just for adding common UI elements all plants may want
+    const { ctx } = game
+
+    const iconPos = vec2.add(this.position, [0, -1])
+
+    if (this.icon === 'timer') {
+      const segments = 9
+      const segment = Math.ceil(u.clamp(this.timerDisplay, 0, 1) * segments)
+      const timerImage = game.assets.images["timer" + segment]
+
+      ctx.save()
+      ctx.drawImage(timerImage, ...iconPos, 1, 1)
+      ctx.restore()
+    }
   }
 }

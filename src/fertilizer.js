@@ -11,7 +11,7 @@ export default class Fertilizer extends Pickupable {
     
     // Types
     if (type === 'ash') {
-      this.fertilizerType = 'ash'
+      this.type = 'ash'
       this.sprite = 'ash'
     }
     else {

@@ -61,5 +61,7 @@ export default class PlantFruit extends Plant {
       ctx.drawImage(this.grownSprite, ...vec2.add(this.position, [-1, -2]), 3, 3)
       ctx.restore()
     }
+    
+    super.draw()
   }
 }

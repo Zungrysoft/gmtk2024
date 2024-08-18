@@ -182,5 +182,6 @@ export default class PlantHedge extends Plant {
       }
     }
     
+    super.draw()
   }
 }
