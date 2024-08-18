@@ -8,6 +8,7 @@ export default class PlantHedge extends Plant {
   aabb = [-10, -10, 10, 10]
   hitboxCache = null
   sprite = game.assets.images.plantHedgeSprout
+  grownSprite = u.createPatternFromImage(game.assets.images.hedgeTest)
 
   constructor (pos, variant, isSprout) {
     super(pos, variant, isSprout)
@@ -128,8 +129,9 @@ export default class PlantHedge extends Plant {
     else {
       for (const e of this.getHitBoxes()) {
         ctx.save()
-        ctx.fillStyle = 'green'
-        ctx.fillRect(e[0], e[1], e[2] - e[0], e[3] - e[1])
+        ctx.scale(1 / 48, 1 / 48)
+        ctx.fillStyle = this.grownSprite //'green'
+        ctx.fillRect(...[e[0], e[1], e[2] - e[0], e[3] - e[1]].map(x => x * 48))
         ctx.restore()
       }
     }

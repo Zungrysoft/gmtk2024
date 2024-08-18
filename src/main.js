@@ -24,6 +24,7 @@ game.assets.images = await game.loadImages({
   dirt2: 'images/dirt2.png',
   dirt3: 'images/dirt3.png',
   dirt4: 'images/dirt4.png',
+  hedgeTest: 'images/hedgetest.png',
   caveBackground: 'images/cavebackground1.png'
 })
 
