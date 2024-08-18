@@ -6,6 +6,7 @@ import Player from './player.js'
 import PlantHedge from './planthedge.js'
 import Shop from './shop.js'
 import Background from './background.js'
+import Apple from './apple.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -29,7 +30,8 @@ game.assets.images = await game.loadImages({
   dirt3: 'images/dirt3.png',
   dirt4: 'images/dirt4.png',
   hedgeTest: 'images/hedgetest.png',
-  caveBackground: 'images/cavebackground1.png'
+  caveBackground: 'images/cavebackground1.png',
+  apple: 'images/apple.png'
 })
 
 game.assets.levels = await game.loadText({
@@ -119,5 +121,6 @@ game.setScene(() => {
   game.addThing(new Level(game.assets.levels.level1))
   game.addThing(new Background())
   game.addThing(new Shop())
+  game.addThing(new Apple())
   game.addThing(new Player())
 })
