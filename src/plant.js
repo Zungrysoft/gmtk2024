@@ -15,6 +15,7 @@ export default class Plant extends Thing {
       frameSize: 48
     },
   }
+  depth = -1
 
   constructor (pos, variant, isSprout) {
     super()

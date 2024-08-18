@@ -15,7 +15,7 @@ export default class PlantApple extends PlantFruit {
     console.log("APPLE GROW UP")
 
     console.log(vec2.add(this.position, this.fruitGrowOffset))
-    this.linkedFruit = new Apple(vec2.add(this.position, this.fruitGrowOffset))
+    this.linkedFruit = new Apple(vec2.add(this.position, this.fruitGrowOffset), true)
     game.addThing(this.linkedFruit)
   }
 

@@ -32,7 +32,14 @@ game.assets.images = await game.loadImages({
   dirt2: 'images/dirt2.png',
   dirt3: 'images/dirt3.png',
   dirt4: 'images/dirt4.png',
-  hedgeTest: 'images/hedgetest.png',
+  hedge: 'images/hedge.png',
+  hedgeSide: 'images/hedgeSide.png',
+  hedgeTopMark: 'images/hedgeTopMark.png',
+  hedgeTopMarkSide: 'images/hedgeTopMarkSide.png',
+  hedgeBottomMarkUp: 'images/hedgeBottomMarkUp.png',
+  hedgeBottomMarkDown: 'images/hedgeBottomMarkDown.png',
+  hedgeBottomMarkRight: 'images/hedgeBottomMarkRight.png',
+  hedgeBottomMarkLeft: 'images/hedgeBottomMarkLeft.png',
   caveBackground: 'images/cavebackground1.png',
   apple: 'images/apple.png'
 })

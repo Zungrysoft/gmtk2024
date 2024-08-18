@@ -1,4 +1,5 @@
 import * as collisionutils from './collisionutils.js'
+import * as vec2 from 'vector2'
 import Thing from 'thing'
 
 export default class Pickupable extends Thing {
@@ -8,11 +9,14 @@ export default class Pickupable extends Thing {
     idle: { frames: [0], speed: 0, frameSize: 48 }
   }
   isPickupable = true
+  isAttached = false
   scale = 1 / 48
 
-  constructor (position = [0, 0]) {
+  constructor (position = [0, 0], isAttached = false) {
     super()
     this.position = [...position]
+    this.startingPosition = [...position]
+    this.isAttached = isAttached
   }
 
   update () {
@@ -30,9 +34,15 @@ export default class Pickupable extends Thing {
     }
 
     super.update()
-    this.velocity[1] += 0.005
+    if (!this.isAttached) {
+      this.velocity[1] += 0.005
+    }
     if (this.contactDirections.down) {
       this.velocity[0] *= 0.8
+    }
+
+    if (this.isAttached && !vec2.equals(this.position, this.startingPosition)) {
+      this.isAttached = false
     }
   }
 

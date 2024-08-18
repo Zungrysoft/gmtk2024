@@ -6,7 +6,7 @@ import Plant from './plant.js'
 export default class PlantFruit extends Plant {
   aabb = [-10, -10, 10, 10]
   linkedFruit = null
-  fruitGrowOffset = [0, -1]
+  fruitGrowOffset = [0.5, -1.4]
 
   update() {
     super.update()
