@@ -8,7 +8,7 @@ import WaterDeliverer from './waterdeliverer.js'
 
 export default class WaterShot extends Thing {
   sprite = game.assets.images.waterShotSpeed1
-  animation = {
+  animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }
   }
   aabb = [-0.3, -0.3, 0.3, 0.3]

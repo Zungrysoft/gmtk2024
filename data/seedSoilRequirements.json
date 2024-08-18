@@ -1,5 +1,6 @@
 {
     "seedPacketApple": ["anySoil"],
     "seedPacketPear": ["anySoil"],
-    "seedPacketHedge": [2]
+    "seedPacketHedge": [2],
+    "seedPacketClock": ["anySoil"]
 }

@@ -7,6 +7,7 @@ import Plant from './plant.js'
 import PlantHedge from './planthedge.js'
 import WaterShot from './watershot.js'
 import PlantApple from './plantapple.js'
+import PlantClock from './plantclock.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -59,6 +60,7 @@ export default class Player extends Thing {
     'sickle',
     'seedPacketHedge',
     'seedPacketApple',
+    'seedPacketClock',
     'wateringCan',
     'waterGun'
   ]
@@ -327,8 +329,9 @@ export default class Player extends Thing {
       // Check tile type
       if (this.canBePlantedAt(placementPos, tileReqs)) {
         // Create Thing based on seed packet type
-        if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos, 'basic', true))
-        if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos, 'basic', true))
+        if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos))
+        if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos))
+        if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
       }
     }
   }
@@ -422,17 +425,13 @@ export default class Player extends Thing {
   }
 
   getToolCategories () {
-    return {
-      seedPacket: ['seedPacketApple', 'seedPacketPear', 'seedPacketHedge'],
-      wateringDevice: ['wateringCan', 'waterGun', 'hose'],
-      trimmer: ['sickle'],
-    }
+    return game.assets.data.toolCategories
   }
 
   getToolCategory (tool) {
     const toolCategories = this.getToolCategories()
-    for (const toolCategory in toolCategories) {
-      const toolsInCategory = toolCategories[toolCategory]
+    for (const toolCategory of toolCategories) {
+      const toolsInCategory = toolCategory.tools
       if (toolsInCategory.includes(tool)) {
         return toolCategory
       }
@@ -461,23 +460,30 @@ export default class Player extends Thing {
     // Returns a set
     const toolCategories = this.getToolCategories()
     const ownedToolCategories = new Set()
-    for (const toolCategory in toolCategories) {
-      const toolsInCategory = toolCategories[toolCategory]
+    for (const toolCategory of toolCategories) {
+      const toolsInCategory = toolCategory.tools
       if (new Set(toolsInCategory).intersection(new Set(this.ownedTools)).size > 0) {
-        ownedToolCategories.add(toolCategory)
+        ownedToolCategories.add(toolCategory.name)
       }
     }
     return ownedToolCategories
   }
 
   getOwnedToolsInCategory (category) {
-    return this.getToolCategories()[category]
+    const toolCategories = this.getToolCategories()
+    for (let i = 0; i < toolCategories.length; i ++) {
+      if (toolCategories[i].name === category) {
+        return toolCategories[i].tools
+      }
+    }
+    return []
   }
 
   cycleToolCategory () {
     // Count how many tool categories we have tools in
     const toolCategories = this.getToolCategories()
     const ownedToolCategories = this.getOwnedToolCategories()
+    const toolCategoryNames = toolCategories.map(e => e.name)
 
     // If we only have one or zero tool categories, there is nothing for this key press to do
     if (ownedToolCategories.size <= 1) {
@@ -487,7 +493,7 @@ export default class Player extends Thing {
     
     // Cycle to next tool category
     let foundMyTool = false
-    const toolCategoriesList = [...Object.keys(toolCategories), ...Object.keys(toolCategories)]
+    const toolCategoriesList = [...toolCategoryNames, ...toolCategoryNames]
     for (const toolCategory of toolCategoriesList) {
       if (foundMyTool && ownedToolCategories.has(toolCategory)) {
         this.selectedToolCategory = toolCategory
@@ -508,7 +514,14 @@ export default class Player extends Thing {
   }
 
   cycleTool (reverse=false) {
-    const toolsInCategory = this.getToolCategories()[this.selectedToolCategory]
+    const toolCategories = this.getToolCategories()
+    let toolsInCategory
+    for (let i = 0; i < toolCategories.length; i ++) {
+      if (toolCategories[i].name === this.selectedToolCategory) {
+        toolsInCategory = toolCategories[i].tools
+      }
+    }
+    
     const ownedToolsInCategory = new Set(toolsInCategory).intersection(new Set(this.ownedTools))
 
     // If we only have one or zero tools in this category, there is nothing for this key press to do

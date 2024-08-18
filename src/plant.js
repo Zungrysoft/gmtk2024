@@ -17,7 +17,7 @@ export default class Plant extends Thing {
   }
   depth = -1
 
-  constructor (pos, variant, isSprout) {
+  constructor (pos, variant='basic', isSprout=true) {
     super()
     this.position = pos
     this.variant = variant

@@ -11,6 +11,7 @@ export default class Sprinkler extends Pickupable {
   }
   sprinklerTimer = 0
   enabled = true
+  isDevice = true
 
   update() {
     super.update()

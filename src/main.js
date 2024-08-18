@@ -20,6 +20,8 @@ game.assets.images = await game.loadImages({
   plantHedgeSprout: 'images/hedgeSprout.png',
   plantApple: 'images/appleTree.png',
   plantAppleSprout: 'images/appleSprout.png',
+  plantClock: 'images/clockPlant.png',
+  plantClockSprout: 'images/clockSprout.png',
   plantingIndicator: 'images/plantingIndicator.png',
   plantingIndicatorError: 'images/plantingIndicatorError.png',
   waterShotSpeed1: 'images/waterShotSpeed1.png',
@@ -44,6 +46,7 @@ game.assets.images = await game.loadImages({
   caveBackground: 'images/cavebackground1.png',
   apple: 'images/apple.png',
   sprinkler: 'images/sprinkler.png',
+  timeRing: 'images/timeRing.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -51,7 +54,8 @@ game.assets.levels = await game.loadText({
 })
 
 game.assets.data = await game.loadJson({
-  seedSoilRequirements: 'data/seedSoilRequirements.json'
+  seedSoilRequirements: 'data/seedSoilRequirements.json',
+  toolCategories: 'data/toolCategories.json',
 })
 
 const tileValues = {
@@ -81,7 +85,7 @@ class Level extends Thing {
     const things = data.layers[0].things
     for (const thing of things) {
       if (thing.name === 'plantHedge') {
-        game.addThing(new PlantHedge(thing.position, thing.data?.variant ?? 'basic'))
+        game.addThing(new PlantHedge(thing.position, thing.data?.variant ?? 'basic', false))
       }
       if (thing.name === 'sprinkler') {
         game.addThing(new Sprinkler(thing.position))

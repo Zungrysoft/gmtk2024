@@ -131,7 +131,6 @@ export default class PlantHedge extends Plant {
   draw () {
     const { ctx } = game
 
-    // Green rectangles for now
     if (this.isSprout) {
       ctx.save()
       ctx.drawImage(this.sprite, ...this.position, 1, 1)
