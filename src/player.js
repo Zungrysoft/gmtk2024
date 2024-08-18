@@ -95,10 +95,12 @@ export default class Player extends Thing {
       const snappiness = 0.7
       this.pickup.position[0] = u.lerp(
         this.pickup.position[0],
-        this.position[0] + this.direction,
+        this.position[0] + this.direction * 0.8,
         snappiness
       )
       this.pickup.position[1] = this.position[1]
+      this.pickup.velocity[0] = this.velocity[0]
+      this.pickup.velocity[1] = this.velocity[1]
     }
 
     // Un-squash and stretch
