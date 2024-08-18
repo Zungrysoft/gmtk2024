@@ -94,9 +94,6 @@ export default class Player extends Thing {
       // The camera should move faster when the player is airborne
       this.velocity[1] === 0 ? 0.05 : 0.1
     )
-    if (!(game.keysDown.KeyA || game.buttonsDown[2])) {
-      this.direction = u.sign(this.velocity[0]) || this.direction
-    }
     game.getCamera2D().position = [
       this.position[0] + this.cameraOffset[0],
       this.position[1] + this.cameraOffset[1]
@@ -175,11 +172,17 @@ export default class Player extends Thing {
       if (!onGround) {
         this.velocity[0] = Math.min(this.velocity[0], maxSpeed)
       }
+      if (!(game.keysDown.KeyA || game.buttonsDown[2])) {
+        this.direction = u.sign(this.velocity[0]) || this.direction
+      }
     }
     if (game.keysDown.ArrowLeft || game.buttonsDown[14]) {
       this.velocity[0] -= acceleration
       if (!onGround) {
         this.velocity[0] = Math.max(this.velocity[0], -maxSpeed)
+      }
+      if (!(game.keysDown.KeyA || game.buttonsDown[2])) {
+        this.direction = u.sign(this.velocity[0]) || this.direction
       }
     }
 
@@ -256,7 +259,7 @@ export default class Player extends Thing {
         let collided = false
         const plants = game.getThingsNear(...placementPos, 1).filter(e => e instanceof Plant)
         for (const plant of plants) {
-          if (plant.collideWithAabb([0, 0, 1, 1], placementPos)) {
+          if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], placementPos)) {
             collided = true
             break
           }
@@ -275,9 +278,17 @@ export default class Player extends Thing {
   }
 
   getPlacementPosition() {
+    let yDelta = 0
+    if (game.keysDown.ArrowUp || game.buttonsDown[12]) {
+      yDelta --
+    }
+    if (game.keysDown.ArrowDown || game.buttonsDown[13]) {
+      yDelta ++
+    }
+
     return [
       Math.floor(this.position[0] + (1.1 * this.direction)),
-      Math.floor(this.position[1] + 0.5),
+      Math.floor(this.position[1] + 0.5 + yDelta),
     ]
   }
 

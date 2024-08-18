@@ -107,7 +107,9 @@ export default class PlantHedge extends Plant {
 
     // Green rectangles for now
     if (this.isSprout) {
-      this.drawSprite(...this.position)
+      ctx.save()
+      ctx.drawImage(this.sprite, ...this.position, 1, 1)
+      ctx.restore()
     }
     else {
       for (const e of this.getHitboxes()) {
