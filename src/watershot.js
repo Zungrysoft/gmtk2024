@@ -7,10 +7,13 @@ import WaterDroplet from './waterdroplet.js'
 import WaterDeliverer from './waterDeliverer.js'
 
 export default class WaterShot extends Thing {
+  animation = {
+    idle: { frames: [0], speed: 0, frameSize: 48 }
+  }
   aabb = [-0.3, -0.3, 0.3, 0.3]
   lifeTime = 300
   scale = 1/48
-  
+
   constructor (position, direction, scale, speed, spread) {
     super()
     this.position = [...position]
