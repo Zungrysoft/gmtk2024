@@ -44,6 +44,7 @@ export default class Player extends Thing {
       speed: 0,
       frameSize: 96
     },
+    grab: { frames: [4], speed: 0, frameSize: 96 },
   }
   aabb = [-0.5, -0.5, 0.5, 1]
   jumpBuffer = 0
@@ -52,7 +53,13 @@ export default class Player extends Thing {
   direction = 1
   cameraOffset = [0, 0]
   squash = [1, 1]
-  ownedTools = ['sickle', 'seedPacketHedge', 'seedPacketApple', 'wateringCan', 'waterGun']
+  ownedTools = [
+    'sickle',
+    'seedPacketHedge',
+    'seedPacketApple',
+    'wateringCan',
+    'waterGun'
+  ]
   selectedTools = {
     seedPacket: '',
     wateringDevice: '',
@@ -113,16 +120,21 @@ export default class Player extends Thing {
       this.runFrames += 1
     }
     if (this.velocity[1] < 0) {
-      this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'jump' : 'runJump'
+      this.animation = (
+        Math.abs(this.velocity[0]) < runThreshold
+          ? 'jump'
+          : 'runJump'
+      )
+    }
+    if (this.velocity[1] > 0.03) {
+      this.animation = (
+        Math.abs(this.velocity[0]) < runThreshold
+          ? 'fall'
+          : 'runFall'
+      )
     }
     if (this.velocity[1] > 0.06) {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
-    }
-
-    // Chug along when running
-    if (this.runFrames > 0) {
-      const s = Math.sin(this.runFrames * Math.PI * 2 / 10)
-      this.squash[1] = u.map(s, -1, 1, 1, 0.93, true)
     }
 
     const onGround = this.contactDirections.down
@@ -138,6 +150,12 @@ export default class Player extends Thing {
 
     // Apply gravity
     this.velocity[1] += 1 / 48
+
+    // Chug along when running
+    if (this.runFrames > 0 && onGround) {
+      const s = Math.sin(this.runFrames * Math.PI * 2 / 10)
+      this.squash[1] = u.map(s, -1, 1, 1, 0.93, true)
+    }
 
     // Coyote frames
     this.coyoteFrames -= 1
@@ -166,6 +184,11 @@ export default class Player extends Thing {
       this.velocity[1] *= 0.7
     }
 
+    const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
+    if (usingItem || this.getSelectedTool() === 'wateringCan') {
+      this.animation = 'grab'
+    }
+
     // Move left and right, on ground speed is naturally clamped by
     // friction but in the air we have to artificially clamp it
     if (game.keysDown.ArrowRight || game.buttonsDown[15]) {
@@ -173,7 +196,7 @@ export default class Player extends Thing {
       if (!onGround) {
         this.velocity[0] = Math.min(this.velocity[0], maxSpeed)
       }
-      if (!(game.keysDown.KeyA || game.buttonsDown[2])) {
+      if (!usingItem) {
         this.direction = u.sign(this.velocity[0]) || this.direction
       }
     }
@@ -182,7 +205,7 @@ export default class Player extends Thing {
       if (!onGround) {
         this.velocity[0] = Math.max(this.velocity[0], -maxSpeed)
       }
-      if (!(game.keysDown.KeyA || game.buttonsDown[2])) {
+      if (!usingItem) {
         this.direction = u.sign(this.velocity[0]) || this.direction
       }
     }
@@ -470,6 +493,17 @@ export default class Player extends Thing {
       ctx.save()
       ctx.globalAlpha = u.map(Math.sin(this.time / 10), -1, 1, 0.3, 0.8)
       ctx.drawImage(game.assets.images.selectionBox, ...this.placementPositionVisual, 1, 1)
+      ctx.restore()
+    }
+
+    // Draw the held watering can
+    if (this.getSelectedTool() === 'wateringCan') {
+      ctx.save()
+      ctx.translate(...this.position)
+      ctx.translate(this.direction, 0.15)
+      ctx.scale(this.direction, 1)
+      ctx.scale(1 / 48, 1 / 48)
+      this.drawSpriteFrame('wateringCan')
       ctx.restore()
     }
   }
