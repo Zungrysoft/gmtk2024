@@ -18,7 +18,8 @@ game.assets.images = await game.loadImages({
   selectionBox: 'images/selectionBox.png',
   waterShot: 'images/waterShot.png',
   wateringCan: 'images/wateringcan.png',
-  ground: 'images/ground.png'
+  ground: 'images/ground.png',
+  caveBackground: 'images/cavebackground.png'
 })
 
 game.assets.levels = await game.loadText({
