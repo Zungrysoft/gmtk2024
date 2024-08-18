@@ -6,4 +6,5 @@ export default class Apple extends Pickupable {
   animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }
   }
+  price = 5
 }

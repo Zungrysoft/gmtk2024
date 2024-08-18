@@ -7,6 +7,7 @@ import PlantHedge from './planthedge.js'
 import Shop from './shop.js'
 import Background from './background.js'
 import Apple from './apple.js'
+import SellZone from './sellzone.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -122,5 +123,6 @@ game.setScene(() => {
   game.addThing(new Background())
   game.addThing(new Shop())
   game.addThing(new Apple())
+  game.addThing(new SellZone([10, 8]))
   game.addThing(new Player())
 })

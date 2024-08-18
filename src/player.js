@@ -560,7 +560,7 @@ export default class Player extends Thing {
     ctx.fillStyle = 'white'
     ctx.font = 'italic bold 64px Arial'
     ctx.translate(64, 128)
-    ctx.fillText(`${this.money}$`, 0, 0)
+    ctx.fillText(`$${this.money}`, 0, 0)
     ctx.restore()
   }
 
