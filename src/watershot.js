@@ -4,10 +4,11 @@ import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Plant from './plant.js'
 import WaterDroplet from './waterdroplet.js'
+import WaterDeliverer from './waterDeliverer.js'
 
 export default class WaterShot extends Thing {
   sprite = game.assets.images.waterShot
-  aabb = [-1, -0.4, 1, 0.4]
+  aabb = [-0.3, -0.3, 0.3, 0.3]
   lifeTime = 300
   scale = 1/48
   
@@ -39,6 +40,14 @@ export default class WaterShot extends Thing {
     this.rotation = vec2.vectorToAngle(this.velocity)
 
     // Detect plants and water them
+    const plants = game.getThingsNear(...this.position, 1).filter(e => e instanceof Plant)
+    for (const plant of plants) {
+      if (plant.overlapWithAabb(this.aabb, this.position)) {
+        this.isDead = true
+        this.spawnDroplets()
+        game.addThing(new WaterDeliverer(plant, 10))
+      }
+    }
 
     // Detect solid ground and destroy self
     if (game.getThing('level').checkWorldTileCollision(...this.position)) {
