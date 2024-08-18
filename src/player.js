@@ -265,7 +265,7 @@ export default class Player extends Thing {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
           const pos = vec2.add(this.position, vec2.scale([1.6, 0], this.direction))
-          game.addThing(new WaterShot(pos, this.direction, 0.6, 0.05 + this.velocity[0] * this.direction, 0.06))
+          game.addThing(new WaterShot(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06))
           break
         }
       }

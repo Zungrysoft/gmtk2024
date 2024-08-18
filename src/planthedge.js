@@ -65,7 +65,7 @@ export default class PlantHedge extends Plant {
         {direction: 'left', length: 6},
       ]
     }
-    return [{direction: 'up', length: 5}]
+    return [{direction: 'up', length: 6}]
   }
 
   getHitBoxes() {
