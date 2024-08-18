@@ -115,7 +115,7 @@ export default class Player extends Thing {
     if (this.velocity[1] < 0) {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'jump' : 'runJump'
     }
-    if (this.velocity[1] > 0.03) {
+    if (this.velocity[1] > 0.06) {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
     }
 
