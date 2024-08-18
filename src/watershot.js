@@ -7,6 +7,7 @@ import Plant from './plant.js'
 export default class WaterShot extends Thing {
   sprite = game.assets.images.waterShot
   aabb = [-1, -1, 1, 1]
+  time = 0
   
 
   constructor (position, direction) {
@@ -17,6 +18,7 @@ export default class WaterShot extends Thing {
 
   update () {
     this.rotation += 0.3
+    this.time ++
 
     // Fly through the air
 
@@ -25,6 +27,9 @@ export default class WaterShot extends Thing {
     // Detect plants and water them
 
     // Limit lifetime
+    if (this.time > 300) {
+      this.isDead = true
+    }
   }
 
   
