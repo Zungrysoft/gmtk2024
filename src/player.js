@@ -6,6 +6,7 @@ import Thing from 'thing'
 import Plant from './plant.js'
 import PlantHedge from './planthedge.js'
 import WaterShot from './waterShot.js'
+import PlantApple from './plantapple.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -326,6 +327,7 @@ export default class Player extends Thing {
       if (this.canBePlantedAt(placementPos, tileReqs)) {
         // Create Thing based on seed packet type
         if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos, 'basic', true))
+        if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos, 'basic', true))
       }
     }
   }

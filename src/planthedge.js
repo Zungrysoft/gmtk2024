@@ -22,7 +22,7 @@ export default class PlantHedge extends Plant {
 
     if (this.isSprout) {
       if (this.isBeingWatered()) {
-        this.isSprout = false
+        this.growUp()
       }
     }
     else {

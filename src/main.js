@@ -16,6 +16,8 @@ game.createCanvas2D()
 game.assets.images = await game.loadImages({
   guy: 'images/guy3.png',
   plantHedgeSprout: 'images/hedgeSprout.png',
+  plantApple: 'images/appleTree.png',
+  plantAppleSprout: 'images/appleSprout.png',
   plantingIndicator: 'images/plantingIndicator.png',
   plantingIndicatorError: 'images/plantingIndicatorError.png',
   waterShotSpeed1: 'images/waterShotSpeed1.png',

@@ -35,6 +35,14 @@ export default class Plant extends Thing {
     return this.timeSinceWatered <= 1
   }
 
+  growUp() {
+    this.isSprout = false
+  }
+
+  revertToSprout() {
+    this.isSprout = true
+  }
+
   getHitBoxes() {
     return []
   }

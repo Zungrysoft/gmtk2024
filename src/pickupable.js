@@ -12,7 +12,7 @@ export default class Pickupable extends Thing {
 
   constructor (position = [0, 0]) {
     super()
-    this.position = position
+    this.position = [...position]
   }
 
   update () {
