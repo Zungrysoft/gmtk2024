@@ -69,6 +69,7 @@ export default class Player extends Thing {
   }
   selectedToolCategory = 'trimmer'
   money = 20
+  visualMoney = 0
   depth = 10
   runFrames = 0
   wateringDeviceCooldowns = [0, 0, 0]
@@ -107,6 +108,8 @@ export default class Player extends Thing {
     // Un-squash and stretch
     this.squash[0] = u.lerp(this.squash[0], 1, 0.15)
     this.squash[1] = u.lerp(this.squash[1], 1, 0.15)
+
+    this.visualMoney = u.lerp(this.visualMoney, this.money, 0.1)
 
     // Camera handling, make sure to offset the camera to look ahead
     // in the direction the player is currently moving or looking
@@ -559,10 +562,16 @@ export default class Player extends Thing {
     if (this.isPaused) { return }
     const { ctx } = game
     ctx.save()
-    ctx.fillStyle = 'white'
     ctx.font = 'italic bold 64px Arial'
     ctx.translate(64, 128)
-    ctx.fillText(`${this.money}$`, 0, 0)
+    const moneyScale = (
+      u.inverseSquareMap(Math.abs(this.money - this.visualMoney), 0, 5, 1, 1.3)
+    )
+    ctx.scale(moneyScale, moneyScale)
+    ctx.fillStyle = '#000B28'
+    ctx.fillText(`$${Math.round(this.visualMoney)}`, 4, 4)
+    ctx.fillStyle = 'white'
+    ctx.fillText(`$${Math.round(this.visualMoney)}`, 0, 0)
     ctx.restore()
   }
 
