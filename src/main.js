@@ -12,6 +12,7 @@ import Deployer from './deployer.js'
 import Fertilizer from './fertilizer.js'
 import LaserField from './laserfield.js'
 import DrippingCeiling from './drippingceiling.js'
+import PickupMoney from './pickupMoney.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -68,6 +69,7 @@ game.assets.images = await game.loadImages({
   laserField: 'images/laserField2.png',
   roots: 'images/roots.png',
   drip: 'images/drip.png',
+  money: 'images/money.png'
 })
 
 game.assets.levels = await game.loadText({
@@ -126,6 +128,9 @@ class Level extends Thing {
       }
       if (thing.name === 'drippingCeiling') {
         game.addThing(new DrippingCeiling(pos))
+      }
+      if (thing.name === 'money') {
+        game.addThing(new PickupMoney(pos, thing.data?.money ?? 1))
       }
     }
 
