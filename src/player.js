@@ -4,6 +4,7 @@ import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Plant from './plant.js'
 import PlantHedge from './planthedge.js'
+import WaterShot from './waterShot.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -61,6 +62,7 @@ export default class Player extends Thing {
   money = 20
   depth = 10
   runFrames = 0
+  wateringDeviceCooldown = 0
 
   constructor () {
     super()
@@ -114,7 +116,6 @@ export default class Player extends Thing {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'jump' : 'runJump'
     }
     if (this.velocity[1] > 0.1) {
-      //this.animation = 'fall'
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
     }
 
@@ -219,7 +220,9 @@ export default class Player extends Thing {
     this.scale[0] = this.direction * this.squash[0] / 48
     this.scale[1] = this.squash[1] / 48
 
+    // Time trackers
     this.time ++
+    this.wateringDeviceCooldown = Math.max(this.wateringDeviceCooldown - 1, 0)
   }
 
   useTool(pressed) {
@@ -242,13 +245,21 @@ export default class Player extends Thing {
 
       // Do collision check
       for (const plant of plants) {
-        if (plant.collideWithAabb(aabb, waterCenter)) {
+        if (plant.overlapWithAabb(aabb, waterCenter)) {
           plant.water()
         }
       }
     }
 
-    if (selectedTool.includes('seedPacket')) {
+    if (selectedTool === 'waterGun') {
+      if (this.wateringDeviceCooldown === 0) {
+        this.wateringDeviceCooldown = 3
+        game.addThing(new WaterShot(this.position, this.direction))
+      }
+    }
+
+    // Seed packet: plants new plants
+    else if (selectedTool.includes('seedPacket')) {
       const placementPos = this.getPlacementPosition()
       const tileReqs = game.assets.data.seedSoilRequirements[selectedTool] ?? 'anySoil'
       // Check tile type
