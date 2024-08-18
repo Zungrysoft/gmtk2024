@@ -590,6 +590,21 @@ export async function loadText (locations) {
   return Object.fromEntries(results)
 }
 
+export async function loadJson (locations) {
+  const results = []
+  for (const [name, location] of Object.entries(locations)) {
+    results.push([
+      name,
+      JSON.parse(
+        location[0] === '#'
+        ? document.querySelector(location).innerHTML
+        : (await (await fetch(location)).text())
+      )
+    ])
+  }
+  return Object.fromEntries(results)
+}
+
 export function loadTexturesFromImages (textures, filter = '') {
   return Object.fromEntries(
     Object.entries(textures).map(([name, image]) => (

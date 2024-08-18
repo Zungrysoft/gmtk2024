@@ -13,11 +13,17 @@ game.setHeight(720)
 game.createCanvas2D()
 
 game.assets.images = await game.loadImages({
-  guy: 'images/guy3.png'
+  guy: 'images/guy3.png',
+  plantHedgeSprout: 'images/hedgeSprout.png',
+  selectionBox: 'images/selectionBox.png',
 })
 
 game.assets.levels = await game.loadText({
   level1: 'levels/level1.json'
+})
+
+game.assets.data = await game.loadJson({
+  seedSoilRequirements: 'data/seedSoilRequirements.json'
 })
 
 class Level extends Thing {
@@ -76,8 +82,7 @@ class Level extends Thing {
   }
 
   getTileAt (x, y) {
-    const { tileSize } = this
-    const tileCoord = [Math.floor(x / tileSize), Math.floor(y / tileSize)]
+    const tileCoord = [Math.floor(x / this.tileSize), Math.floor(y / this.tileSize)]
     return this.tileGrids[0][tileCoord] ?? 0
   }
 }

@@ -3,6 +3,7 @@ import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Plant from './plant.js'
+import PlantHedge from './planthedge.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -45,6 +46,7 @@ export default class Player extends Thing {
   }
   aabb = [-0.5, -0.5, 0.5, 1]
   jumpBuffer = 0
+  time = 0
   coyoteFrames = 0
   direction = 1
   cameraOffset = [0, 0]
@@ -57,6 +59,7 @@ export default class Player extends Thing {
   }
   selectedToolCategory = 'trimmer'
   money = 20
+  depth = 10
   runFrames = 0
 
   constructor () {
@@ -91,7 +94,6 @@ export default class Player extends Thing {
       // The camera should move faster when the player is airborne
       this.velocity[1] === 0 ? 0.05 : 0.1
     )
-    this.direction = u.sign(this.velocity[0]) || this.direction
     game.getCamera2D().position = [
       this.position[0] + this.cameraOffset[0],
       this.position[1] + this.cameraOffset[1]
@@ -111,7 +113,7 @@ export default class Player extends Thing {
     if (this.velocity[1] < 0) {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'jump' : 'runJump'
     }
-    if (this.velocity[1] > 0) {
+    if (this.velocity[1] > 0.1) {
       //this.animation = 'fall'
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
     }
@@ -170,11 +172,17 @@ export default class Player extends Thing {
       if (!onGround) {
         this.velocity[0] = Math.min(this.velocity[0], maxSpeed)
       }
+      if (!(game.keysDown.KeyA || game.buttonsDown[2])) {
+        this.direction = u.sign(this.velocity[0]) || this.direction
+      }
     }
     if (game.keysDown.ArrowLeft || game.buttonsDown[14]) {
       this.velocity[0] -= acceleration
       if (!onGround) {
         this.velocity[0] = Math.max(this.velocity[0], -maxSpeed)
+      }
+      if (!(game.keysDown.KeyA || game.buttonsDown[2])) {
+        this.direction = u.sign(this.velocity[0]) || this.direction
       }
     }
 
@@ -210,6 +218,8 @@ export default class Player extends Thing {
     // Apply scaling
     this.scale[0] = this.direction * this.squash[0] / 48
     this.scale[1] = this.squash[1] / 48
+
+    this.time ++
   }
 
   useTool(pressed) {
@@ -237,6 +247,84 @@ export default class Player extends Thing {
         }
       }
     }
+
+    if (selectedTool.includes('seedPacket')) {
+      const placementPos = this.getPlacementPosition()
+      const tileReqs = game.assets.data.seedSoilRequirements[selectedTool] ?? 'anySoil'
+      // Check tile type
+      if (this.canBePlantedAt(placementPos, tileReqs)) {
+        // Can't plant on top of another plant
+        // Sprouts are always 1x1, so only check that square
+
+        let collided = false
+        const plants = game.getThingsNear(...placementPos, 1).filter(e => e instanceof Plant)
+        for (const plant of plants) {
+          if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], placementPos)) {
+            collided = true
+            break
+          }
+          if (plant.position[0] === placementPos[0] && plant.position[1] === placementPos[1]) {
+            collided = true
+            break
+          }
+        }
+        if (!collided) {
+          // Create Thing based on seed packet type
+          if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos, 'basic', true))
+        }
+        
+      }
+    }
+  }
+
+  getPlacementPosition() {
+    let yDelta = 0
+    if (game.keysDown.ArrowUp || game.buttonsDown[12]) {
+      yDelta --
+    }
+    if (game.keysDown.ArrowDown || game.buttonsDown[13]) {
+      yDelta ++
+    }
+
+    return [
+      Math.floor(this.position[0] + (1.1 * this.direction)),
+      Math.floor(this.position[1] + 0.5 + yDelta),
+    ]
+  }
+
+  updatePlacementPositionVisual() {
+    const pp = this.getPlacementPosition()
+    if (this.placementPositionVisual) {
+      this.placementPositionVisual = vec2.lerp(this.placementPositionVisual, pp, 0.2)
+    }
+    else {
+      this.placementPositionVisual = pp
+    }
+  }
+
+  canBePlantedAt(pos, validTileTypes) {
+    const tileType = game.getThing('level').getTileAt(...pos)
+    const soilType = game.getThing('level').getTileAt(pos[0], pos[1]+1)
+
+    // Must be planted in an air tile and on a non-air tile
+    if (tileType === 0 && soilType > 0) {
+      // Can be planted on any tile
+      if (validTileTypes.includes('any')) {
+        return true
+      }
+
+      // Can be planted on any soil tile
+      if (validTileTypes.includes('anySoil') && soilType < 16) {
+        return true
+      }
+
+      // Has specific soil requirements
+      if (validTileTypes.includes(soilType)) {
+        return true
+      }
+    }
+
+    return false
   }
 
   unlockTool (tool, toolMode) {
@@ -359,10 +447,20 @@ export default class Player extends Thing {
   }
 
   draw () {
+    const { ctx } = game
     // Move the sprite down a bit when it's being squashed, so it
     // looks like it's taking off from the ground when the player
     // jumps
     this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 32, true))
+
+    // Selection box for planting seeds
+    this.updatePlacementPositionVisual()
+    if (this.placementPositionVisual && this.getSelectedTool().includes('seedPacket')) {
+      ctx.save()
+      ctx.globalAlpha = u.map(Math.sin(this.time / 10), -1, 1, 0.3, 0.8)
+      ctx.drawImage(game.assets.images.selectionBox, ...this.placementPositionVisual, 1, 1)
+      ctx.restore()
+    }
   }
 
   postDraw () {

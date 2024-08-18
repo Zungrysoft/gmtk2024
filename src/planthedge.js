@@ -4,16 +4,17 @@ import * as vec2 from 'vector2'
 import Plant from './plant.js'
 
 export default class PlantHedge extends Plant {
-  validTileTypes = [2]
   hedgeGrowth = 0
   aabb = [-10, -10, 10, 10]
   hitboxCache = null
+  sprite = game.assets.images.plantHedgeSprout
 
   constructor (pos, variant, isSprout) {
     super(pos, variant, isSprout)
     if (!this.isSprout) {
       this.hedgeGrowth = 1
     }
+    console.log("HEDGE CREATED")
   }
 
   update() {
@@ -105,11 +106,19 @@ export default class PlantHedge extends Plant {
     const { ctx } = game
 
     // Green rectangles for now
-    for (const e of this.getHitboxes()) {
+    if (this.isSprout) {
       ctx.save()
-      ctx.fillStyle = 'green'
-      ctx.fillRect(e[0], e[1], e[2] - e[0], e[3] - e[1])
+      ctx.drawImage(this.sprite, ...this.position, 1, 1)
       ctx.restore()
     }
+    else {
+      for (const e of this.getHitboxes()) {
+        ctx.save()
+        ctx.fillStyle = 'green'
+        ctx.fillRect(e[0], e[1], e[2] - e[0], e[3] - e[1])
+        ctx.restore()
+      }
+    }
+    
   }
 }
