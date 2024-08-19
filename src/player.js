@@ -302,7 +302,23 @@ export default class Player extends Thing {
   useTool(pressed) {
     const selectedTool = this.getSelectedTool()
 
-    // Watering Can: Wpills water in front of the player
+    // Sickle
+    if (selectedTool === 'sickle' && pressed) {
+      // Simple implementation for now
+      const plants = game.getThingsNear(...this.position, 2).filter(x => x instanceof Plant)
+      for (const plant of plants) {
+        if (plant.overlapWithAabb([-0.3, -0.3, 0.3, 0.3], vec2.add(this.position, [this.direction * 0.7, 0]))) {
+          if (plant.isIndestructible) {
+            // TODO: Play sound effect indicating failure to destroy plant
+          }
+          else {
+            plant.destroy()
+          }
+        }
+      }
+    }
+
+    // Watering Can: Spills water in front of the player
     if (selectedTool === 'wateringCan') {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {

@@ -123,6 +123,10 @@ export default class Plant extends Thing {
     this.icon = n
   }
 
+  destroy() {
+    this.isDead = true
+  }
+
   draw() {
     // This draw function is just for adding common UI elements all plants may want
     const { ctx } = game
