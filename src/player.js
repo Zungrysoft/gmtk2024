@@ -5,7 +5,10 @@ import * as collisionutils from './collisionutils.js'
 import Thing from 'thing'
 import Plant from './plant.js'
 import PlantHedge from './planthedge.js'
-import WaterShot from './waterShot.js'
+import WaterShot from './watershot.js'
+import PlantApple from './plantapple.js'
+import PlantClock from './plantclock.js'
+import PlantOrange from './plantorange.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -58,6 +61,8 @@ export default class Player extends Thing {
     'sickle',
     'seedPacketHedge',
     'seedPacketApple',
+    'seedPacketClock',
+    'seedPacketOrange',
     'wateringCan',
     'waterGun'
   ]
@@ -263,9 +268,8 @@ export default class Player extends Thing {
     // Player actions
     // ==============
 
-    // Switch tool category
-    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
-      const lastPickup = this.pickup
+    // Grab objects
+    if (game.keysPressed.KeyD || game.buttonsPressed[1]) {
       let nextPickup
       const grabPosition = [
         this.position[0] + this.direction * 0.5,
@@ -279,9 +283,11 @@ export default class Player extends Thing {
         }
       }
       this.pickup = nextPickup
-      if (!this.pickup && !lastPickup) {
-        this.cycleToolCategory()
-      }
+    }
+
+    // Switch tool category
+    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
+      this.cycleToolCategory()
     }
 
     // Switch sub tool
@@ -321,41 +327,80 @@ export default class Player extends Thing {
   useTool(pressed) {
     const selectedTool = this.getSelectedTool()
 
-    // Watering Can: waters plants in a small circle in front of the player 
+    // Sickle
+    if (selectedTool === 'sickle' && pressed) {
+      // Simple implementation for now
+      const plants = game.getThingsNear(...this.position, 2).filter(x => x instanceof Plant)
+      for (const plant of plants) {
+        if (plant.overlapWithAabb([-0.3, -0.3, 0.3, 0.3], vec2.add(this.position, [this.direction * 0.7, 0]))) {
+          if (plant.isIndestructible) {
+            // TODO: Play sound effect indicating failure to destroy plant
+          }
+          else {
+            plant.destroy()
+          }
+        }
+      }
+    }
+
+    // Watering Can: Spills water in front of the player
     if (selectedTool === 'wateringCan') {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
           const pos = vec2.add(this.position, vec2.scale([1.6, 0], this.direction))
-          game.addThing(new WaterShot(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06))
+          this.shootWater(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06)
           break
         }
       }
     }
 
-    // Water gun: Long range water delivery
+    // Water gun: Long range water delivery apparatus
     else if (selectedTool === 'waterGun') {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 8 + 2)
-          game.addThing(new WaterShot(this.position, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05))
+          this.shootWater(this.position, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05)
           break
         }
       }
     }
 
-    
-
-    // Seed packet: plants new plants
+    // Seed packet: Plants new plants
     else if (selectedTool.includes('seedPacket')) {
       const placementPos = this.getPlacementPosition()
-      const tileReqs = game.assets.data.seedSoilRequirements[selectedTool] ?? 'anySoil'
+      const tileReqs = game.assets.data.plantingRequirements[selectedTool]
       // Check tile type
       if (this.canBePlantedAt(placementPos, tileReqs)) {
         // Create Thing based on seed packet type
-        if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos, 'basic', true))
+        if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos))
+        if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos))
+        if (selectedTool === 'seedPacketOrange') game.addThing(new PlantOrange(placementPos))
+        if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
       }
     }
+  }
+
+  shootWater(position, direction, scale, speed, spread) {
+    // const r1 = Math.random()
+    // const r2 = Math.random()
+    // const vx = (Math.sqrt(r1)*2 - 1) * 0.06
+    // const vy = (Math.sqrt(r2)*2 - 1) * 0.06
+    // this.velocity = vec2.add(this.velocity, [vx, vy])
+
+    // Randomly vary velocity
+    let vel = direction > 0 ? [speed, -0.1] : [-speed, -0.1]
+    const r1 = Math.random()
+    const r2 = Math.random()
+    const vx = (Math.sqrt(r1)*2 - 1) * spread * direction
+    const vy = (Math.sqrt(r2)*2 - 1) * spread * 0.5
+    vel = vec2.add(vel, [vx, vy])
+
+    // Randomly vary position
+    const dx = (Math.random()*2 - 1) * speed * 0.5
+    const pos = vec2.add(position, [dx, 0])
+
+    game.addThing(new WaterShot(pos, vel, scale))
   }
 
   getPlacementPosition() {
@@ -380,7 +425,9 @@ export default class Player extends Thing {
     }
   }
 
-  canBePlantedAt(pos, validTileTypes) {
+  canBePlantedAt(pos, plantingRequirements) {
+    const validTileTypes = plantingRequirements.soil ?? 'anySoil'
+    const spacing = plantingRequirements.spacing ?? 0
     const tileType = game.getThing('level').getTileAt(...pos)
     const soilType = game.getThing('level').getTileAt(pos[0], pos[1]+1)
 
@@ -425,17 +472,13 @@ export default class Player extends Thing {
   }
 
   getToolCategories () {
-    return {
-      seedPacket: ['seedPacketApple', 'seedPacketPear', 'seedPacketHedge'],
-      wateringDevice: ['wateringCan', 'waterGun', 'hose'],
-      trimmer: ['sickle'],
-    }
+    return game.assets.data.toolCategories
   }
 
   getToolCategory (tool) {
     const toolCategories = this.getToolCategories()
-    for (const toolCategory in toolCategories) {
-      const toolsInCategory = toolCategories[toolCategory]
+    for (const toolCategory of toolCategories) {
+      const toolsInCategory = toolCategory.tools
       if (toolsInCategory.includes(tool)) {
         return toolCategory
       }
@@ -464,23 +507,30 @@ export default class Player extends Thing {
     // Returns a set
     const toolCategories = this.getToolCategories()
     const ownedToolCategories = new Set()
-    for (const toolCategory in toolCategories) {
-      const toolsInCategory = toolCategories[toolCategory]
+    for (const toolCategory of toolCategories) {
+      const toolsInCategory = toolCategory.tools
       if (new Set(toolsInCategory).intersection(new Set(this.ownedTools)).size > 0) {
-        ownedToolCategories.add(toolCategory)
+        ownedToolCategories.add(toolCategory.name)
       }
     }
     return ownedToolCategories
   }
 
   getOwnedToolsInCategory (category) {
-    return this.getToolCategories()[category]
+    const toolCategories = this.getToolCategories()
+    for (let i = 0; i < toolCategories.length; i ++) {
+      if (toolCategories[i].name === category) {
+        return toolCategories[i].tools
+      }
+    }
+    return []
   }
 
   cycleToolCategory () {
     // Count how many tool categories we have tools in
     const toolCategories = this.getToolCategories()
     const ownedToolCategories = this.getOwnedToolCategories()
+    const toolCategoryNames = toolCategories.map(e => e.name)
 
     // If we only have one or zero tool categories, there is nothing for this key press to do
     if (ownedToolCategories.size <= 1) {
@@ -490,7 +540,7 @@ export default class Player extends Thing {
     
     // Cycle to next tool category
     let foundMyTool = false
-    const toolCategoriesList = [...Object.keys(toolCategories), ...Object.keys(toolCategories)]
+    const toolCategoriesList = [...toolCategoryNames, ...toolCategoryNames]
     for (const toolCategory of toolCategoriesList) {
       if (foundMyTool && ownedToolCategories.has(toolCategory)) {
         this.selectedToolCategory = toolCategory
@@ -511,7 +561,14 @@ export default class Player extends Thing {
   }
 
   cycleTool (reverse=false) {
-    const toolsInCategory = this.getToolCategories()[this.selectedToolCategory]
+    const toolCategories = this.getToolCategories()
+    let toolsInCategory
+    for (let i = 0; i < toolCategories.length; i ++) {
+      if (toolCategories[i].name === this.selectedToolCategory) {
+        toolsInCategory = toolCategories[i].tools
+      }
+    }
+    
     const ownedToolsInCategory = new Set(toolsInCategory).intersection(new Set(this.ownedTools))
 
     // If we only have one or zero tools in this category, there is nothing for this key press to do
@@ -551,7 +608,7 @@ export default class Player extends Thing {
       this.getSelectedTool().includes('seedPacket')
     ) {
       let sprite = game.assets.images.plantingIndicator
-      const tileReqs = game.assets.data.seedSoilRequirements[this.getSelectedTool()] ?? 'anySoil'
+      const tileReqs = game.assets.data.plantingRequirements[this.getSelectedTool()]
       if (!this.canBePlantedAt(this.getPlacementPosition(), tileReqs)) {
         sprite = game.assets.images.plantingIndicatorError
       }

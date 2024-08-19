@@ -8,10 +8,12 @@ export default class PlantHedge extends Plant {
   aabb = [-10, -10, 10, 10]
   hitboxCache = null
   sprite = game.assets.images.plantHedgeSprout
-  grownSprite = u.createPatternFromImage(game.assets.images.hedgeTest)
+  hedgePattern = u.createPatternFromImage(game.assets.images.hedge)
+  hedgePatternSide = u.createPatternFromImage(game.assets.images.hedgeSide)
+  depth = 2
 
-  constructor (pos, variant, isSprout) {
-    super(pos, variant, isSprout)
+  constructor (pos, variant, isSprout, isIndestructible) {
+    super(pos, variant, isSprout, isIndestructible)
     if (!this.isSprout) {
       this.hedgeGrowth = 1
     }
@@ -22,7 +24,7 @@ export default class PlantHedge extends Plant {
 
     if (this.isSprout) {
       if (this.isBeingWatered()) {
-        this.isSprout = false
+        this.growUp()
       }
     }
     else {
@@ -68,7 +70,7 @@ export default class PlantHedge extends Plant {
     return [{direction: 'up', length: 6}]
   }
 
-  getHitBoxes() {
+  getHedgeSegments() {
     if (this.hitboxCache) { return this.hitboxCache }
 
     // List of collision boxes
@@ -86,18 +88,23 @@ export default class PlantHedge extends Plant {
       const segLength = Math.min(lengthLeft, seg.length)
 
       // Y direction
+      let segBox
       if (seg.direction === 'down') {
-        ret.push([curPos[0], curPos[1] + 1, curPos[0] + 1, curPos[1] + 1 + segLength])
+        segBox = [curPos[0], curPos[1] + 1, curPos[0] + 1, curPos[1] + 1 + segLength]
       }
       else if (seg.direction === 'up') {
-        ret.push([curPos[0], curPos[1] - segLength, curPos[0] + 1, curPos[1]])
+        segBox = [curPos[0], curPos[1] - segLength, curPos[0] + 1, curPos[1]]
       }
       else if (seg.direction === 'right') {
-        ret.push([curPos[0] + 1, curPos[1], curPos[0] + 1 + segLength, curPos[1] + 1])
+        segBox = [curPos[0] + 1, curPos[1], curPos[0] + 1 + segLength, curPos[1] + 1]
       }
       else if (seg.direction === 'left') {
-        ret.push([curPos[0] - segLength, curPos[1], curPos[0], curPos[1] + 1])
+        segBox = [curPos[0] - segLength, curPos[1], curPos[0], curPos[1] + 1]
       }
+      ret.push({
+        hitBox: segBox,
+        direction: seg.direction
+      })
 
       lengthLeft -= seg.length
       if (lengthLeft <= 0) {
@@ -110,6 +117,10 @@ export default class PlantHedge extends Plant {
     return this.hitboxCache
   }
 
+  getHitBoxes() {
+    return this.getHedgeSegments().map(x => x.hitBox)
+  }
+
   getOverlapBoxes() {
     return [
       ...this.getHitBoxes(),
@@ -118,23 +129,59 @@ export default class PlantHedge extends Plant {
   }
 
   draw () {
+    super.draw()
+
     const { ctx } = game
 
-    // Green rectangles for now
     if (this.isSprout) {
       ctx.save()
       ctx.drawImage(this.sprite, ...this.position, 1, 1)
       ctx.restore()
     }
     else {
-      for (const e of this.getHitBoxes()) {
+      for (const e of this.getHedgeSegments()) {
+        const b = e.hitBox
         ctx.save()
         ctx.scale(1 / 48, 1 / 48)
-        ctx.fillStyle = this.grownSprite //'green'
-        ctx.fillRect(...[e[0], e[1], e[2] - e[0], e[3] - e[1]].map(x => x * 48))
+
+        // Main body
+        ctx.fillStyle = vec2.directionToVector(e.direction)[0] !== 0 ? this.hedgePatternSide : this.hedgePattern
+        ctx.fillRect(...[b[0], b[1], b[2] - b[0], b[3] - b[1]].map(x => x * 48))
+        ctx.restore()
+
+        // Top and bottom marks
+        ctx.save()
+        let topMarkPos
+        let topMarkSprite = game.assets.images.hedgeTopMark
+        let bottomMarkPos
+        let bottomMarkSprite = game.assets.images.hedgeBottomMarkRight
+        if (e.direction === 'up') {
+          topMarkPos = [b[0], b[1] - 0.5]
+          bottomMarkPos = [b[0], b[3] - 0.5]
+          bottomMarkSprite = game.assets.images.hedgeBottomMarkUp
+        }
+        else if (e.direction === 'down') {
+          topMarkPos = [b[0], b[3] - 0.5]
+          bottomMarkPos = [b[0], b[1] - 0.5]
+          bottomMarkSprite = game.assets.images.hedgeBottomMarkDown
+        }
+        else if (e.direction === 'left') {
+          topMarkPos = [b[0] - 0.5, b[1]]
+          bottomMarkPos = [b[2] - 0.5, b[1]]
+          topMarkSprite = game.assets.images.hedgeTopMarkSide
+          bottomMarkSprite = game.assets.images.hedgeBottomMarkLeft
+        }
+        else {
+          topMarkPos = [b[2] - 0.5, b[1]]
+          bottomMarkPos = [b[0] - 0.5, b[1]]
+          topMarkSprite = game.assets.images.hedgeTopMarkSide
+        }
+        
+        ctx.drawImage(bottomMarkSprite, ...bottomMarkPos, 1, 1)
+        ctx.drawImage(topMarkSprite, ...topMarkPos, 1, 1)
+
         ctx.restore()
       }
     }
-    
   }
 }

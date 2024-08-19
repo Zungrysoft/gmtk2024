@@ -1,0 +1,14 @@
+{
+    "seedPacketApple": {
+        "soil": ["anySoil"]
+    },
+    "seedPacketOrange": {
+        "soil": ["anySoil"]
+    },
+    "seedPacketHedge": {
+        "soil": [2]
+    },
+    "seedPacketClock": {
+        "soil": ["anySoil"]
+    }
+}

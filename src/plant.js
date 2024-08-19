@@ -1,6 +1,9 @@
 import * as game from 'game'
 import * as u from 'utils'
+import * as vec2 from 'vector2'
 import Thing from 'thing'
+import Fertilizer from './fertilizer.js'
+import FertilizerParticle from './fertilizerParticle.js'
 
 export default class Plant extends Thing {
   validTileTypes = []
@@ -15,12 +18,16 @@ export default class Plant extends Thing {
       frameSize: 48
     },
   }
+  depth = -1
+  timerDisplay = 0
+  isIndestructible = false
 
-  constructor (pos, variant, isSprout) {
+  constructor (pos, variant='basic', isSprout=true, isIndestructible=false) {
     super()
     this.position = pos
     this.variant = variant
     this.isSprout = isSprout
+    this.isIndestructible = isIndestructible
   }
 
   update() {
@@ -33,6 +40,14 @@ export default class Plant extends Thing {
 
   isBeingWatered() {
     return this.timeSinceWatered <= 1
+  }
+
+  growUp() {
+    this.isSprout = false
+  }
+
+  revertToSprout() {
+    this.isSprout = true
   }
 
   getHitBoxes() {
@@ -75,5 +90,64 @@ export default class Plant extends Thing {
     }
 
     return false
+  }
+
+  consumeFertilizer(type) {
+    const fertilizers = game.getThingsNear(...this.position, 2).filter(x => x instanceof Fertilizer)
+    for (const thing of fertilizers) {
+      if (
+        this.overlapWithThing(thing) &&
+        thing.type === type &&
+        !thing.isPickedUp() &&
+        !thing.isDead &&
+        thing.contactDirections.down
+      ) {
+        thing.isDead = true
+        return true
+      }
+    }
+    return false
+  }
+
+  createFertilizerParticles(count=6, intensity=1) {
+    for (let i = 0; i < count; i ++) {
+      game.addThing(new FertilizerParticle(vec2.add(this.position, [0.5, 0.5]), intensity))
+    }
+  }
+
+  setTimerDisplay(n) {
+    this.timerDisplay = n
+  }
+
+  setIcon(n) {
+    this.icon = n
+  }
+
+  destroy() {
+    this.isDead = true
+  }
+
+  draw() {
+    // This draw function is just for adding common UI elements all plants may want
+    const { ctx } = game
+
+    ctx.save()
+
+    if (this.isIndestructible) {
+      ctx.save()
+      ctx.translate(0, 1)
+      ctx.drawImage(game.assets.images.roots, ...this.position, 1, 2)
+      ctx.restore()
+    }
+
+    if (this.icon === 'timer') {
+      ctx.translate(0, 1)
+      const segments = 9
+      const segment = Math.ceil(u.clamp(this.timerDisplay, 0, 1) * segments)
+      const timerImage = game.assets.images["timer" + segment]
+      ctx.drawImage(timerImage, ...this.position, 1, 1)
+    }
+
+    ctx.restore()
   }
 }

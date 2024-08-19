@@ -6,8 +6,13 @@ import Player from './player.js'
 import PlantHedge from './planthedge.js'
 import Shop from './shop.js'
 import Background from './background.js'
-import Apple from './apple.js'
 import SellZone from './sellzone.js'
+import Sprinkler from './sprinkler.js'
+import Deployer from './deployer.js'
+import Fertilizer from './fertilizer.js'
+import LaserField from './laserfield.js'
+import DrippingCeiling from './drippingceiling.js'
+import PickupMoney from './pickupMoney.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -17,6 +22,13 @@ game.createCanvas2D()
 game.assets.images = await game.loadImages({
   guy: 'images/guy3.png',
   plantHedgeSprout: 'images/hedgeSprout.png',
+  apple: 'images/apple.png',
+  plantApple: 'images/appleTree.png',
+  plantAppleSprout: 'images/appleSprout.png',
+  orange: 'images/orange.png',
+  plantOrangeSprout: 'images/orangeSprout.png',
+  plantClock: 'images/clockPlant.png',
+  plantClockSprout: 'images/clockSprout.png',
   plantingIndicator: 'images/plantingIndicator.png',
   plantingIndicatorError: 'images/plantingIndicatorError.png',
   waterShotSpeed1: 'images/waterShotSpeed1.png',
@@ -24,16 +36,42 @@ game.assets.images = await game.loadImages({
   waterShotSpeed3: 'images/waterShotSpeed3.png',
   waterShotSpeed4: 'images/waterShotSpeed4.png',
   waterDroplet: 'images/waterDroplet.png',
+  fertilizerParticle: 'images/fertilizerParticle.png',
+  timeRing: 'images/timeRing.png',
   wateringCan: 'images/wateringcan.png',
   ground: 'images/ground.png',
   dirt1: 'images/dirt1.png',
   dirt2: 'images/dirt2.png',
   dirt3: 'images/dirt3.png',
   dirt4: 'images/dirt4.png',
-  hedgeTest: 'images/hedgetest.png',
+  hedge: 'images/hedge.png',
+  hedgeSide: 'images/hedgeSide.png',
+  hedgeTopMark: 'images/hedgeTopMark.png',
+  hedgeTopMarkSide: 'images/hedgeTopMarkSide.png',
+  hedgeBottomMarkUp: 'images/hedgeBottomMarkUp.png',
+  hedgeBottomMarkDown: 'images/hedgeBottomMarkDown.png',
+  hedgeBottomMarkRight: 'images/hedgeBottomMarkRight.png',
+  hedgeBottomMarkLeft: 'images/hedgeBottomMarkLeft.png',
   caveBackground: 'images/cavebackground1.png',
   apple: 'images/apple.png',
   dustParticle: 'images/dust.png'
+  sprinkler: 'images/sprinkler.png',
+  ash: 'images/ash.png',
+  deployer: 'images/deployer.png',
+  timer0: 'images/timer0.png',
+  timer1: 'images/timer1.png',
+  timer2: 'images/timer2.png',
+  timer3: 'images/timer3.png',
+  timer4: 'images/timer4.png',
+  timer5: 'images/timer5.png',
+  timer6: 'images/timer6.png',
+  timer7: 'images/timer7.png',
+  timer8: 'images/timer8.png',
+  timer9: 'images/timer9.png',
+  laserField: 'images/laserField2.png',
+  roots: 'images/roots.png',
+  drip: 'images/drip.png',
+  money: 'images/money.png'
 })
 
 game.assets.levels = await game.loadText({
@@ -41,7 +79,8 @@ game.assets.levels = await game.loadText({
 })
 
 game.assets.data = await game.loadJson({
-  seedSoilRequirements: 'data/seedSoilRequirements.json'
+  plantingRequirements: 'data/plantingRequirements.json',
+  toolCategories: 'data/toolCategories.json',
 })
 
 const tileValues = {
@@ -55,6 +94,7 @@ const tileValues = {
 class Level extends Thing {
   tileGrids = []
   tileSize = 1
+  depth = -10
 
   constructor (inputText) {
     super()
@@ -70,8 +110,29 @@ class Level extends Thing {
     // Spawn level things
     const things = data.layers[0].things
     for (const thing of things) {
+      const pos = [Math.floor(thing.position[0]), Math.floor(thing.position[1])]
       if (thing.name === 'plantHedge') {
-        game.addThing(new PlantHedge(thing.position, thing.data?.variant ?? 'basic'))
+        game.addThing(new PlantHedge(
+          pos,
+          thing.data?.variant ?? 'basic',
+          thing.data?.isSprout ?? false,
+          thing.data?.isIndestructible ?? true,
+        ))
+      }
+      if (thing.name === 'sprinkler') {
+        game.addThing(new Sprinkler(pos))
+      }
+      if (thing.name === 'deployer') {
+        game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
+      }
+      if (thing.name === 'laserField') {
+        game.addThing(new LaserField(pos, thing.data?.size ?? [1, 1]))
+      }
+      if (thing.name === 'drippingCeiling') {
+        game.addThing(new DrippingCeiling(pos))
+      }
+      if (thing.name === 'money') {
+        game.addThing(new PickupMoney(pos, thing.data?.money ?? 1))
       }
     }
 
@@ -117,13 +178,19 @@ class Level extends Thing {
     const tileCoord = [Math.floor(x / this.tileSize), Math.floor(y / this.tileSize)]
     return this.tileGrids[0][tileCoord] ?? 0
   }
+
+  // Used by plants to check if they are clear to grow somewhere
+  isTileClear() {
+    const tileCoord = [Math.floor(x / this.tileSize), Math.floor(y / this.tileSize)]
+
+  }
 }
 
 game.setScene(() => {
   game.addThing(new Level(game.assets.levels.level1))
   game.addThing(new Background())
   game.addThing(new Shop())
-  game.addThing(new Apple())
+  game.addThing(new Fertilizer([3, 0], 'apple'))
   game.addThing(new SellZone([10, 8]))
   game.addThing(new Player())
 })

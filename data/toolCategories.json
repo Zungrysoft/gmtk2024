@@ -1,0 +1,14 @@
+[
+    {
+        "name": "seedPacket",
+        "tools": ["seedPacketApple", "seedPacketOrange", "seedPacketHedge", "seedPacketClock"]
+    },
+    {
+        "name": "wateringDevice",
+        "tools": ["wateringCan", "waterGun", "hose"]
+    },
+    {
+        "name": "trimmer",
+        "tools": ["sickle"]
+    }
+]
