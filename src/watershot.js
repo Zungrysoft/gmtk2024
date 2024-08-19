@@ -48,7 +48,7 @@ export default class WaterShot extends Thing {
     }
 
     // Detect plants and water them
-    const plants = game.getThingsNear(...this.position, 1).filter(e => e instanceof Plant)
+    const plants = game.getThingsNear(...this.position, 1).filter(e => e.overlapWithAabb)
     for (const plant of plants) {
       if (plant.overlapWithAabb(this.aabb, this.position)) {
         this.isDead = true

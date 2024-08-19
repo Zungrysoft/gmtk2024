@@ -42,6 +42,10 @@ export default class Gate extends Thing {
     return false
   }
 
+  overlapWithAabb(aabb, position = [0, 0]) {
+    return this.collideWithAabb(aabb, position)
+  }
+
   draw () {
     const { ctx } = game
 
