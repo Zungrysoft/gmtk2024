@@ -135,7 +135,7 @@ export default class Player extends Thing {
       this.cycleToolCategory(false)
     }
 
-    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
+    if (game.keysPressed.KeyS) {
       this.cycleToolCategory(true)
     }
 
@@ -375,7 +375,7 @@ export default class Player extends Thing {
     // Sickle
     if (selectedTool === 'sickle' && pressed) {
       // Simple implementation for now
-      const plants = game.getThingsNear(...this.position, 2).filter(x => x.overlapWithAabb)
+      const plants = game.getThingsNear(...this.position, 2).filter(x => x instanceof Plant)
       for (const plant of plants) {
         if (plant.overlapWithAabb([-0.3, -0.3, 0.3, 0.3], vec2.add(this.position, [this.direction * 0.7, 0]))) {
           if (plant.isIndestructible) {

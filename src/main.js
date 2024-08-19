@@ -15,6 +15,7 @@ import SellZone from './sellzone.js'
 import Shop from './shop.js'
 import Gate from './gate.js'
 import Tutorial from './tutorial.js'
+import Fertilizer from './fertilizer.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -87,6 +88,10 @@ game.assets.images = await game.loadImages({
   gateyellow: 'images/gateYellow.png',
   tutorialcontrols: 'images/tutorialControls.png',
   tutorialtool: 'images/tutorialTool.png',
+  tutorialgrab: 'images/tutorialGrab.png',
+  tutorialgrab2: 'images/tutorialGrab2.png',
+  tutorialswitch: 'images/tutorialSwitch.png',
+  tutorialshop: 'images/tutorialShop.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -144,6 +149,9 @@ class Level extends Thing {
       }
       if (thing.name === 'deployer') {
         game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
+      }
+      if (thing.name === 'fertilizer') {
+        game.addThing(new Fertilizer(pos, thing.data?.type ?? 'apple'))
       }
       if (thing.name === 'laserField') {
         game.addThing(new LaserField(pos, thing.data?.size ?? [1, 1]))
