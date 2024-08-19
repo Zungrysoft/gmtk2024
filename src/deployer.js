@@ -45,7 +45,7 @@ export default class Deployer extends Thing {
     const { ctx } = game
 
     ctx.save()
-    ctx.drawImage(this.sprite, ...this.position, 1, 1)
+    ctx.drawImage(this.sprite, ...vec2.add(this.position, [0, -0.4]), 1, 1)
     ctx.restore()
   }
 }

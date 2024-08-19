@@ -82,7 +82,7 @@ game.assets.images = await game.loadImages({
 })
 
 game.assets.levels = await game.loadText({
-  level1: 'levels/testWorld.json'
+  level1: 'levels/gameWorld.json'
 })
 
 game.assets.data = await game.loadJson({
