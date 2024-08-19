@@ -92,22 +92,6 @@ export default class Shop extends Thing {
 class ShopMenu extends Thing {
   selection = 0
   selectionAnim = 0
-  items = [
-    {
-      name: 'Watering Can',
-      price: 2,
-      description: 'Waters plants',
-      image: 'wateringCan',
-      givenTool: 'wateringCan',
-    },
-    {
-      name: 'Yellow Key',
-      price: 6,
-      description: 'Unlocks the Yellow Gate',
-      image: 'keyyellow',
-      givenKey: 'yellow',
-    },
-  ]
   holdFrames = 0
   canBuy = true
 
@@ -115,6 +99,7 @@ class ShopMenu extends Thing {
     super()
     game.setThingName(this, 'shopmenu')
     this.setTimer('shopmenu', 12)
+    this.regenerateShop()
   }
 
   update () {
@@ -169,12 +154,47 @@ class ShopMenu extends Thing {
           else if (selection.givenKey) {
             player.unlockKey(selection.givenKey)
           }
+          this.regenerateShop()
         }
         else {
           // TODO: Error Sound
         }
       }
     }
+  }
+
+  regenerateShop() {
+    this.items = [
+      {
+        name: 'Watering Can',
+        price: 2,
+        description: 'Waters plants',
+        image: 'wateringCan',
+        givenTool: 'wateringCan',
+      },
+      {
+        name: 'Yellow Key',
+        price: 6,
+        description: 'Unlocks the Yellow Gate',
+        image: 'keyyellow',
+        givenKey: 'yellow',
+      },
+    ].filter(x => !this.itemAlreadyOwned(x))
+
+    if (this.selection >= this.items.length) {
+      this.selection = this.items.length - 1
+    }
+  }
+
+  itemAlreadyOwned(item) {
+    const player = game.getThing('player')
+    if (player.ownedTools.includes(item.givenTool)) {
+      return true
+    }
+    if (player.keyColors.includes(item.givenKey)) {
+      return true
+    }
+    return false
   }
 
   finish () {
