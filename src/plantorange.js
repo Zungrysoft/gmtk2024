@@ -1,8 +1,5 @@
 import * as game from 'game'
-import * as u from 'utils'
-import * as vec2 from 'vector2'
 import PlantFruit from './plantfruit.js'
-import Fertilizer from './fertilizer.js'
 
 export default class PlantOrange extends PlantFruit {
   sprite = game.assets.images.plantOrangeSprout
@@ -13,13 +10,7 @@ export default class PlantOrange extends PlantFruit {
   waterTimer = 0
   waterIterations = 0
   consumedFertilizer = 0
-
-  growUp() {
-    super.growUp()
-    
-    this.linkedFruit = new Fertilizer(vec2.add(this.position, this.fruitGrowOffset), 'orange', true)
-    game.addThing(this.linkedFruit)
-  }
+  fruitType = 'orange'
 
   revertToSprout() {
     super.revertToSprout()

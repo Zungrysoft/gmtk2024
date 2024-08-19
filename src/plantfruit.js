@@ -2,11 +2,19 @@ import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Plant from './plant.js'
+import Fertilizer from './fertilizer.js'
 
 export default class PlantFruit extends Plant {
   aabb = [-10, -10, 10, 10]
   linkedFruit = null
   fruitGrowOffset = [0.5, -1.4]
+
+  growUp() {
+    super.growUp()
+    
+    this.linkedFruit = new Fertilizer(vec2.add(this.position, this.fruitGrowOffset), this.fruitType, true)
+    game.addThing(this.linkedFruit)
+  }
 
   update() {
     super.update()

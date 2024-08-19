@@ -1,21 +1,24 @@
 import * as game from 'game'
 import PlantFruit from './plantfruit.js'
 
-export default class PlantApple extends PlantFruit {
-  sprite = game.assets.images.plantAppleSprout
+export default class PlantBanana extends PlantFruit {
+  sprite = game.assets.images.plantBananaSprout
   grownSprite = game.assets.images.plantApple
-  waterInterval = 600
-  requiredWaterIterations = 3
-  requiredFertilizer = 1
+  waterInterval = 200
+  requiredWaterIterations = 10
+  requiredApples = 3
+  requiredOranges = 3
   waterTimer = 0
   waterIterations = 0
-  consumedFertilizer = 0
-  fruitType = 'apple'
+  consumedApples = 0
+  consumedOranges = 0
+  fruitType = 'banana'
 
   revertToSprout() {
     super.revertToSprout()
 
-    this.consumedFertilizer = 0
+    this.consumedOranges = 0
+    this.consumedApples = 0
     this.waterIterations = 0
     this.waterTimer = 0
   }
@@ -37,7 +40,7 @@ export default class PlantApple extends PlantFruit {
           this.icons.push('timer')
         }
       }
-      if (this.consumedFertilizer < this.requiredFertilizer) {
+      if (this.consumedApples < this.requiredApples || this.consumedOranges < this.requiredOranges) {
         this.icons.push('fertilizer')
       }
 
@@ -48,17 +51,25 @@ export default class PlantApple extends PlantFruit {
       }
 
       // Consume fertilizer
-      if (this.consumedFertilizer < this.requiredFertilizer) {
-        if (this.consumeFertilizer('ash')) {
-          this.consumedFertilizer ++
+      if (this.consumedApples < this.requiredApples) {
+        if (this.consumeFertilizer('apple')) {
+          this.consumedApples ++
+          this.createFertilizerParticles()
+        }
+      }
+      if (this.consumedOranges < this.requiredOranges) {
+        if (this.consumeFertilizer('orange')) {
+          this.consumedOranges ++
           this.createFertilizerParticles()
         }
       }
 
       // Grow up
       if (this.waterIterations >= this.requiredWaterIterations) {
-        if (this.consumedFertilizer >= this.requiredFertilizer) {
-          this.growUp()
+        if (this.consumedApples >= this.requiredApples) {
+          if (this.consumedOranges >= this.requiredOranges) {
+            this.growUp()
+          }
         }
       }
     }

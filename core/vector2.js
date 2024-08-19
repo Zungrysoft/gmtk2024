@@ -62,6 +62,10 @@ export function distance (a, b) {
   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
 }
 
+export function squareDistance (a, b) {
+  return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1]))
+}
+
 export function lerp (v1, v2, t) {
   return [
     (1 - t) * v1[0] + t * v2[0],

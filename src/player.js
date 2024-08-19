@@ -12,6 +12,7 @@ import PlantOrange from './plantorange.js'
 import Swipe from './swipe.js'
 import LaserField from './laserfield.js'
 import PlantFan from './plantFan.js'
+import PlantBanana from './plantbanana.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -466,6 +467,7 @@ export default class Player extends Thing {
         if (selectedTool === 'seedPacketHedge') game.addThing(new PlantHedge(placementPos))
         if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos))
         if (selectedTool === 'seedPacketOrange') game.addThing(new PlantOrange(placementPos))
+        if (selectedTool === 'seedPacketBanana') game.addThing(new PlantBanana(placementPos))
         if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
         if (selectedTool === 'seedPacketFan') game.addThing(new PlantFan(placementPos))
       }
@@ -705,8 +707,7 @@ export default class Player extends Thing {
       this.selectedTools[this.selectedToolCategory] = this.getOwnedToolsInCategory(this.selectedToolCategory)[0]
     }
 
-    // TODO: Play item cycle sound and remove console log
-    console.log(this.getSelectedTool())
+    // TODO: Play item cycle sound
 
     this.setTimer('swapHotbar', 10)
     if (reverse) {
@@ -761,8 +762,7 @@ export default class Player extends Thing {
       }
     }
 
-    // TODO: Play item cycle sound and remove console log
-    console.log(this.getSelectedTool())
+    // TODO: Play item cycle sound
 
     this.setTimer('cycleTool', 10)
   }

@@ -85,8 +85,12 @@ export default class WaterShot extends Thing {
   }
 
   spawnDroplets() {
-    for (let i = 0; i < 8*this.scaleMultiplier; i ++) {
-      game.addThing(new WaterDroplet(this.position, Math.sqrt(this.scaleMultiplier)))
+    // Make sure player is nearby to actually see the particles
+    const player = game.getThing('player')
+    if (vec2.squareDistance(player.position, this.position) < 18) {
+      for (let i = 0; i < 8*this.scaleMultiplier; i ++) {
+        game.addThing(new WaterDroplet(this.position, Math.sqrt(this.scaleMultiplier)))
+      }
     }
   }
 }
