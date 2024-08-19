@@ -165,13 +165,13 @@ export default class Player extends Thing {
     }
 
     const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
-    const holdingItem = this.pickup || this.getSelectedTool() === 'wateringCan'
+    const holdingItem = this.pickup || ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
     if (usingItem || holdingItem) {
       this.animation = 'grab'
     }
 
     const onGround = this.contactDirections.down
-    const friction = holdingItem || usingItem ? 0.65 : 0.7
+    const friction = usingItem ? 0.65 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration
@@ -357,7 +357,8 @@ export default class Player extends Thing {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 8 + 2)
-          this.shootWater(this.position, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05)
+          const pos = vec2.add(this.position, [this.direction * 0.4, 0.3])
+          this.shootWater(pos, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05)
           break
         }
       }
@@ -641,6 +642,19 @@ export default class Player extends Thing {
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)
       this.drawSpriteFrame('wateringCan')
+      ctx.restore()
+    }
+
+    // Draw the held water gun
+    if (this.getSelectedTool() === 'waterGun') {
+      ctx.save()
+      ctx.translate(...this.position)
+      ctx.scale(...this.squash)
+      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
+      ctx.translate(this.direction * 1.1, 0.4)
+      ctx.scale(this.direction, 1)
+      ctx.scale(1 / 48, 1 / 48)
+      this.drawSpriteFrame('waterGun')
       ctx.restore()
     }
   }

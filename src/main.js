@@ -40,6 +40,7 @@ game.assets.images = await game.loadImages({
   fertilizerParticle: 'images/fertilizerParticle.png',
   timeRing: 'images/timeRing.png',
   wateringCan: 'images/wateringcan.png',
+  waterGun: 'images/watergun.png',
   ground: 'images/ground.png',
   dirt1: 'images/dirt1.png',
   dirt2: 'images/dirt2.png',
@@ -80,7 +81,7 @@ game.assets.images = await game.loadImages({
 })
 
 game.assets.levels = await game.loadText({
-  level1: 'levels/level1.json'
+  level1: 'levels/gameWorld.json'
 })
 
 game.assets.data = await game.loadJson({
