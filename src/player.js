@@ -76,6 +76,7 @@ export default class Player extends Thing {
   unlockAnimationItemDescription = null
   isUnlockAnimationActive = false
   timer = 0
+  isUsingSelectedTool = false
 
   constructor (position) {
     super()
@@ -190,13 +191,19 @@ export default class Player extends Thing {
     }
 
     const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
-    const holdingItem = this.pickup || ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
+    this.isUsingSelectedTool = usingItem
+    const holdingItem = (
+      usingItem && (
+        this.pickup ||
+        ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
+      )
+    )
     if (usingItem || holdingItem) {
       this.animation = 'grab'
     }
 
     const onGround = this.contactDirections.down
-    const friction = usingItem ? 0.65 : 0.7
+    const friction = usingItem ? 0.6 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration
@@ -309,12 +316,12 @@ export default class Player extends Thing {
 
     // Switch sub tool
     if (game.keysPressed.KeyQ || game.buttonsPressed[5]) {
-      this.cycleTool(false)
+      this.cycleTool(true)
     }
 
     // Switch sub tool reverse
     if (game.keysPressed.KeyE || game.buttonsPressed[4]) {
-      this.cycleTool(true)
+      this.cycleTool(false)
     }
 
     // Use tool
@@ -584,7 +591,10 @@ export default class Player extends Thing {
     const toolCategories = this.getToolCategories()
     for (let i = 0; i < toolCategories.length; i ++) {
       if (toolCategories[i].name === category) {
-        return toolCategories[i].tools
+        return [...(
+          new Set(toolCategories[i].tools)
+          .intersection(new Set(this.ownedTools))
+        )]
       }
     }
     return []
@@ -622,6 +632,8 @@ export default class Player extends Thing {
 
     // TODO: Play item cycle sound and remove console log
     console.log(this.getSelectedTool())
+
+    this.setTimer('swapHotbar', 10)
   }
 
   cycleTool (reverse=false) {
@@ -656,6 +668,8 @@ export default class Player extends Thing {
 
     // TODO: Play item cycle sound and remove console log
     console.log(this.getSelectedTool())
+
+    this.setTimer('cycleTool', 10)
   }
 
   draw () {
@@ -769,42 +783,22 @@ export default class Player extends Thing {
       ctx.restore()
     }
 
+    let heldItemPosition = [1.1, 0.4]
+    let heldItemImage = this.getSelectedTool()
+
     // Draw the held sickle
-    if (this.getSelectedTool() === 'sickle') {
+    if (
+      ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool()) &&
+      this.isUsingSelectedTool
+    ) {
       ctx.save()
       ctx.translate(...this.position)
       ctx.scale(...this.squash)
       ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
-      ctx.translate(this.direction * 1.1, 0.4)
+      ctx.translate(this.direction * heldItemPosition[0], heldItemPosition[1])
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)
-      this.drawSpriteFrame('sickle')
-      ctx.restore()
-    }
-
-    // Draw the held watering can
-    if (this.getSelectedTool() === 'wateringCan') {
-      ctx.save()
-      ctx.translate(...this.position)
-      ctx.scale(...this.squash)
-      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
-      ctx.translate(this.direction * 1.15, 0.45)
-      ctx.scale(this.direction, 1)
-      ctx.scale(1 / 48, 1 / 48)
-      this.drawSpriteFrame('wateringCan')
-      ctx.restore()
-    }
-
-    // Draw the held water gun
-    if (this.getSelectedTool() === 'waterGun') {
-      ctx.save()
-      ctx.translate(...this.position)
-      ctx.scale(...this.squash)
-      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
-      ctx.translate(this.direction * 1.1, 0.4)
-      ctx.scale(this.direction, 1)
-      ctx.scale(1 / 48, 1 / 48)
-      this.drawSpriteFrame('waterGun')
+      this.drawSpriteFrame(heldItemImage)
       ctx.restore()
     }
   }
@@ -825,6 +819,45 @@ export default class Player extends Thing {
     ctx.fillStyle = 'white'
     ctx.fillText(`$${Math.round(this.visualMoney)}`, 0, 0)
     ctx.restore()
+
+    let i = 0
+    for (const tool of this.getOwnedToolsInCategory(this.selectedToolCategory)) {
+      ctx.save()
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+      ctx.strokeStyle = 'white'
+      ctx.lineWidth = 4
+      ctx.translate(64, game.getHeight() - 128)
+      ctx.translate(i * 80, 0)
+
+      const anim = Math.cos(this.getTimer('swapHotbar') * Math.PI * 2)
+      ctx.translate(0, u.map(anim, 0, -1, 0, 24, true))
+      //ctx.fillRect(0, 0, 64, 64)
+
+      ctx.translate(32, 32)
+      const scale = (
+        this.getTimer('cycleTool') && tool === this.getSelectedTool()
+        ? u.squareMap(this.getTimer('cycleTool'), 0, 1, 1.25, 1)
+        : 1
+      )
+      ctx.scale(scale, scale)
+      ctx.beginPath()
+      ctx.arc(0, 0, 36, 0, Math.PI * 2)
+      ctx.fill()
+
+      if (tool === this.getSelectedTool()) {
+        //ctx.beginPath()
+        //ctx.rect(0, 0, 64, 64)
+        ctx.stroke()
+      }
+
+      const image = game.assets.images[tool]
+      if (image) {
+        ctx.drawImage(image, -24, -24)
+      }
+      ctx.restore()
+
+      i += 1
+    }
   }
 
   // Get the player unstuck when trapped in a collision
