@@ -77,8 +77,10 @@ export default class PlantHedge extends Plant {
       }
       // If this is being actively watered, it should grow until it reaches max size
       else if (this.isBeingWatered()) {
-        this.hedgeGrowth = u.clamp(this.hedgeGrowth + growthSpeed, 1, this.getMaxHedgeGrowth())
-        this.hitboxCache = null
+        if (game.getThing('level').isTileClear(this.getHeadTile(), this)) {
+          this.hedgeGrowth = u.clamp(this.hedgeGrowth + growthSpeed, 1, this.getMaxHedgeGrowth())
+          this.hitboxCache = null
+        }
       }
       // If this has not been watered for a few seconds, it should shrivel until it reachers min size
       else if (this.timeSinceWatered > 240) {
@@ -120,6 +122,29 @@ export default class PlantHedge extends Plant {
       ]
     }
     return [{direction: 'up', length: 6}]
+  }
+
+  getHeadTile() {
+    const shape = this.getShape()
+    let lengthLeft = this.hedgeGrowth
+    let curPos = vec2.add(this.position, [0, 1])
+    for (const seg of shape) {   
+      const delta = vec2.directionToVector(seg.direction)
+      const segLength = Math.min(lengthLeft, seg.length)
+
+      lengthLeft -= seg.length
+      curPos = vec2.add(curPos, vec2.scale(delta, segLength))
+      if (lengthLeft <= 0) {
+        if (seg.direction === 'right') {
+          curPos = vec2.add(curPos, [1, 0])
+        }
+        if (seg.direction === 'down') {
+          curPos = vec2.add(curPos, [0, 1])
+        }
+        break
+      }
+    }
+    return [Math.floor(curPos[0]), Math.floor(curPos[1])]
   }
 
   getHedgeSegments() {

@@ -508,8 +508,8 @@ export default class Player extends Thing {
   }
 
   canBePlantedAt(pos, plantingRequirements) {
-    const validTileTypes = plantingRequirements.soil ?? 'anySoil'
-    const spacing = plantingRequirements.spacing ?? 0
+    // const validTileTypes = plantingRequirements?.soil ?? 'anySoil'
+    const validTileTypes = 'anySoil'
     const tileType = game.getThing('level').getTileAt(...pos)
     const soilType = game.getThing('level').getTileAt(pos[0], pos[1]+1)
 

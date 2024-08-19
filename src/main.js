@@ -258,9 +258,22 @@ class Level extends Thing {
   }
 
   // Used by plants to check if they are clear to grow somewhere
-  isTileClear() {
+  isTileClear(pos, thing) {
+    const [x, y] = pos
     const tileCoord = [Math.floor(x / this.tileSize), Math.floor(y / this.tileSize)]
-
+    if (this.tileGrids[0][tileCoord]) {
+      return false
+    }
+    const plants = game.getThingsNear(...pos, 1).filter(e => e.collideWithAabb && e !== thing)
+    for (const plant of plants) {
+      if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], pos)) {
+        return false
+      }
+      if (plant.position[0] === pos[0] && plant.position[1] === pos[1]) {
+        return false
+      }
+    }
+    return true
   }
 }
 
