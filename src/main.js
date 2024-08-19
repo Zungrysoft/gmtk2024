@@ -54,7 +54,7 @@ game.assets.images = await game.loadImages({
   hedgeBottomMarkLeft: 'images/hedgeBottomMarkLeft.png',
   caveBackground: 'images/cavebackground1.png',
   apple: 'images/apple.png',
-  dustParticle: 'images/dust.png'
+  dustParticle: 'images/dust.png',
   sprinkler: 'images/sprinkler.png',
   ash: 'images/ash.png',
   deployer: 'images/deployer.png',
