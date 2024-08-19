@@ -923,7 +923,7 @@ export default class Player extends Thing {
       ctx.translate(0, u.map(anim, 0, -1, 0, 24, true))
       ctx.translate(32, 32)
 
-      const scale = 1
+      const scale = 0.75
       ctx.scale(scale, scale)
       ctx.beginPath()
       ctx.arc(0, 0, 36, 0, Math.PI * 2)
