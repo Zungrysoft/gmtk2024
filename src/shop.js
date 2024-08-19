@@ -179,6 +179,13 @@ class ShopMenu extends Thing {
         image: 'keyyellow',
         givenKey: 'yellow',
       },
+      {
+        name: 'Blue Key',
+        price: 200,
+        description: 'Unlocks the Blue Gate',
+        image: 'keyblue',
+        givenKey: 'blue',
+      },
     ].filter(x => !this.itemAlreadyOwned(x))
 
     if (this.selection >= this.items.length) {
