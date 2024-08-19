@@ -315,12 +315,12 @@ export default class Player extends Thing {
     }
 
     // Switch sub tool
-    if (game.keysPressed.KeyQ || game.buttonsPressed[5]) {
+    if (game.keysPressed.KeyQ || game.buttonsPressed[4]) {
       this.cycleTool(true)
     }
 
     // Switch sub tool reverse
-    if (game.keysPressed.KeyE || game.buttonsPressed[4]) {
+    if (game.keysPressed.KeyE || game.buttonsPressed[5]) {
       this.cycleTool(false)
     }
 

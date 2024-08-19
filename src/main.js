@@ -11,6 +11,8 @@ import LaserField from './laserfield.js'
 import DrippingCeiling from './drippingceiling.js'
 import PickupMoney from './pickupMoney.js'
 import PickupTool from './pickuptool.js'
+import SellZone from './sellzone.js'
+import Shop from './shop.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -23,8 +25,10 @@ game.assets.images = await game.loadImages({
   apple: 'images/apple.png',
   plantApple: 'images/appleTree.png',
   plantAppleSprout: 'images/appleSprout.png',
+  seedPacketApple: 'images/seedPacketApple.png',
   orange: 'images/orange.png',
   plantOrangeSprout: 'images/orangeSprout.png',
+  seedPacketOrange: 'images/seedPacketOrange.png',
   plantClock: 'images/clockPlant.png',
   plantClockSprout: 'images/clockSprout.png',
   plantingIndicator: 'images/plantingIndicator.png',
@@ -78,7 +82,7 @@ game.assets.images = await game.loadImages({
 })
 
 game.assets.levels = await game.loadText({
-  level1: 'levels/testWorld.json'
+  level1: 'levels/gameWorld.json'
 })
 
 game.assets.data = await game.loadJson({
@@ -142,6 +146,12 @@ class Level extends Thing {
       }
       if (thing.name === 'tool') {
         game.addThing(new PickupTool(pos, thing.data?.tool ?? 'wateringCan'))
+      }
+      if (thing.name === 'sellZone') {
+        game.addThing(new SellZone(pos))
+      }
+      if (thing.name === 'shop') {
+        game.addThing(new Shop(pos))
       }
     }
 
