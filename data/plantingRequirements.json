@@ -6,9 +6,21 @@
         "soil": ["anySoil"]
     },
     "seedPacketHedge": {
-        "soil": [2]
+        "soil": ["anySoil"]
     },
     "seedPacketClock": {
+        "soil": ["anySoil"]
+    },
+    "seedPacketBanana": {
+        "soil": ["anySoil"]
+    },
+    "seedPacketBlueberry": {
+        "soil": ["anySoil"]
+    },
+    "seedPacketFan": {
+        "soil": ["anySoil"]
+    },
+    "seedPacketMelon": {
         "soil": ["anySoil"]
     }
 }

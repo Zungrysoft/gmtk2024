@@ -18,6 +18,10 @@ export default class Fertilizer extends Pickupable {
       this.type = 'coal'
       this.sprite = 'coal'
     }
+    else if (type === 'ether') {
+      this.type = 'ether'
+      this.sprite = 'ether'
+    }
     else if (type === 'orange') {
       this.type = 'orange'
       this.sprite = 'orange'

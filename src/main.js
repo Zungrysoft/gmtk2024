@@ -16,6 +16,7 @@ import Shop from './shop.js'
 import Gate from './gate.js'
 import Tutorial from './tutorial.js'
 import Fertilizer from './fertilizer.js'
+import Dribbler from './dribbler.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -34,6 +35,10 @@ game.assets.images = await game.loadImages({
   seedPacketOrange: 'images/seedPacketOrange.png',
   plantClock: 'images/clockPlant.png',
   plantClockSprout: 'images/clockSprout.png',
+  seedPacketClock: 'images/seedPacketClock.png',
+  plantFan: 'images/fanPlant.png',
+  plantFanSprout: 'images/fanSprout.png',
+  seedPacketFan: 'images/seedPacketFan.png',
   plantingIndicator: 'images/plantingIndicator.png',
   plantingIndicatorError: 'images/plantingIndicatorError.png',
   waterShotSpeed1: 'images/waterShotSpeed1.png',
@@ -63,8 +68,10 @@ game.assets.images = await game.loadImages({
   caveBackground: 'images/cavebackground1.png',
   dustParticle: 'images/dust.png',
   sprinkler: 'images/sprinkler.png',
+  dribbler: 'images/dribbler.png',
   ash: 'images/ash.png',
   coal: 'images/coal.png',
+  ether: 'images/ether.png',
   deployer: 'images/deployer.png',
   timer0: 'images/timer0.png',
   timer1: 'images/timer1.png',
@@ -103,6 +110,7 @@ game.assets.images = await game.loadImages({
   tutorialmode2: 'images/tutorialMode2.png',
   vendingmachine: 'images/vendingmachine.png',
   swipe: 'images/swipe.png',
+  leafParticle: 'images/leafParticle.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -157,6 +165,9 @@ class Level extends Thing {
       }
       if (thing.name === 'sprinkler') {
         game.addThing(new Sprinkler(pos))
+      }
+      if (thing.name === 'dribbler') {
+        game.addThing(new Dribbler(pos, thing.data?.direction ?? 1))
       }
       if (thing.name === 'deployer') {
         game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
