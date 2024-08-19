@@ -224,14 +224,14 @@ export default class Player extends Thing {
     this.isUsingSelectedTool = usingItem
 
     let holdingItem = Boolean(this.pickup)
-    if (usingItem && this.getSelectedTool()) {
+    if (usingItem && this.getHeldTool()) {
       holdingItem = true
     }
     if (
       Math.abs(this.velocity[0]) < 0.04 &&
       onGround &&
-      this.getSelectedTool() &&
-      ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
+      this.getHeldTool() &&
+      ['wateringCan', 'waterGun'].includes(this.getHeldTool())
     ) {
       holdingItem = true
     }
@@ -357,7 +357,7 @@ export default class Player extends Thing {
       this.money += 1000000
     }
 
-    if (onGround && this.getSelectedTool().includes('seedPacket')) {
+    if (onGround && this.getHeldTool().includes('seedPacket')) {
       this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.2, 1.3)
     }
     else {
@@ -377,7 +377,7 @@ export default class Player extends Thing {
   }
 
   useTool(pressed) {
-    const selectedTool = this.getSelectedTool()
+    const selectedTool = this.getHeldTool()
 
     // Sickle
     if (selectedTool === 'sickle' && pressed) {
@@ -586,10 +586,14 @@ export default class Player extends Thing {
   }
 
   getSelectedTool () {
+    return this.selectedTools[this.selectedToolCategory]
+  }
+
+  getHeldTool () {
     if (this.pickup) {
       return 'pickup'
     }
-    return this.selectedTools[this.selectedToolCategory]
+    return this.getSelectedTool()
   }
 
   setSelectedTool (tool) {
@@ -816,10 +820,10 @@ export default class Player extends Thing {
     this.updatePlacementPositionVisual()
     if (
       this.placementPositionVisual &&
-      this.getSelectedTool().includes('seedPacket')
+      this.getHeldTool().includes('seedPacket')
     ) {
       let sprite = game.assets.images.plantingIndicator
-      const tileReqs = game.assets.data.plantingRequirements[this.getSelectedTool()]
+      const tileReqs = game.assets.data.plantingRequirements[this.getHeldTool()]
       if (!this.canBePlantedAt(this.getPlacementPosition(), tileReqs)) {
         sprite = game.assets.images.plantingIndicatorError
       }
@@ -836,11 +840,11 @@ export default class Player extends Thing {
     }
 
     let heldItemPosition = [1.1, 0.4]
-    let heldItemImage = this.getSelectedTool()
+    let heldItemImage = this.getHeldTool()
 
     // Draw the held sickle
     if (
-      ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool()) &&
+      ['sickle', 'wateringCan', 'waterGun'].includes(this.getHeldTool()) &&
       this.isHoldingSelectedTool
     ) {
       ctx.save()
