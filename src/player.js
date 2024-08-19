@@ -229,7 +229,7 @@ export default class Player extends Thing {
       Math.abs(this.velocity[0]) < 0.04 &&
       onGround &&
       this.getSelectedTool() &&
-      this.getSelectedTool() !== 'sickle'
+      ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
     ) {
       holdingItem = true
     }
