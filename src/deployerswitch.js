@@ -29,7 +29,7 @@ export default class DeployerSwitch extends Thing {
         // Reactivate deployers
         this.activateDeployers()
       }
-      this.downTime = 15
+      this.downTime = 25
     }
     
     this.downTime = Math.max(this.downTime - 1, 0)
