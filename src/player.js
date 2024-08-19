@@ -9,6 +9,7 @@ import WaterShot from './watershot.js'
 import PlantApple from './plantapple.js'
 import PlantClock from './plantclock.js'
 import PlantOrange from './plantorange.js'
+import Gate from './gate.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -48,7 +49,7 @@ export default class Player extends Thing {
       speed: 0,
       frameSize: 96
     },
-    grab: { frames: [4], speed: 0, frameSize: 96 },
+    grab: { frames: [4, 5], speed: 0.04, frameSize: 96 },
     unlock: { frames: [12], speed: 0, frameSize: 96 },
   }
   aabb = [-0.25, -0.25, 0.25, 1]
@@ -77,6 +78,8 @@ export default class Player extends Thing {
   isUnlockAnimationActive = false
   timer = 0
   isUsingSelectedTool = false
+  isHoldingSelectedTool = false
+  keyColors = []
 
   constructor (position) {
     super()
@@ -125,6 +128,30 @@ export default class Player extends Thing {
       this.pickup.position[1] = this.position[1]
       this.pickup.velocity[0] = this.velocity[0]
       this.pickup.velocity[1] = this.velocity[1]
+    }
+
+    // Switch tool category
+    if (game.keysPressed.KeyW || game.buttonsPressed[3]) {
+      this.cycleToolCategory(false)
+    }
+
+    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
+      this.cycleToolCategory(true)
+    }
+
+    // Switch sub tool
+    if (game.keysPressed.KeyA || game.buttonsPressed[4]) {
+      this.cycleTool(true)
+    }
+
+    // Switch sub tool reverse
+    if (game.keysPressed.KeyD || game.buttonsPressed[5]) {
+      this.cycleTool(false)
+    }
+
+    // Use tool
+    if (game.keysDown.KeyZ || game.buttonsDown[2]) {
+      this.useTool(true)
     }
 
     // Un-squash and stretch
@@ -190,19 +217,28 @@ export default class Player extends Thing {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
     }
 
+    const onGround = this.contactDirections.down
     const usingItem = game.keysDown.KeyZ || game.buttonsDown[2]
     this.isUsingSelectedTool = usingItem
-    const holdingItem = (
-      this.pickup || (
-        usingItem &&
-        ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
-      )
-    )
+
+    let holdingItem = Boolean(this.pickup)
+    if (usingItem && this.getSelectedTool()) {
+      holdingItem = true
+    }
+    if (
+      Math.abs(this.velocity[0]) < 0.04 &&
+      onGround &&
+      this.getSelectedTool() &&
+      this.getSelectedTool() !== 'sickle'
+    ) {
+      holdingItem = true
+    }
+    this.isHoldingSelectedTool = holdingItem
+
     if (usingItem || holdingItem) {
       this.animation = 'grab'
     }
 
-    const onGround = this.contactDirections.down
     const friction = usingItem && holdingItem ? 0.6 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
@@ -309,30 +345,6 @@ export default class Player extends Thing {
       this.pickup = nextPickup
     }
 
-    // Switch tool category
-    if (game.keysPressed.KeyW || game.buttonsPressed[3]) {
-      this.cycleToolCategory(false)
-    }
-
-    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
-      this.cycleToolCategory(true)
-    }
-
-    // Switch sub tool
-    if (game.keysPressed.KeyA || game.buttonsPressed[4]) {
-      this.cycleTool(true)
-    }
-
-    // Switch sub tool reverse
-    if (game.keysPressed.KeyD || game.buttonsPressed[5]) {
-      this.cycleTool(false)
-    }
-
-    // Use tool
-    if (game.keysDown.KeyZ || game.buttonsDown[2]) {
-      this.useTool(true)
-    }
-
     // Unlock all tools cheat
     if (game.keysDown.ShiftLeft && game.keysPressed.KeyJ) {
       this.unlockAllToolsCheat()
@@ -363,7 +375,7 @@ export default class Player extends Thing {
     // Sickle
     if (selectedTool === 'sickle' && pressed) {
       // Simple implementation for now
-      const plants = game.getThingsNear(...this.position, 2).filter(x => x instanceof Plant)
+      const plants = game.getThingsNear(...this.position, 2).filter(x => x.overlapWithAabb)
       for (const plant of plants) {
         if (plant.overlapWithAabb([-0.3, -0.3, 0.3, 0.3], vec2.add(this.position, [this.direction * 0.7, 0]))) {
           if (plant.isIndestructible) {
@@ -476,7 +488,7 @@ export default class Player extends Thing {
         // Can't plant on top of another plant
         // Sprouts are always 1x1, so only check that square
         let collided = false
-        const plants = game.getThingsNear(...pos, 1).filter(e => e instanceof Plant)
+        const plants = game.getThingsNear(...pos, 1).filter(e => e.collideWithAabb)
         for (const plant of plants) {
           if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], pos)) {
             collided = true
@@ -792,7 +804,7 @@ export default class Player extends Thing {
     // Draw the held sickle
     if (
       ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool()) &&
-      this.isUsingSelectedTool
+      this.isHoldingSelectedTool
     ) {
       ctx.save()
       ctx.translate(...this.position)

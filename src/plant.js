@@ -59,12 +59,6 @@ export default class Plant extends Thing {
     return this.getHitBoxes()
   }
 
-  collideWithThing (other, position = [undefined, undefined]) {
-    if (position[0] === undefined) { position[0] = other.position[0] }
-    if (position[1] === undefined) { position[1] = other.position[1] }
-    return this.collideWithAabb(other.aabb, position)
-  }
-
   collideWithAabb (aabb, position = [0, 0]) {
     for (const box of this.getHitBoxes()) {
       const collided = u.checkAabbIntersection(box, aabb, [0, 0], position)
@@ -74,12 +68,6 @@ export default class Plant extends Thing {
     }
 
     return false
-  }
-
-  overlapWithThing (other, position = [undefined, undefined]) {
-    if (position[0] === undefined) { position[0] = other.position[0] }
-    if (position[1] === undefined) { position[1] = other.position[1] }
-    return this.overlapWithAabb(other.aabb, position)
   }
 
   overlapWithAabb (aabb, position = [0, 0]) {
@@ -97,7 +85,7 @@ export default class Plant extends Thing {
     const fertilizers = game.getThingsNear(...this.position, 2).filter(x => x instanceof Fertilizer)
     for (const thing of fertilizers) {
       if (
-        this.overlapWithThing(thing) &&
+        this.overlapWithAabb(thing.aabb, thing.position) &&
         thing.type === type &&
         !thing.isPickedUp() &&
         !thing.isDead &&

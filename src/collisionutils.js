@@ -11,9 +11,9 @@ export function checkWorldPointCollision (x, y) {
 
 export function checkCollision (aabb, x, y, collideWithLaserField=false) {
   for (const thing of game.getThingsInAabb(aabb, [x, y])) {
-    if (thing instanceof Plant) {
-      const plantHit = thing.collideWithAabb(aabb, [x, y])
-      if (plantHit) {
+    if (thing.collideWithAabb) {
+      const thingHit = thing.collideWithAabb(aabb, [x, y])
+      if (thingHit) {
         return true
       }
     }
