@@ -96,6 +96,7 @@ game.assets.images = await game.loadImages({
   tutorialtool: 'images/tutorialTool.png',
   tutorialgrab: 'images/tutorialGrab.png',
   tutorialgrab2: 'images/tutorialGrab2.png',
+  tutorialgrab3: 'images/tutorialGrab3.png',
   tutorialswitch: 'images/tutorialSwitch.png',
   tutorialshop: 'images/tutorialShop.png',
   tutorialmode: 'images/tutorialMode.png',
