@@ -49,6 +49,7 @@ export default class Player extends Thing {
       frameSize: 96
     },
     grab: { frames: [4], speed: 0, frameSize: 96 },
+    unlock: { frames: [12], speed: 0, frameSize: 96 },
   }
   aabb = [-0.25, -0.25, 0.25, 1]
   jumpBuffer = 0
@@ -79,6 +80,7 @@ export default class Player extends Thing {
   wateringDeviceCooldowns = [0, 0, 0]
   placementPositionIndicatorScale = 1
   pickup = null // The thing you're currently picking up
+  unlockAnimationItemImage = null
 
   constructor () {
     super()
@@ -86,6 +88,13 @@ export default class Player extends Thing {
   }
 
   update () {
+    if (this.getTimer('unlock')) {
+      this.animation = 'unlock'
+      this.updateTimers()
+      this.animate()
+      return
+    }
+
     // If trapped inside something solid, like when getting pushed by
     // a hedge or something, try to get unstuck
     this.getUnstuck()
@@ -305,6 +314,10 @@ export default class Player extends Thing {
       this.useTool(game.keysPressed.KeyA || game.buttonsPressed[2])
     }
 
+    if (game.keysPressed.KeyU) {
+      this.unlockTool('wateringCan')
+    }
+
     if (onGround && this.getSelectedTool().includes('seedPacket')) {
       this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.2, 1.3)
     }
@@ -469,6 +482,19 @@ export default class Player extends Thing {
     }
 
     // TODO: Play ITEM GET animation and sound
+
+    this.unlockAnimationItemImage = tool
+    const wasPaused = new WeakMap()
+    game.getThings().forEach(thing => {
+      wasPaused.set(thing, thing.isPaused)
+      thing.isPaused = thing !== this
+    })
+    this.setTimer('unlock', 200, () => {
+      game.getThings().forEach(thing => {
+        if (thing === this) { return }
+        thing.isPaused = wasPaused.get(thing)
+      })
+    })
   }
 
   getToolCategories () {
@@ -596,10 +622,55 @@ export default class Player extends Thing {
 
   draw () {
     const { ctx } = game
+
+    if (this.getTimer('unlock')) {
+      ctx.save()
+      ctx.fillStyle = '#000B28'
+      ctx.globalAlpha = 0.5
+      const camera = game.getCamera2D()
+      ctx.translate(...camera.position)
+      ctx.translate(game.getWidth() * -0.5, game.getHeight() * -0.5)
+      ctx.fillRect(0, 0, game.getWidth(), game.getHeight())
+      ctx.restore()
+    }
+
+
     // Move the sprite down a bit when it's being squashed, so it
     // looks like it's taking off from the ground when the player
     // jumps
     this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 32, true))
+
+    if (this.getTimer('unlock')) {
+      ctx.save()
+      ctx.translate(
+        this.position[0],
+        this.position[1] - 1.25
+      )
+      ctx.fillStyle = 'yellow'
+      ctx.globalAlpha = 0.5
+      ctx.beginPath()
+      ctx.arc(0, 0, u.map(Math.sin(this.getTimer('unlock') * 14), -1, 1, 0.7, 0.85), 0, Math.PI * 2)
+      ctx.fill()
+      ctx.globalAlpha = 1
+      ctx.scale(1 / 48, 1 / 48)
+      this.drawSpriteFrame(this.unlockAnimationItemImage, 0, 64)
+      ctx.restore()
+
+
+      ctx.save()
+      ctx.translate(
+        this.position[0],
+        this.position[1] - 3
+      )
+      ctx.scale(1 / 48, 1 / 48)
+      ctx.textAlign = 'center'
+      ctx.font = 'italic bold 64px Arial'
+      ctx.fillStyle = '#000B28'
+      ctx.fillText(`You unlocked ${this.unlockAnimationName}!`, 4, 4)
+      ctx.fillStyle = 'yellow'
+      ctx.fillText(`You unlocked ${this.unlockAnimationName}!`, 0, 0)
+      ctx.restore()
+    }
 
     // Selection box for planting seeds
     this.updatePlacementPositionVisual()

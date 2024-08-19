@@ -50,17 +50,20 @@ class ShopMenu extends Thing {
     {
       name: 'Watering Can',
       price: 10,
-      description: 'Waters stuff'
+      description: 'Waters stuff',
+      image: 'wateringCan'
     },
     {
       name: 'Apple Seeds',
       price: 20,
-      description: 'Grows apples!'
+      description: 'Grows apples!',
+      image: 'apple'
     },
     {
       name: 'Pear Seeds',
       price: 40,
-      description: 'Grows pears!'
+      description: 'Grows pears!',
+      image: 'apple'
     }
   ]
 
@@ -103,7 +106,6 @@ class ShopMenu extends Thing {
 
     const size = 180
     ctx.save()
-    ctx.fillStyle = 'black'
     ctx.strokeStyle = 'white'
     ctx.lineWidth = 4
     ctx.translate(game.getWidth() / 2, game.getHeight() / 2)
@@ -111,7 +113,9 @@ class ShopMenu extends Thing {
       const a = (this.selectionAnim - i) * Math.PI * 2 / 10 + Math.PI * 0.5
       const shopItem = this.items[i % this.items.length]
 
-      ctx.globalAlpha = u.map(Math.sin(a), -0.25, 0.25, 0, 1, true)
+      const alpha = u.map(Math.sin(a), -0.25, 0.25, 0, 1, true)
+      if (alpha <= 0) { continue }
+      ctx.globalAlpha = alpha
 
       ctx.globalAlpha *= (
         shopItem.price > game.getThing('player').money
@@ -124,8 +128,15 @@ class ShopMenu extends Thing {
       ctx.translate(Math.cos(a) * 500, Math.sin(a) * 100 - 50)
       ctx.scale(scale, scale)
       ctx.beginPath()
+      ctx.fillStyle = '#888'
       ctx.fillRect(-size / 2, -size / 2, size, size)
       ctx.rect(-size / 2, -size / 2, size, size)
+      ctx.save()
+      const img = game.assets.images[shopItem.image]
+      ctx.scale(2, 2)
+      ctx.translate(img.width / -2, img.height / -2)
+      ctx.drawImage(img, 0, 0)
+      ctx.restore()
       ctx.stroke()
 
       ctx.save()
