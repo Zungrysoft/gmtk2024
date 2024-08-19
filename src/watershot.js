@@ -5,6 +5,7 @@ import Thing from 'thing'
 import Plant from './plant.js'
 import WaterDroplet from './waterdroplet.js'
 import WaterDeliverer from './waterdeliverer.js'
+import LaserField from './laserfield.js'
 
 export default class WaterShot extends Thing {
   sprite = game.assets.images.waterShotSpeed1
@@ -63,6 +64,17 @@ export default class WaterShot extends Thing {
     if (game.getThing('level').checkWorldTileCollision(...this.position)) {
       this.isDead = true
       this.spawnDroplets()
+    }
+
+    // Detect laser fields
+    for (const thing of game.getThingsInAabb(this.aabb, this.position)) {
+      if (thing instanceof LaserField) {
+        const collided = u.checkAabbIntersection(this.aabb, thing.aabb, this.position, thing.position)
+        if (collided) {
+          this.isDead = true
+          this.spawnDroplets()
+        }
+      }
     }
 
     // Limit lifetime
