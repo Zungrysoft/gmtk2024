@@ -13,6 +13,7 @@ import PickupMoney from './pickupMoney.js'
 import PickupTool from './pickuptool.js'
 import SellZone from './sellzone.js'
 import Shop from './shop.js'
+import Gate from './gate.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -78,7 +79,11 @@ game.assets.images = await game.loadImages({
   laserField: 'images/laserField2.png',
   roots: 'images/roots.png',
   drip: 'images/drip.png',
-  money: 'images/money.png'
+  money: 'images/money.png',
+  gateblue: 'images/gateBlue.png',
+  gatered: 'images/gateRed.png',
+  gategreen: 'images/gateGreen.png',
+  gateyellow: 'images/gateYellow.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -152,6 +157,9 @@ class Level extends Thing {
       }
       if (thing.name === 'shop') {
         game.addThing(new Shop(pos))
+      }
+      if (thing.name === 'gate') {
+        game.addThing(new Gate(pos, thing.data?.color ?? 'yellow'))
       }
     }
 

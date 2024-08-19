@@ -9,6 +9,7 @@ import WaterShot from './watershot.js'
 import PlantApple from './plantapple.js'
 import PlantClock from './plantclock.js'
 import PlantOrange from './plantorange.js'
+import Gate from './gate.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -77,6 +78,7 @@ export default class Player extends Thing {
   isUnlockAnimationActive = false
   timer = 0
   isUsingSelectedTool = false
+  keyColors = []
 
   constructor (position) {
     super()
@@ -363,7 +365,7 @@ export default class Player extends Thing {
     // Sickle
     if (selectedTool === 'sickle' && pressed) {
       // Simple implementation for now
-      const plants = game.getThingsNear(...this.position, 2).filter(x => x instanceof Plant)
+      const plants = game.getThingsNear(...this.position, 2).filter(x => x.collideWithAabb)
       for (const plant of plants) {
         if (plant.overlapWithAabb([-0.3, -0.3, 0.3, 0.3], vec2.add(this.position, [this.direction * 0.7, 0]))) {
           if (plant.isIndestructible) {
@@ -476,7 +478,7 @@ export default class Player extends Thing {
         // Can't plant on top of another plant
         // Sprouts are always 1x1, so only check that square
         let collided = false
-        const plants = game.getThingsNear(...pos, 1).filter(e => e instanceof Plant)
+        const plants = game.getThingsNear(...pos, 1).filter(e => e.collideWithAabb)
         for (const plant of plants) {
           if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], pos)) {
             collided = true
