@@ -141,6 +141,18 @@ export default class Player extends Thing {
       this.runFrames = 0
     } else {
       this.runFrames += 1
+      if (this.runFrames % 4 === 0 && this.contactDirections.down) {
+        game.addThing(new DustParticle(
+          [
+            this.position[0] - this.direction * u.random(0.1, 0.3),
+            this.position[1] + 0.9
+          ],
+          [
+            u.random(this.direction * -0.02, this.direction * -0.04),
+            u.random(-0.001, -0.01)
+          ]
+        ))
+      }
     }
     if (this.velocity[1] < 0) {
       this.animation = (
@@ -191,6 +203,19 @@ export default class Player extends Thing {
     if (onGround) {
       if (this.coyoteFrames < 3) {
         this.squash[1] = 0.5
+        for (let i = 0; i < 3; i += 1) {
+          const dir = u.choose([1, -1])
+          game.addThing(new DustParticle(
+            [
+              this.position[0] + u.random(-0.1, 0.1),
+              this.position[1] + 0.9
+            ],
+            [
+              u.random(dir * -0.02, dir * -0.04),
+              u.random(-0.001, -0.01)
+            ]
+          ))
+        }
       }
       this.coyoteFrames = 8
     }
@@ -657,5 +682,32 @@ export default class Player extends Thing {
       return true
     }
     return collisionutils.checkCollision(this.aabb, x, y)
+  }
+}
+
+class DustParticle extends Thing {
+  sprite = 'dustParticle'
+  scale = 0.7 / 48
+  animation = {
+    idle: {
+      frames: [0, 1],
+      speed: 0.5,
+      frameSize: 64
+    }
+  }
+
+  constructor (position, velocity) {
+    super()
+    this.position = position
+    this.velocity = velocity
+    this.setTimer('life', 30, () => { this.isDead = true })
+  }
+
+  draw () {
+    const { ctx } = game
+    ctx.save()
+    ctx.globalAlpha = u.map(this.getTimer('life'), 0.5, 1, 0.35, 0, true)
+    super.draw()
+    ctx.restore()
   }
 }
