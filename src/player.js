@@ -118,6 +118,8 @@ export default class Player extends Thing {
     this.move()
     this.animate()
 
+    if (game.getThing('shopmenu')) { return }
+
     if (this.pickup) {
       const snappiness = 0.7
       this.pickup.position[0] = u.lerp(

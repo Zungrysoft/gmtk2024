@@ -74,14 +74,20 @@ class ShopMenu extends Thing {
     },
   ]
   holdFrames = 0
+  canBuy = true
 
   constructor () {
     super()
     game.setThingName(this, 'shopmenu')
-    this.setTimer('intro', 12)
+    this.setTimer('shopmenu', 12)
   }
 
   update () {
+    const player = game.getThing('player')
+    if (player.isUnlockAnimationActive) {
+      return
+    }
+
     super.update()
     this.selectionAnim = u.lerp(this.selectionAnim, this.selection, 0.2)
     const rightButton = game.keysDown.ArrowRight || game.buttonsDown[15]
@@ -112,26 +118,28 @@ class ShopMenu extends Thing {
     }
 
     // Buy item
-    const player = game.getThing('player')
-    if (
-      game.keysDown.KeyX ||
-      game.keysDown.KeyZ ||
-      game.buttonsDown[2] ||
-      game.buttonsDown[0]
-    ) {
-      const selection = this.items[this.selection]
-      if (player.money >= selection.price) {
-        player.money -= selection.price
-        this.finish()
-        if (selection.givenTool) {
-          player.unlockTool(selection.givenTool)
+    if (this.canBuy) {
+      if (
+        game.keysPressed.KeyX ||
+          game.keysPressed.KeyZ ||
+          game.buttonsPressed[2] ||
+          game.buttonsPressed[0]
+      ) {
+        const selection = this.items[this.selection]
+        if (player.money >= selection.price) {
+          player.money -= selection.price
+          this.canBuy = false
+          this.after(10, () => { this.canBuy = true })
+          if (selection.givenTool) {
+            player.unlockTool(selection.givenTool)
+          }
+          else if (selection.givenKey) {
+            player.unlockKey(selection.givenKey)
+          }
         }
-        else if (selection.givenKey) {
-          player.unlockKey(selection.givenKey)
+        else {
+          // TODO: Error Sound
         }
-      }
-      else {
-        // TODO: Error Sound
       }
     }
   }
@@ -142,6 +150,8 @@ class ShopMenu extends Thing {
   }
 
   postDraw () {
+    if (game.getThing('player').isUnlockAnimationActive) { return }
+
     const { ctx } = game
     ctx.save()
     if (this.getTimer('intro')) {
