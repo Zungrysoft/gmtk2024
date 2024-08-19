@@ -1,5 +1,6 @@
 import * as game from 'game'
 import * as u from 'utils'
+import * as vec2 from 'vector2'
 import * as webgl from 'webgl'
 import Thing from 'thing'
 import Player from './player.js'
@@ -17,6 +18,7 @@ import Gate from './gate.js'
 import Tutorial from './tutorial.js'
 import Fertilizer from './fertilizer.js'
 import Dribbler from './dribbler.js'
+import DeployerSwitch from './deployerswitch.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -114,6 +116,8 @@ game.assets.images = await game.loadImages({
   vendingmachine: 'images/vendingmachine.png',
   swipe: 'images/swipe.png',
   leafParticle: 'images/leafParticle.png',
+  switch: 'images/switch.png',
+  switchDown: 'images/switchDown.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -167,16 +171,19 @@ class Level extends Thing {
         ))
       }
       if (thing.name === 'sprinkler') {
-        game.addThing(new Sprinkler(pos))
+        game.addThing(new Sprinkler(vec2.add(pos, [0.5, 0.5])))
       }
       if (thing.name === 'dribbler') {
-        game.addThing(new Dribbler(pos, thing.data?.direction ?? 1))
+        game.addThing(new Dribbler(vec2.add(pos, [0.5, 0.5]), thing.data?.direction ?? 1))
       }
       if (thing.name === 'deployer') {
         game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
       }
+      if (thing.name === 'deployerSwitch') {
+        game.addThing(new DeployerSwitch(pos, thing.data?.radius ?? 10))
+      }
       if (thing.name === 'fertilizer') {
-        game.addThing(new Fertilizer(pos, thing.data?.type ?? 'apple'))
+        game.addThing(new Fertilizer(vec2.add(pos, [0.5, 0.5]), thing.data?.type ?? 'apple'))
       }
       if (thing.name === 'laserField') {
         game.addThing(new LaserField(pos, thing.data?.size ?? [1, 1]))

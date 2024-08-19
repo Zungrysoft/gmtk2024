@@ -3,7 +3,6 @@ import WaterShot from './waterShot.js'
 import * as game from 'game'
 
 export default class Dribbler extends Pickupable {
-  aabb = [-0.5, -0.5, 0.5, 0.5]
   sprite = 'dribbler'
   animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }
@@ -11,7 +10,7 @@ export default class Dribbler extends Pickupable {
   sprinklerTimer = 0
   enabled = true
 
-  constructor(position, direction, isAttached) {
+  constructor(position, direction=1, isAttached) {
     super(position, isAttached)
     this.direction = direction
   }
@@ -31,7 +30,7 @@ export default class Dribbler extends Pickupable {
     if (this.enabled && !this.isPickedUp()) {
       this.sprinklerTimer ++
       if (this.sprinklerTimer % 4 === 0) {
-        const vel = [(0.2 + Math.random()*0.1) * this.direction, Math.random() * -0.1]
+        const vel = [(0.28 + Math.random()*0.1) * this.direction, Math.random() * -0.1]
         game.addThing(new WaterShot(this.position, vel, 0.4))
       }
     }

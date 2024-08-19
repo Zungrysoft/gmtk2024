@@ -2,6 +2,8 @@ import * as game from 'game'
 import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Fertilizer from './fertilizer.js'
+import Dribbler from './dribbler.js'
+import Sprinkler from './sprinkler.js'
 
 export default class Deployer extends Thing {
   sprite = game.assets.images.deployer
@@ -34,6 +36,12 @@ export default class Deployer extends Thing {
 
   createNewObject() {
     const pos = vec2.add(this.position, [0.5, 0.5])
+    if (this.type === 'dribbler') {
+      return new Dribbler(pos)
+    }
+    if (this.type === 'sprinkler') {
+      return new Sprinkler(pos)
+    }
     return new Fertilizer(pos, this.type)
   }
 

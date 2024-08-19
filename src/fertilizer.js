@@ -1,7 +1,6 @@
 import Pickupable from './pickupable.js'
 
 export default class Fertilizer extends Pickupable {
-  aabb = [-0.45, -0.45, 0.45, 0.45]
   animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }
   }

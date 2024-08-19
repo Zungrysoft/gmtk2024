@@ -4,7 +4,7 @@ import * as game from 'game'
 import Thing from 'thing'
 
 export default class Pickupable extends Thing {
-  aabb = [-0.5, -0.5, 0.5, 0.5]
+  aabb = [-0.45, -0.45, 0.45, 0.45]
   sprite = 'apple'
   animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }

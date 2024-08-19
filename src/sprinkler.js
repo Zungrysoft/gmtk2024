@@ -4,7 +4,6 @@ import * as vec2 from 'vector2'
 import * as game from 'game'
 
 export default class Sprinkler extends Pickupable {
-  aabb = [-0.5, -0.5, 0.5, 0.5]
   sprite = 'sprinkler'
   animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }
