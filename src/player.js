@@ -49,7 +49,7 @@ export default class Player extends Thing {
       speed: 0,
       frameSize: 96
     },
-    grab: { frames: [4], speed: 0, frameSize: 96 },
+    grab: { frames: [4, 5], speed: 0.04, frameSize: 96 },
     unlock: { frames: [12], speed: 0, frameSize: 96 },
   }
   aabb = [-0.25, -0.25, 0.25, 1]
@@ -78,6 +78,7 @@ export default class Player extends Thing {
   isUnlockAnimationActive = false
   timer = 0
   isUsingSelectedTool = false
+  isHoldingSelectedTool = false
   keyColors = []
 
   constructor (position) {
@@ -127,6 +128,30 @@ export default class Player extends Thing {
       this.pickup.position[1] = this.position[1]
       this.pickup.velocity[0] = this.velocity[0]
       this.pickup.velocity[1] = this.velocity[1]
+    }
+
+    // Switch tool category
+    if (game.keysPressed.KeyW || game.buttonsPressed[3]) {
+      this.cycleToolCategory(false)
+    }
+
+    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
+      this.cycleToolCategory(true)
+    }
+
+    // Switch sub tool
+    if (game.keysPressed.KeyA || game.buttonsPressed[4]) {
+      this.cycleTool(true)
+    }
+
+    // Switch sub tool reverse
+    if (game.keysPressed.KeyD || game.buttonsPressed[5]) {
+      this.cycleTool(false)
+    }
+
+    // Use tool
+    if (game.keysDown.KeyZ || game.buttonsDown[2]) {
+      this.useTool(true)
     }
 
     // Un-squash and stretch
@@ -192,16 +217,28 @@ export default class Player extends Thing {
       this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
     }
 
-    const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
+    const onGround = this.contactDirections.down
+    const usingItem = game.keysDown.KeyZ || game.buttonsDown[2]
     this.isUsingSelectedTool = usingItem
-    const holdingItem = (
-      (this.pickup || ['wateringCan', 'waterGun'].includes(this.getSelectedTool()))
-    )
-    if ((usingItem || holdingItem) && Math.abs(this.velocity[0]) < runThreshold) {
+
+    let holdingItem = Boolean(this.pickup)
+    if (usingItem && this.getSelectedTool()) {
+      holdingItem = true
+    }
+    if (
+      Math.abs(this.velocity[0]) < 0.04 &&
+      onGround &&
+      this.getSelectedTool() &&
+      ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
+    ) {
+      holdingItem = true
+    }
+    this.isHoldingSelectedTool = holdingItem
+
+    if (usingItem || holdingItem) {
       this.animation = 'grab'
     }
 
-    const onGround = this.contactDirections.down
     const friction = usingItem && holdingItem ? 0.6 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
@@ -247,7 +284,7 @@ export default class Player extends Thing {
     // space. Buffer times for pressing space too early (jumpBuffer)
     // and too late (coyoteTime)
     this.jumpBuffer -= 1
-    if (game.keysPressed.Space || game.buttonsPressed[0]) {
+    if (game.keysPressed.KeyX || game.buttonsPressed[0]) {
       this.jumpBuffer = 10
     }
     if (this.jumpBuffer > 0 && this.coyoteFrames > 0) {
@@ -257,7 +294,7 @@ export default class Player extends Thing {
       this.squash[1] = 1.5
       this.squash[0] = 0.5
     }
-    if (!(game.keysDown.Space || game.buttonsDown[0]) && this.velocity[1] < 0) {
+    if (!(game.keysDown.KeyX || game.buttonsDown[0]) && this.velocity[1] < 0) {
       this.velocity[1] *= 0.7
     }
 
@@ -306,30 +343,6 @@ export default class Player extends Thing {
         }
       }
       this.pickup = nextPickup
-    }
-
-    // Switch tool category
-    if (game.keysPressed.KeyS || game.buttonsPressed[3]) {
-      this.cycleToolCategory()
-    }
-
-    // Switch sub tool
-    if (game.keysPressed.KeyQ || game.buttonsPressed[4]) {
-      this.cycleTool(true)
-    }
-
-    // Switch sub tool reverse
-    if (game.keysPressed.KeyE || game.buttonsPressed[5]) {
-      this.cycleTool(false)
-    }
-
-    // Use tool
-    if (game.keysDown.KeyA || game.buttonsDown[2]) {
-      this.useTool(game.keysPressed.KeyA || game.buttonsPressed[2])
-    }
-
-    if (game.keysPressed.KeyU) {
-      this.unlockTool('wateringCan')
     }
 
     // Unlock all tools cheat
@@ -603,7 +616,7 @@ export default class Player extends Thing {
     return []
   }
 
-  cycleToolCategory () {
+  cycleToolCategory (reverse = false) {
     // Count how many tool categories we have tools in
     const toolCategories = this.getToolCategories()
     const ownedToolCategories = this.getOwnedToolCategories()
@@ -617,7 +630,10 @@ export default class Player extends Thing {
     
     // Cycle to next tool category
     let foundMyTool = false
-    const toolCategoriesList = [...toolCategoryNames, ...toolCategoryNames]
+    let toolCategoriesList = [...toolCategoryNames, ...toolCategoryNames]
+    if (reverse) {
+      toolCategoriesList = toolCategoriesList.reverse()
+    }
     for (const toolCategory of toolCategoriesList) {
       if (foundMyTool && ownedToolCategories.has(toolCategory)) {
         this.selectedToolCategory = toolCategory
@@ -791,8 +807,8 @@ export default class Player extends Thing {
 
     // Draw the held sickle
     if (
-      this.animation === 'grab' &&
-      ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool())
+      ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool()) &&
+      this.isHoldingSelectedTool
     ) {
       ctx.save()
       ctx.translate(...this.position)

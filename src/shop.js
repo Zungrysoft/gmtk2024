@@ -64,30 +64,62 @@ class ShopMenu extends Thing {
       name: 'Apple Seeds',
       price: 20,
       description: 'Grows apples!',
-      image: 'apple'
+      image: 'seedPacketApple'
     },
     {
-      name: 'Pear Seeds',
+      name: 'Orange Seeds',
       price: 40,
-      description: 'Grows pears!',
-      image: 'apple'
-    }
+      description: 'Grows oranges!',
+      image: 'seedPacketOrange'
+    },
   ]
+  holdFrames = 0
 
   constructor () {
     super()
     game.setThingName(this, 'shopmenu')
     this.setTimer('intro', 12)
+
+    for (let i = 0; i < 10; i += 1) {
+      this.items.push(
+        {
+          name: 'Orange Seeds',
+          price: 40,
+          description: 'Grows oranges!',
+          image: 'seedPacketOrange'
+        }
+      )
+    }
   }
 
   update () {
     super.update()
     this.selectionAnim = u.lerp(this.selectionAnim, this.selection, 0.2)
-    if (game.keysPressed.ArrowRight) {
-      this.selection += 1
+    const rightButton = game.keysDown.ArrowRight
+    const leftButton = game.keysDown.ArrowLeft
+    if (rightButton || leftButton) {
+      this.holdFrames += 1
+    } else {
+      this.holdFrames = 0
     }
-    if (game.keysPressed.ArrowLeft) {
+    const { holdFrames } = this
+    const inputAcceptable = (
+      holdFrames === 1 || (holdFrames >= 20 && holdFrames % 5 === 0)
+    )
+    const right = rightButton && inputAcceptable
+    const left = leftButton && inputAcceptable
+
+    if (right) {
+      this.selection += 1
+      if (this.selection > this.items.length - 1) {
+        this.selection = this.items.length - 1
+      }
+    }
+    if (left) {
       this.selection -= 1
+      if (this.selection < 0) {
+        this.selection = 0
+      }
     }
   }
 
@@ -116,9 +148,10 @@ class ShopMenu extends Thing {
     ctx.strokeStyle = 'white'
     ctx.lineWidth = 4
     ctx.translate(game.getWidth() / 2, game.getHeight() / 2)
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = this.selection - 4; i < this.selection + 4; i += 1) {
       const a = (this.selectionAnim - i) * Math.PI * 2 / 10 + Math.PI * 0.5
-      const shopItem = this.items[i % this.items.length]
+      const shopItem = this.items[i]
+      if (!shopItem) { continue }
 
       const alpha = u.map(Math.sin(a), -0.25, 0.25, 0, 1, true)
       if (alpha <= 0) { continue }
