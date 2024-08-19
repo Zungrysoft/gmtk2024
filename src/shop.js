@@ -6,6 +6,11 @@ export default class Shop extends Thing {
   isActive = false
   thingWasPaused = new WeakMap()
 
+  constructor(position) {
+    super()
+    this.position = [...position]
+  }
+
   update () {
     const player = game.getThing('player')
     const isPlayerInRange = (
