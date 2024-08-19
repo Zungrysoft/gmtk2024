@@ -517,13 +517,17 @@ export default class Player extends Thing {
     // TODO: Play ITEM GET animation and sound
 
     const nameMap = {
+      sickle: 'Sickle',
+      wateringCan: 'Watering Can',
       waterGun: 'Water Gun',
-      wateringCan: 'Watering Can'
+      hose: 'Hose',
     }
 
     const descMap = {
+      sickle: 'Press A to destroy unrooted plants.',
+      wateringCan: 'Press A to water plants.',
       waterGun: 'Shoot water even farther!',
-      wateringCan: 'Press A to water plants.'
+      hose: 'Spray water through walls!',
     }
 
     this.unlockAnimationItemImage = tool
