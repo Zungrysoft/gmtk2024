@@ -4,6 +4,7 @@ import * as vec2 from 'vector2'
 import Thing from 'thing'
 import Fertilizer from './fertilizer.js'
 import FertilizerParticle from './fertilizerParticle.js'
+import DestroyLeafParticle from './destroyleafparticle.js'
 
 export default class Plant extends Thing {
   validTileTypes = []
@@ -110,6 +111,13 @@ export default class Plant extends Thing {
 
   destroy() {
     this.isDead = true
+
+    // Particle effect
+    for (let i = 0; i < 8; i ++) {
+      const pos = vec2.add(this.position, [0.5, 1])
+      const vel = [(Math.random()-0.5)* 0.2, Math.random()*-0.1 - 0.2]
+      game.addThing(new DestroyLeafParticle(pos, vel))
+    }
   }
 
   draw() {

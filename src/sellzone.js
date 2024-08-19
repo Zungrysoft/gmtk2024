@@ -1,5 +1,6 @@
 import * as game from 'game'
 import * as u from 'utils'
+import * as vec2 from 'vector2'
 import Thing from 'thing'
 
 export default class SellZone extends Thing {
@@ -26,7 +27,7 @@ export default class SellZone extends Thing {
       ) {
         thing.isDead = true
         player.money += thing.value
-        game.addThing(new MoneyPopup(thing.value, [...this.position]))
+        game.addThing(new MoneyPopup(thing.value, vec2.add(this.position, [0, -1])))
       }
     }
   }

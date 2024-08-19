@@ -2,6 +2,7 @@ import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Plant from './plant.js'
+import DestroyLeafParticle from './destroyleafparticle.js'
 
 export default class PlantHedge extends Plant {
   hedgeGrowth = 0
@@ -213,6 +214,26 @@ export default class PlantHedge extends Plant {
       ...this.getHitBoxes(),
       [this.position[0], this.position[1], this.position[0] + 1, this.position[1] + 1]
     ]
+  }
+
+  destroy() {
+    this.isDead = true
+
+    // Particle effect on each segment of body
+    const segs = this.getHedgeSegments()
+    for (const seg of segs) {
+      const box = seg.hitBox
+      const area = Math.abs((box[2] - box[0]) * (box[3] - box[1]))
+      for (let i = 0; i < 3 * area; i ++) {
+        const pos = [
+          u.map(Math.random(), 0, 1, box[0], box[2]),
+          u.map(Math.random(), 0, 1, box[1], box[3]),
+        ]
+        const vel = [(Math.random()-0.5)* 0.1, Math.random()*-0.05 - 0.1]
+        game.addThing(new DestroyLeafParticle(pos, vel))
+      }
+    }
+    
   }
 
   draw () {
