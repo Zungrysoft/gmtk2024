@@ -1,7 +1,7 @@
 [
     {
         "name": "seedPacket",
-        "tools": ["seedPacketApple", "seedPacketOrange", "seedPacketHedge", "seedPacketClock"]
+        "tools": ["seedPacketApple", "seedPacketOrange", "seedPacketHedge", "seedPacketClock", "seedPacketFan"]
     },
     {
         "name": "wateringDevice",
