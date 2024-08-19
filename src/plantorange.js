@@ -35,9 +35,18 @@ export default class PlantOrange extends PlantFruit {
     if (this.isSprout) {
       // Timer display
       this.waterTimer = Math.max(this.waterTimer - 1, 0)
-      if (this.waterIterations > 0 && this.waterIterations < this.requiredWaterIterations) {
-        this.setTimerDisplay(this.waterTimer / this.waterInterval)
-        this.setIcon('timer')
+
+      if (this.waterIterations < this.requiredWaterIterations) {
+        if (this.waterIterations > 0) {
+          this.setTimerDisplay(this.waterTimer / this.waterInterval)
+          this.setIcon('timer')
+        }
+        else {
+          this.setIcon('water')
+        }
+      }
+      else if (this.consumedFertilizer < this.requiredFertilizer) {
+        this.setIcon('fertilizer')
       }
       else {
         this.setIcon(null)

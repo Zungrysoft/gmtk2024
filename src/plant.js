@@ -21,6 +21,7 @@ export default class Plant extends Thing {
   depth = -1
   timerDisplay = 0
   isIndestructible = false
+  icons = []
 
   constructor (pos, variant='basic', isSprout=true, isIndestructible=false) {
     super()
@@ -119,10 +120,6 @@ export default class Plant extends Thing {
     this.timerDisplay = n
   }
 
-  setIcon(n) {
-    this.icon = n
-  }
-
   destroy() {
     this.isDead = true
   }
@@ -133,19 +130,42 @@ export default class Plant extends Thing {
 
     ctx.save()
 
+    ctx.translate(0, 1)
+
+    // Indestructible roots
     if (this.isIndestructible) {
-      ctx.save()
-      ctx.translate(0, 1)
       ctx.drawImage(game.assets.images.roots, ...this.position, 1, 2)
-      ctx.restore()
     }
 
-    if (this.icon === 'timer') {
-      ctx.translate(0, 1)
+    // Wait until further action
+    if (this.icons.includes('timer')) {
+      ctx.save()
+      ctx.translate(0, 0.3)
       const segments = 9
       const segment = Math.ceil(u.clamp(this.timerDisplay, 0, 1) * segments)
       const timerImage = game.assets.images["timer" + segment]
       ctx.drawImage(timerImage, ...this.position, 1, 1)
+      ctx.restore()
+    }
+
+    // Blocked
+    if (this.icons.includes('blocked')) {
+      ctx.drawImage(game.assets.images.growIconBlocked, ...this.position, 1, 1)
+    }
+
+    // Needs Fertilizer
+    if (this.icons.includes('fertilizer')) {
+      ctx.drawImage(game.assets.images.growIconFertilizer, ...this.position, 1, 1)
+    }
+
+    // Needs Water
+    if (this.icons.includes('water')) {
+      ctx.drawImage(game.assets.images.growIconWater, ...this.position, 1, 1)
+    }
+
+    // Needs to not be watered
+    if (this.icons.includes('noWater')) {
+      ctx.drawImage(game.assets.images.growIconNoWater, ...this.position, 1, 1)
     }
 
     ctx.restore()

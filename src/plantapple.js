@@ -35,12 +35,18 @@ export default class PlantApple extends PlantFruit {
     if (this.isSprout) {
       // Timer display
       this.waterTimer = Math.max(this.waterTimer - 1, 0)
-      if (this.waterIterations > 0 && this.waterIterations < this.requiredWaterIterations) {
-        this.setTimerDisplay(this.waterTimer / this.waterInterval)
-        this.setIcon('timer')
+
+      this.icons = []
+      if (this.waterIterations < this.requiredWaterIterations) {
+        this.icons.push('water')
+
+        if (this.waterIterations > 0) {
+          this.setTimerDisplay(this.waterTimer / this.waterInterval)
+          this.icons.push('timer')
+        }
       }
-      else {
-        this.setIcon(null)
+      if (this.consumedFertilizer < this.requiredFertilizer) {
+        this.icons.push('fertilizer')
       }
 
       // Is watered
@@ -65,7 +71,7 @@ export default class PlantApple extends PlantFruit {
       }
     }
     else {
-      this.setIcon(null)
+      this.icons = []
     }
   }
 }
