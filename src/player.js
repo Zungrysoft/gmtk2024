@@ -357,6 +357,12 @@ export default class Player extends Thing {
       this.money += 1000000
     }
 
+    // Controller cheat
+    if (game.buttonsDown[10] && game.buttonsPressed[11]) {
+      this.unlockAllToolsCheat()
+      this.money += 1000000
+    }
+
     if (onGround && this.getHeldTool().includes('seedPacket')) {
       this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.2, 1.3)
     }
@@ -401,7 +407,7 @@ export default class Player extends Thing {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
           const pos = vec2.add(this.position, [this.direction * 1.3, 0.3])
-          this.shootWater(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06)
+          this.shootWater(pos, this.direction, 0.4, 0.05 + (this.velocity[0] * this.direction), 0.06)
           break
         }
       }
