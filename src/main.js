@@ -39,6 +39,7 @@ game.assets.images = await game.loadImages({
   waterDroplet: 'images/waterDroplet.png',
   fertilizerParticle: 'images/fertilizerParticle.png',
   timeRing: 'images/timeRing.png',
+  sickle: 'images/sickle.png',
   wateringCan: 'images/wateringcan.png',
   waterGun: 'images/watergun.png',
   ground: 'images/ground.png',
@@ -117,6 +118,9 @@ class Level extends Thing {
     const things = data.layers[0].things
     for (const thing of things) {
       const pos = [Math.floor(thing.position[0]), Math.floor(thing.position[1])]
+      if (thing.name === 'player') {
+        game.addThing(new Player(pos))
+      }
       if (thing.name === 'plantHedge') {
         game.addThing(new PlantHedge(
           pos,
@@ -198,8 +202,4 @@ class Level extends Thing {
 game.setScene(() => {
   game.addThing(new Level(game.assets.levels.level1))
   game.addThing(new Background())
-  game.addThing(new Shop())
-  game.addThing(new Fertilizer([3, 0], 'apple'))
-  game.addThing(new SellZone([10, 8]))
-  game.addThing(new Player())
 })
