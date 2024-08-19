@@ -45,13 +45,11 @@ export default class Shop extends Thing {
     }
 
     // Toggle shop menu open/closed
-    if (isPlayerInRange) {
-      if (!this.isActive) {
-        this.frame += 1
-        const t = this.frame / 20
-        this.squash[0] = u.map(Math.abs(Math.sin(t)), 0, 1, 0.8, 1, true)
-        this.squash[1] = u.map(Math.abs(Math.cos(t)), 0, 1, 0.8, 1.1, true)
-      }
+    if (isPlayerInRange && !this.isActive) {
+      this.frame += 1
+      const t = this.frame / 20
+      this.squash[0] = u.map(Math.abs(Math.sin(t)), 0, 1, 0.8, 1, true)
+      this.squash[1] = u.map(Math.abs(Math.cos(t)), 0, 1, 0.8, 1.1, true)
 
       if (game.keysPressed.ArrowUp || game.buttonsPressed[12]) {
         const menu = game.addThing(new ShopMenu())
