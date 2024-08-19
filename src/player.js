@@ -58,14 +58,14 @@ export default class Player extends Thing {
   direction = 1
   cameraOffset = [0, 0]
   squash = [1, 1]
-  ownedTools = ['sickle']
+  ownedTools = []
   selectedTools = {
     seedPacket: '',
     wateringDevice: '',
-    trimmer: 'sickle',
+    trimmer: '',
   }
   selectedToolCategory = 'trimmer'
-  money = 20
+  money = 0
   visualMoney = 0
   depth = 10
   runFrames = 0
@@ -77,8 +77,9 @@ export default class Player extends Thing {
   isUnlockAnimationActive = false
   timer = 0
 
-  constructor () {
+  constructor (position) {
     super()
+    this.position = [...position]
     game.setThingName(this, 'player')
   }
 
@@ -765,6 +766,19 @@ export default class Player extends Thing {
         sc,
       )
       ctx.globalAlpha = u.map(Math.sin(this.time / 10), -1, 1, 0.6, 0.5)
+      ctx.restore()
+    }
+
+    // Draw the held sickle
+    if (this.getSelectedTool() === 'sickle') {
+      ctx.save()
+      ctx.translate(...this.position)
+      ctx.scale(...this.squash)
+      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
+      ctx.translate(this.direction * 1.1, 0.4)
+      ctx.scale(this.direction, 1)
+      ctx.scale(1 / 48, 1 / 48)
+      this.drawSpriteFrame('sickle')
       ctx.restore()
     }
 
