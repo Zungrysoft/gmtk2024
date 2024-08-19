@@ -12,7 +12,7 @@ export default class PlantHedge extends Plant {
   hedgePatternSide = u.createPatternFromImage(game.assets.images.hedgeSide)
   depth = 2
   hasBeenWatered = false
-  hasBeenFertilized = false
+  receivedFertilizers = []
 
   constructor (pos, variant, isSprout, isIndestructible) {
     super(pos, variant, isSprout, isIndestructible)
@@ -29,7 +29,7 @@ export default class PlantHedge extends Plant {
       if (!this.hasBeenWatered) {
         this.icons.push('water')
       }
-      if (!this.hasBeenFertilized) {
+      if (!this.receivedFertilizers.includes('coal')) {
         this.icons.push('fertilizer')
       }
 
@@ -39,16 +39,29 @@ export default class PlantHedge extends Plant {
       }
 
       // Consume fertilizer
-      if (!this.hasBeenFertilized) {
-        if (this.consumeFertilizer('coal')) {
-          this.hasBeenFertilized = true
-          this.createFertilizerParticles()
+      for (const fert of ['ash', 'coal']) {
+        if (!this.receivedFertilizers.includes(fert)) {
+          if (this.consumeFertilizer(fert)) {
+            this.receivedFertilizers.push(fert)
+            this.createFertilizerParticles()
+          }
         }
       }
 
       // Grow up
-      if (this.hasBeenFertilized && this.hasBeenWatered) {
+      if (this.receivedFertilizers.includes('coal') && this.hasBeenWatered) {
         this.growUp()
+
+        // Set variant
+        if (u.compareLists(this.receivedFertilizers, ['coal', 'ash'])) {
+          this.variant = 'archLeft'
+        }
+        else if (u.compareLists(this.receivedFertilizers, ['ash', 'coal'])) {
+          this.variant = 'archRight'
+        }
+        else {
+          this.variant = 'basic'
+        }
       }
     }
     else {

@@ -480,3 +480,15 @@ export function createPatternFromImage (image, scale = 1) {
   patternCtx.drawImage(image, 0, 0)
   return patternCtx.createPattern(patternCanvas, 'repeat')
 }
+
+export function compareLists(a, b) {
+  if (a.length !== b.length) {
+    return false
+  }
+  for (let i = 0; i < a.length; i ++) {
+    if (a[i] !== b[i]) {
+      return false
+    }
+  }
+  return true
+}
