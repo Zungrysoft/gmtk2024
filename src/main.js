@@ -85,7 +85,8 @@ game.assets.images = await game.loadImages({
   gatered: 'images/gateRed.png',
   gategreen: 'images/gateGreen.png',
   gateyellow: 'images/gateYellow.png',
-  tutorialcontrols: 'images/tutorialControls.png'
+  tutorialcontrols: 'images/tutorialControls.png',
+  tutorialtool: 'images/tutorialTool.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -126,7 +127,9 @@ class Level extends Thing {
     for (const thing of things) {
       const pos = [Math.floor(thing.position[0]), Math.floor(thing.position[1])]
       if (thing.name === 'player') {
-        game.addThing(new Player(pos))
+        if (!game.getThing('player')) {
+          game.addThing(new Player(pos))
+        }
       }
       if (thing.name === 'plantHedge') {
         game.addThing(new PlantHedge(
