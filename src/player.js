@@ -247,7 +247,7 @@ export default class Player extends Thing {
       Math.abs(this.velocity[0]) < 0.04 &&
       onGround &&
       this.getHeldTool() &&
-      ['wateringCan', 'waterGun'].includes(this.getHeldTool())
+      this.isToolHeld(this.getHeldTool())
     ) {
       holdingItem = true
     }
@@ -399,6 +399,16 @@ export default class Player extends Thing {
     }
   }
 
+  isToolHeld(tool) {
+    if (['wateringCan', 'waterGun'].includes(tool)) {
+      return true
+    }
+    if (tool.includes('seedPacket')) {
+      return true
+    }
+    return false
+  }
+
   useTool(pressed) {
     const selectedTool = this.getHeldTool()
 
@@ -509,7 +519,7 @@ export default class Player extends Thing {
 
   canBePlantedAt(pos, plantingRequirements) {
     // const validTileTypes = plantingRequirements?.soil ?? 'anySoil'
-    const validTileTypes = 'anySoil'
+    const validTileTypes = ['anySoil']
     const tileType = game.getThing('level').getTileAt(...pos)
     const soilType = game.getThing('level').getTileAt(pos[0], pos[1]+1)
 
@@ -870,10 +880,16 @@ export default class Player extends Thing {
 
     let heldItemPosition = [1.1, 0.4]
     let heldItemImage = this.getHeldTool()
+    let heldItemScale = [1.0, 1.0]
+
+    if (this.getHeldTool().includes("seedPacket")) {
+      heldItemScale = [-0.8, 0.8]
+      heldItemPosition = [0.6, 0.4]
+    }
 
     // Draw the held item
     if (
-      ['wateringCan', 'waterGun'].includes(this.getHeldTool()) &&
+      this.isToolHeld(this.getHeldTool()) &&
       this.isHoldingSelectedTool
     ) {
       ctx.save()
@@ -883,6 +899,7 @@ export default class Player extends Thing {
       ctx.translate(this.direction * heldItemPosition[0], heldItemPosition[1])
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)
+      ctx.scale(...heldItemScale)
       this.drawSpriteFrame(heldItemImage)
       ctx.restore()
     }

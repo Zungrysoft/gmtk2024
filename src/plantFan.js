@@ -26,7 +26,7 @@ export default class PlantFan extends Plant {
       if (!this.hasBeenWatered) {
         this.icons.push('water')
       }
-      if (!this.receivedFertilizers.includes('ether')) {
+      if (!(this.receivedFertilizers.includes('ether') && this.receivedFertilizers.length >= 2)) {
         this.icons.push('fertilizer')
       }
 
@@ -36,7 +36,7 @@ export default class PlantFan extends Plant {
       }
 
       // Consume fertilizer
-      for (const fert of ['ash', 'ether']) {
+      for (const fert of ['ash', 'coal', 'ether']) {
         if (!this.receivedFertilizers.includes(fert)) {
           if (this.consumeFertilizer(fert)) {
             this.receivedFertilizers.push(fert)
@@ -46,7 +46,7 @@ export default class PlantFan extends Plant {
       }
 
       // Grow up
-      if (this.receivedFertilizers.includes('ether') && this.hasBeenWatered) {
+      if (this.receivedFertilizers.includes('ether') && this.receivedFertilizers.length >= 2 && this.hasBeenWatered) {
         this.growUp()
 
         // Set variant
