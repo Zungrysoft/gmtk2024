@@ -41,8 +41,10 @@ export default class Shop extends Thing {
     ctx.save()
     ctx.beginPath()
     ctx.fillStyle = 'white'
-    ctx.font = 'italic bold 1px Arial'
+    ctx.font = 'italic bold 32px Arial'
     ctx.textAlign = 'center'
+    ctx.translate(...this.position)
+    ctx.scale(1 / 48, 1 / 48)
     ctx.fillText('SHOP', 0, 0)
     ctx.restore()
   }
