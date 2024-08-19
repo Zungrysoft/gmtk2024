@@ -9,25 +9,62 @@ export default class PlantClock extends Plant {
   hitboxCache = null
   sprite = game.assets.images.plantClockSprout
   grownSprite = game.assets.images.plantClock
-  interval = 60 * 10
   clockTime = 0
+  fertilizerConsumed = 0
 
   update() {
     super.update()
 
     if (this.isSprout) {
-      if (this.isBeingWatered()) {
+      // Icons
+      this.icons = []
+      if (this.fertilizerConsumed === 0) {
+        this.icons.push('fertilizer')
+      }
+      else {
+        this.icons.push('water')
+      }
+
+      // Consume fertilizer
+      if (this.fertilizerConsumed < 5) {
+        if (this.consumeFertilizer('ash')) {
+          this.fertilizerConsumed ++
+          this.createFertilizerParticles()
+        }
+      }
+
+      // Grow up
+      if (this.isBeingWatered() && this.fertilizerConsumed > 0) {
         this.growUp()
+
+        // Set variant
+        if (this.fertilizerConsumed === 2) {
+          this.variant = 'timer2'
+        }
+        else if (this.fertilizerConsumed === 3) {
+          this.variant = 'timer3'
+        }
+        else if (this.fertilizerConsumed === 4) {
+          this.variant = 'timer4'
+        }
+        else if (this.fertilizerConsumed === 5) {
+          this.variant = 'timer5'
+        }
+        else {
+          this.variant = 'basic'
+        }
       }
     }
     else {
+      this.icons = []
+
       // Clock features
       this.clockTime ++
-      if (this.clockTime > this.interval) {
+      if (this.clockTime > this.getInterval()) {
         this.clockTime = 0
 
         // Toggle all nearby devices
-        const effectRadius = 5.5
+        const effectRadius = 6.5
         const devices = game.getThingsNear(...this.position, effectRadius).filter(e => e.deviceTrigger)
         for (const device of devices) {
           if (vec2.distance(this.position, device.position) <= effectRadius) {
@@ -36,6 +73,24 @@ export default class PlantClock extends Plant {
         }
         game.addThing(new TimeRing(vec2.add(this.position, [0.5, 0.5]), effectRadius))
       }
+    }
+  }
+
+  getInterval() {
+    if (this.variant === 'timer2') {
+      return 60 * 10
+    }
+    else if (this.variant === 'timer3') {
+      return 60 * 30
+    }
+    else if (this.variant === 'timer4') {
+      return 60 * 60
+    }
+    else if (this.variant === 'timer5') {
+      return 60 * 60 * 5
+    }
+    else {
+      return 60 * 5
     }
   }
 

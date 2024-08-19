@@ -39,6 +39,27 @@ export default class SellZone extends Thing {
     ctx.translate(...this.position)
     ctx.fillRect(-1, -1, 2, 2)
     ctx.restore()
+
+    ctx.save()
+    ctx.beginPath()
+    ctx.fillStyle = 'white'
+    ctx.font = 'italic bold 26px Arial'
+    ctx.textAlign = 'center'
+    ctx.translate(...this.position)
+
+    ctx.save()
+    ctx.translate(0, -0.35)
+    ctx.scale(1 / 48, 1 / 48)
+    ctx.fillText('SELL', 0, 0)
+    ctx.restore()
+
+    ctx.save()
+    ctx.translate(0, 0.45)
+    ctx.scale(1 / 48, 1 / 48)
+    ctx.fillText('FRUIT', 0, 0)
+    ctx.restore()
+
+    ctx.restore()
   }
 }
 

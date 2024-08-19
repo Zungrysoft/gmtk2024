@@ -16,7 +16,7 @@ export default class TimeRing extends Thing {
     super()
     
     this.position = [...position]
-    this.radius = radius
+    this.radius = radius * 0.7
   }
 
   update () {
