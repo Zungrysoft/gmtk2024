@@ -96,7 +96,10 @@ game.assets.images = await game.loadImages({
   tutorialgrab2: 'images/tutorialGrab2.png',
   tutorialswitch: 'images/tutorialSwitch.png',
   tutorialshop: 'images/tutorialShop.png',
-  vendingmachine: 'images/vendingmachine.png'
+  tutorialmode: 'images/tutorialMode.png',
+  tutorialmode2: 'images/tutorialMode2.png',
+  vendingmachine: 'images/vendingmachine.png',
+  swipe: 'images/swipe.png',
 })
 
 game.assets.levels = await game.loadText({

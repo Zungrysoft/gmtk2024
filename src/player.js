@@ -9,7 +9,7 @@ import WaterShot from './watershot.js'
 import PlantApple from './plantapple.js'
 import PlantClock from './plantclock.js'
 import PlantOrange from './plantorange.js'
-import Gate from './gate.js'
+import Swipe from './swipe.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -77,9 +77,10 @@ export default class Player extends Thing {
   unlockAnimationItemDescription = null
   isUnlockAnimationActive = false
   timer = 0
-  isUsingSelectedTool = false
   isHoldingSelectedTool = false
   keyColors = []
+  sickleFrames = 0
+  isUsingTool = false
 
   constructor (position) {
     super()
@@ -156,8 +157,9 @@ export default class Player extends Thing {
     }
 
     // Use tool
+    this.isUsingTool = false
     if (game.keysDown.KeyZ || game.buttonsDown[2]) {
-      this.useTool(true)
+      this.useTool(game.keysPressed.KeyZ || game.buttonsPressed[2])
     }
 
     // Un-squash and stretch
@@ -224,8 +226,7 @@ export default class Player extends Thing {
     }
 
     const onGround = this.contactDirections.down
-    const usingItem = game.keysDown.KeyZ || game.buttonsDown[2]
-    this.isUsingSelectedTool = usingItem
+    const usingItem = this.isUsingTool || (this.getHeldTool() === 'sickle' && this.sickleFrames > 0)
 
     let holdingItem = Boolean(this.pickup)
     if (usingItem && this.getHeldTool()) {
@@ -381,6 +382,7 @@ export default class Player extends Thing {
 
     // Time trackers
     this.time ++
+    this.sickleFrames --
     for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
       this.wateringDeviceCooldowns[i] = Math.max(this.wateringDeviceCooldowns[i] - 1, 0)
     }
@@ -403,6 +405,8 @@ export default class Player extends Thing {
           }
         }
       }
+      game.addThing(new Swipe(this))
+      this.sickleFrames = 10
     }
 
     // Watering Can: Spills water in front of the player
@@ -415,6 +419,7 @@ export default class Player extends Thing {
           break
         }
       }
+      this.isUsingTool = true
     }
 
     // Water gun: Long range water delivery apparatus
@@ -427,6 +432,7 @@ export default class Player extends Thing {
           break
         }
       }
+      this.isUsingTool = true
     }
 
     // Seed packet: Plants new plants
@@ -441,6 +447,7 @@ export default class Player extends Thing {
         if (selectedTool === 'seedPacketOrange') game.addThing(new PlantOrange(placementPos))
         if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
       }
+      this.isUsingTool = true
     }
   }
 
@@ -852,9 +859,9 @@ export default class Player extends Thing {
     let heldItemPosition = [1.1, 0.4]
     let heldItemImage = this.getHeldTool()
 
-    // Draw the held sickle
+    // Draw the held item
     if (
-      ['sickle', 'wateringCan', 'waterGun'].includes(this.getHeldTool()) &&
+      ['wateringCan', 'waterGun'].includes(this.getHeldTool()) &&
       this.isHoldingSelectedTool
     ) {
       ctx.save()
@@ -864,6 +871,22 @@ export default class Player extends Thing {
       ctx.translate(this.direction * heldItemPosition[0], heldItemPosition[1])
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)
+      this.drawSpriteFrame(heldItemImage)
+      ctx.restore()
+    }
+
+    if (
+      ['sickle'].includes(this.getHeldTool()) &&
+      this.sickleFrames > 0
+    ) {
+      ctx.save()
+      ctx.translate(...this.position)
+      ctx.scale(...this.squash)
+      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
+      ctx.translate(this.direction * 0.9, 0.4)
+      ctx.scale(this.direction, 1)
+      ctx.scale(1 / 48, 1 / 48)
+      ctx.scale(0.8, 0.8)
       this.drawSpriteFrame(heldItemImage)
       ctx.restore()
     }
