@@ -345,7 +345,7 @@ export default class Player extends Thing {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
-          const pos = vec2.add(this.position, vec2.scale([1.6, 0], this.direction))
+          const pos = vec2.add(this.position, [this.direction * 1.3, 0.3])
           this.shootWater(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06)
           break
         }
@@ -637,7 +637,7 @@ export default class Player extends Thing {
       ctx.translate(...this.position)
       ctx.scale(...this.squash)
       ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
-      ctx.translate(this.direction, 0.15)
+      ctx.translate(this.direction * 1.15, 0.45)
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)
       this.drawSpriteFrame('wateringCan')
