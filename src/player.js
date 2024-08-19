@@ -107,6 +107,12 @@ export default class Player extends Thing {
       return
     }
 
+    if (game.getThing('shopmenu')) {
+      this.updateTimers()
+      this.animate()
+      return
+    }
+
     // If trapped inside something solid, like when getting pushed by
     // a hedge or something, try to get unstuck
     this.getUnstuck()
@@ -117,8 +123,6 @@ export default class Player extends Thing {
     this.updateTimers()
     this.move()
     this.animate()
-
-    if (game.getThing('shopmenu')) { return }
 
     if (this.pickup) {
       const snappiness = 0.7
