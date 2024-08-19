@@ -36,20 +36,18 @@ export default class PlantOrange extends PlantFruit {
       // Timer display
       this.waterTimer = Math.max(this.waterTimer - 1, 0)
 
+      this.icons = []
       if (this.waterIterations < this.requiredWaterIterations) {
         if (this.waterIterations > 0) {
           this.setTimerDisplay(this.waterTimer / this.waterInterval)
-          this.setIcon('timer')
+          this.icons.push('timer')
         }
-        else {
-          this.setIcon('water')
+        if (this.waterTimer === 0) {
+          this.icons.push('water')
         }
       }
-      else if (this.consumedFertilizer < this.requiredFertilizer) {
-        this.setIcon('fertilizer')
-      }
-      else {
-        this.setIcon(null)
+      if (this.consumedFertilizer < this.requiredFertilizer) {
+        this.icons.push('fertilizer')
       }
 
       // Is watered
@@ -74,7 +72,7 @@ export default class PlantOrange extends PlantFruit {
       }
     }
     else {
-      this.setIcon(null)
+      this.icons = []
     }
   }
 }
