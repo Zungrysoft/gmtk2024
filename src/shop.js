@@ -18,7 +18,7 @@ export default class Shop extends Thing {
     )
 
     // Toggle shop menu open/closed
-    if (game.keysPressed.KeyS) {
+    if (game.keysPressed.ArrowUp || game.buttonsPressed[12]) {
       if (this.isActive) {
         game.getThings().forEach(thing => {
           thing.isPaused = this.thingWasPaused.get(thing)
@@ -34,6 +34,10 @@ export default class Shop extends Thing {
         this.isActive = true
       }
     }
+  }
+
+  close() {
+    
   }
 
   draw () {
@@ -56,21 +60,17 @@ class ShopMenu extends Thing {
   items = [
     {
       name: 'Watering Can',
-      price: 10,
-      description: 'Waters stuff',
-      image: 'wateringCan'
+      price: 2,
+      description: 'Waters plants',
+      image: 'wateringCan',
+      givenTool: 'wateringCan',
     },
     {
-      name: 'Apple Seeds',
-      price: 20,
-      description: 'Grows apples!',
-      image: 'seedPacketApple'
-    },
-    {
-      name: 'Orange Seeds',
-      price: 40,
-      description: 'Grows oranges!',
-      image: 'seedPacketOrange'
+      name: 'Yellow Key',
+      price: 6,
+      description: 'Unlocks the Yellow Gate',
+      image: 'keyyellow',
+      givenKey: 'yellow',
     },
   ]
   holdFrames = 0
@@ -79,24 +79,13 @@ class ShopMenu extends Thing {
     super()
     game.setThingName(this, 'shopmenu')
     this.setTimer('intro', 12)
-
-    for (let i = 0; i < 10; i += 1) {
-      this.items.push(
-        {
-          name: 'Orange Seeds',
-          price: 40,
-          description: 'Grows oranges!',
-          image: 'seedPacketOrange'
-        }
-      )
-    }
   }
 
   update () {
     super.update()
     this.selectionAnim = u.lerp(this.selectionAnim, this.selection, 0.2)
-    const rightButton = game.keysDown.ArrowRight
-    const leftButton = game.keysDown.ArrowLeft
+    const rightButton = game.keysDown.ArrowRight || game.buttonsDown[15]
+    const leftButton = game.keysDown.ArrowLeft || game.buttonsDown[14]
     if (rightButton || leftButton) {
       this.holdFrames += 1
     } else {
@@ -119,6 +108,30 @@ class ShopMenu extends Thing {
       this.selection -= 1
       if (this.selection < 0) {
         this.selection = 0
+      }
+    }
+
+    // Buy item
+    const player = game.getThing('player')
+    if (
+      game.keysDown.KeyX ||
+      game.keysDown.KeyZ ||
+      game.buttonsDown[2] ||
+      game.buttonsDown[0]
+    ) {
+      const selection = this.items[this.selection]
+      if (player.money >= selection.price) {
+        player.money -= selection.price
+        this.finish()
+        if (selection.givenTool) {
+          player.unlockTool(selection.givenTool)
+        }
+        else if (selection.givenKey) {
+          player.unlockKey(selection.givenKey)
+        }
+      }
+      else {
+        // TODO: Error Sound
       }
     }
   }

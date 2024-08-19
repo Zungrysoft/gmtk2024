@@ -350,6 +350,11 @@ export default class Player extends Thing {
       this.unlockAllToolsCheat()
     }
 
+    // Money Cheat
+    if (game.keysDown.ShiftLeft && game.keysPressed.KeyK) {
+      this.money += 1000000
+    }
+
     if (onGround && this.getSelectedTool().includes('seedPacket')) {
       this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.2, 1.3)
     }
@@ -556,6 +561,12 @@ export default class Player extends Thing {
       }
     }
     this.ownedTools = allTools
+  }
+
+  unlockKey(color) {
+    if (!this.keyColors.includes(color)) {
+      this.keyColors.push(color)
+    }
   }
 
   getToolCategories () {
