@@ -664,6 +664,26 @@ export default class Player extends Thing {
     console.log(this.getSelectedTool())
 
     this.setTimer('swapHotbar', 10)
+    if (reverse) {
+      this.setTimer('swapHotbarReverse', 10)
+    }
+  }
+
+  getToolCategoryIndex () {
+    const toolCategoryNames = this.getToolCategories().map(e => e.name)
+
+    if (this.getOwnedToolCategories().size <= 1) {
+      return 0
+    }
+    
+    // Cycle to next tool category
+    let i = 0
+    for (const toolCategory of [...toolCategoryNames, ...toolCategoryNames]) {
+      if (toolCategory === this.selectedToolCategory) {
+        return i
+      }
+      i += 1
+    }
   }
 
   cycleTool (reverse=false) {
@@ -850,13 +870,73 @@ export default class Player extends Thing {
     ctx.fillText(`$${Math.round(this.visualMoney)}`, 0, 0)
     ctx.restore()
 
+    let ii = 0
+    const categoryCount = [...this.getOwnedToolCategories()].length
+    let x = 64
+    let y = game.getHeight() - 128
+
+    /*
+    if (categoryCount > 1) {
+      x += 32
+    }
+    if (categoryCount === 3) {
+      y -= 32
+    }
+*/
+
+    const toolCategoryNames = this.getToolCategories().map(e => e.name)
+    const toolCategoryIndex = this.getToolCategoryIndex()
+
+    for (const category of toolCategoryNames) {
+      if (categoryCount < 2) { break }
+      const tool = this.selectedTools[category] || this.getOwnedToolsInCategory(category)[0]
+      
+      if (!([...this.getOwnedToolCategories()].includes(category))) {
+        ii += 1
+        continue
+      }
+
+      ctx.save()
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
+      ctx.strokeStyle = 'white'
+      ctx.lineWidth = 4
+
+      let yy = ii - toolCategoryIndex
+      if (yy < 0) {
+        yy += categoryCount
+      }
+      if (yy === 0) {
+        ii += 1
+        continue
+      }
+      ctx.translate(x, y - yy * 64)
+
+      const anim = Math.cos(this.getTimer('swapHotbar') * Math.PI * 2)
+      ctx.translate(0, u.map(anim, 0, -1, 0, 24, true))
+      ctx.translate(32, 32)
+
+      const scale = 1
+      ctx.scale(scale, scale)
+      ctx.beginPath()
+      ctx.arc(0, 0, 36, 0, Math.PI * 2)
+      ctx.fill()
+
+      const image = game.assets.images[tool]
+      if (image) {
+        ctx.drawImage(image, -24, -24)
+      }
+      ctx.restore()
+
+      ii += 1
+    }
+
     let i = 0
     for (const tool of this.getOwnedToolsInCategory(this.selectedToolCategory)) {
       ctx.save()
       ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
       ctx.strokeStyle = 'white'
       ctx.lineWidth = 4
-      ctx.translate(64, game.getHeight() - 128)
+      ctx.translate(x, y)
       ctx.translate(i * 80, 0)
 
       const anim = Math.cos(this.getTimer('swapHotbar') * Math.PI * 2)
