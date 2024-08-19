@@ -73,6 +73,9 @@ export default class Player extends Thing {
   placementPositionIndicatorScale = 1
   pickup = null // The thing you're currently picking up
   unlockAnimationItemImage = null
+  unlockAnimationItemDescription = null
+  isUnlockAnimationActive = false
+  timer = 0
 
   constructor (position) {
     super()
@@ -81,10 +84,22 @@ export default class Player extends Thing {
   }
 
   update () {
-    if (this.getTimer('unlock')) {
+    this.timer += 1
+
+    if (this.isUnlockAnimationActive) {
       this.animation = 'unlock'
       this.updateTimers()
       this.animate()
+
+      if (
+        Object.values(game.keysPressed).some(Boolean) ||
+        Object.values(game.buttonsPressed).some(Boolean)
+      ) {
+        this.isUnlockAnimationActive = false
+        this.unlockAnimationCancel()
+        this.unlockAnimationCancel = undefined
+      }
+
       return
     }
 
@@ -482,18 +497,32 @@ export default class Player extends Thing {
 
     // TODO: Play ITEM GET animation and sound
 
+    const nameMap = {
+      waterGun: 'Water Gun',
+      wateringCan: 'Watering Can'
+    }
+
+    const descMap = {
+      waterGun: 'Shoot water even farther!',
+      wateringCan: 'Press A to water plants.'
+    }
+
     this.unlockAnimationItemImage = tool
+    this.unlockAnimationName = nameMap[tool] || tool
+    this.unlockAnimationItemDescription = descMap[tool] || ''
+    this.isUnlockAnimationActive = true
     const wasPaused = new WeakMap()
     game.getThings().forEach(thing => {
       wasPaused.set(thing, thing.isPaused)
       thing.isPaused = thing !== this
     })
-    this.setTimer('unlock', 200, () => {
+
+    this.unlockAnimationCancel = () => {
       game.getThings().forEach(thing => {
         if (thing === this) { return }
         thing.isPaused = wasPaused.get(thing)
       })
-    })
+    }
   }
 
   unlockAllToolsCheat () {
@@ -632,7 +661,7 @@ export default class Player extends Thing {
   draw () {
     const { ctx } = game
 
-    if (this.getTimer('unlock')) {
+    if (this.isUnlockAnimationActive) {
       ctx.save()
       ctx.fillStyle = '#000B28'
       ctx.globalAlpha = 0.5
@@ -641,6 +670,8 @@ export default class Player extends Thing {
       ctx.translate(game.getWidth() * -0.5, game.getHeight() * -0.5)
       ctx.fillRect(0, 0, game.getWidth(), game.getHeight())
       ctx.restore()
+
+      this.scale = [1 / 48, 1 / 48]
     }
 
 
@@ -649,36 +680,70 @@ export default class Player extends Thing {
     // jumps
     this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 32, true))
 
-    if (this.getTimer('unlock')) {
+    if (this.isUnlockAnimationActive) {
       ctx.save()
       ctx.translate(
         this.position[0],
-        this.position[1] - 1.25
+        this.position[1] - 2
       )
       ctx.fillStyle = 'yellow'
       ctx.globalAlpha = 0.5
+      ctx.scale(2, 2)
       ctx.beginPath()
-      ctx.arc(0, 0, u.map(Math.sin(this.getTimer('unlock') * 14), -1, 1, 0.7, 0.85), 0, Math.PI * 2)
+      ctx.arc(0, 0, u.map(Math.sin(this.timer / 14), -1, 1, 0.6, 0.7), 0, Math.PI * 2)
       ctx.fill()
       ctx.globalAlpha = 1
+      ctx.translate(0.25, 0.15)
       ctx.scale(1 / 48, 1 / 48)
       this.drawSpriteFrame(this.unlockAnimationItemImage, 0, 64)
       ctx.restore()
 
+      ctx.save()
+      ctx.translate(
+        this.position[0],
+        this.position[1] - 4
+      )
+      ctx.scale(1 / 48, 1 / 48)
+      ctx.textAlign = 'center'
+      ctx.font = 'italic bold 58px Arial'
+      ctx.fillStyle = '#000B28'
+      ctx.fillText(`You found the ${this.unlockAnimationName}!`, 4, 4)
+      ctx.fillStyle = 'yellow'
+      ctx.fillText(`You found the ${this.unlockAnimationName}!`, 0, 0)
+      ctx.restore()
 
       ctx.save()
       ctx.translate(
         this.position[0],
-        this.position[1] - 3
+        this.position[1] + 2.5
       )
       ctx.scale(1 / 48, 1 / 48)
       ctx.textAlign = 'center'
-      ctx.font = 'italic bold 64px Arial'
+      ctx.font = 'italic bold 24px Arial'
       ctx.fillStyle = '#000B28'
-      ctx.fillText(`You unlocked ${this.unlockAnimationName}!`, 4, 4)
-      ctx.fillStyle = 'yellow'
-      ctx.fillText(`You unlocked ${this.unlockAnimationName}!`, 0, 0)
+      const str = this.unlockAnimationItemDescription
+      ctx.fillText(str, 4, 4)
+      ctx.fillStyle = 'white'
+      ctx.fillText(str, 0, 0)
       ctx.restore()
+
+      const camera = game.getCamera2D()
+      ctx.save()
+      ctx.translate(
+        camera.position[0] + 12,
+        camera.position[1] + 6
+      )
+      ctx.scale(1 / 48, 1 / 48)
+      ctx.textAlign = 'right'
+      ctx.font = 'italic bold 24px Arial'
+      ctx.fillStyle = '#000B28'
+      const contStr = 'Press any key to continue...'
+      ctx.fillText(contStr, 4, 4)
+      ctx.fillStyle = 'white'
+      ctx.fillText(contStr, 0, 0)
+      ctx.restore()
+
+      return
     }
 
     // Selection box for planting seeds
@@ -745,6 +810,7 @@ export default class Player extends Thing {
   }
 
   postDraw () {
+    if (this.isUnlockAnimationActive) { return }
     if (this.isPaused) { return }
     const { ctx } = game
     ctx.save()
