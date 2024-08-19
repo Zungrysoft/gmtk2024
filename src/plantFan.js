@@ -13,6 +13,8 @@ export default class PlantFan extends Plant {
   sprite = 'plantFan'
   time = 0
   timeLeft = 0
+  hasBeenWatered = false
+  receivedFertilizers = []
 
   update() {
     super.update()
@@ -20,12 +22,48 @@ export default class PlantFan extends Plant {
     this.time ++
 
     if (this.isSprout) {
+      this.icons = []
+      if (!this.hasBeenWatered) {
+        this.icons.push('water')
+      }
+      if (!this.receivedFertilizers.includes('ether')) {
+        this.icons.push('fertilizer')
+      }
+
+      // Is watered
       if (this.isBeingWatered()) {
+        this.hasBeenWatered = true
+      }
+
+      // Consume fertilizer
+      for (const fert of ['ash', 'ether']) {
+        if (!this.receivedFertilizers.includes(fert)) {
+          if (this.consumeFertilizer(fert)) {
+            this.receivedFertilizers.push(fert)
+            this.createFertilizerParticles()
+          }
+        }
+      }
+
+      // Grow up
+      if (this.receivedFertilizers.includes('ether') && this.hasBeenWatered) {
         this.growUp()
-        this.variant = 'right'
+
+        // Set variant
+        if (u.compareLists(this.receivedFertilizers, ['ether', 'ash'])) {
+          this.variant = 'left'
+        }
+        else if (u.compareLists(this.receivedFertilizers, ['ash', 'ether'])) {
+          this.variant = 'right'
+        }
+        else {
+          this.variant = 'basic'
+        }
       }
     }
     else {
+      this.icons = []
+
       // Track watering
       this.timeLeft --
       if (this.isBeingWatered()) {
