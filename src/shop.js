@@ -36,16 +36,17 @@ export default class Shop extends Thing {
     this.squash[0] = u.lerp(this.squash[0], 1, 0.15)
     this.squash[1] = u.lerp(this.squash[1], 1, 0.15)
 
-    if (this.isActive && cancel) {
+    const isActive = Boolean(game.getThing('shopmenu'))
+
+    if (isActive && cancel) {
       game.getThings().forEach(thing => {
         thing.isPaused = this.thingWasPaused.get(thing)
       })
       game.getThing('shopmenu').finish()
-      this.isActive = false
     }
 
     // Toggle shop menu open/closed
-    if (isPlayerInRange && !this.isActive) {
+    if (isPlayerInRange && !isActive) {
       this.frame += 1
       const t = this.frame / 20
       this.squash[0] = u.map(Math.abs(Math.sin(t)), 0, 1, 0.8, 1, true)
@@ -57,7 +58,6 @@ export default class Shop extends Thing {
           this.thingWasPaused.set(thing, thing.isPaused)
           thing.isPaused = thing !== this && thing !== menu
         })
-        this.isActive = true
       }
     } else {
       this.frame = 0
