@@ -14,6 +14,7 @@ import PickupTool from './pickuptool.js'
 import SellZone from './sellzone.js'
 import Shop from './shop.js'
 import Gate from './gate.js'
+import Tutorial from './tutorial.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -84,6 +85,7 @@ game.assets.images = await game.loadImages({
   gatered: 'images/gateRed.png',
   gategreen: 'images/gateGreen.png',
   gateyellow: 'images/gateYellow.png',
+  tutorialcontrols: 'images/tutorialControls.png'
 })
 
 game.assets.levels = await game.loadText({
@@ -160,6 +162,9 @@ class Level extends Thing {
       }
       if (thing.name === 'gate') {
         game.addThing(new Gate(pos, thing.data?.color ?? 'yellow'))
+      }
+      if (thing.name === 'tutorial') {
+        game.addThing(new Tutorial(pos, thing.data?.tutorial ?? 'controls'))
       }
     }
 
