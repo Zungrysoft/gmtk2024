@@ -13,6 +13,7 @@ import Fertilizer from './fertilizer.js'
 import LaserField from './laserfield.js'
 import DrippingCeiling from './drippingceiling.js'
 import PickupMoney from './pickupMoney.js'
+import PickupTool from './pickuptool.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -137,6 +138,9 @@ class Level extends Thing {
       }
       if (thing.name === 'money') {
         game.addThing(new PickupMoney(pos, thing.data?.money ?? 1))
+      }
+      if (thing.name === 'tool') {
+        game.addThing(new PickupTool(pos, thing.data?.tool ?? 'wateringCan'))
       }
     }
 

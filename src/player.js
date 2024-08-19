@@ -57,15 +57,7 @@ export default class Player extends Thing {
   direction = 1
   cameraOffset = [0, 0]
   squash = [1, 1]
-  ownedTools = [
-    'sickle',
-    'seedPacketHedge',
-    'seedPacketApple',
-    'seedPacketClock',
-    'seedPacketOrange',
-    'wateringCan',
-    'waterGun'
-  ]
+  ownedTools = ['sickle']
   selectedTools = {
     seedPacket: '',
     wateringDevice: '',
@@ -305,6 +297,11 @@ export default class Player extends Thing {
       this.useTool(game.keysPressed.KeyA || game.buttonsPressed[2])
     }
 
+    // Unlock all tools cheat
+    if (game.keysDown.ShiftLeft && game.keysPressed.KeyJ) {
+      this.unlockAllToolsCheat()
+    }
+
     if (onGround && this.getSelectedTool().includes('seedPacket')) {
       this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.2, 1.3)
     }
@@ -462,13 +459,23 @@ export default class Player extends Thing {
     return false
   }
 
-  unlockTool (tool, toolMode) {
+  unlockTool (tool) {
     if (!this.ownedTools.includes(tool)) {
       this.ownedTools.push(tool)
       this.setSelectedTool(tool)
     }
 
     // TODO: Play ITEM GET animation and sound
+  }
+
+  unlockAllToolsCheat () {
+    let allTools = []
+    for (const toolCategory of this.getToolCategories()) {
+      for (const tool of toolCategory.tools) {
+        allTools.push(tool)
+      }
+    }
+    this.ownedTools = allTools
   }
 
   getToolCategories () {
@@ -493,10 +500,10 @@ export default class Player extends Thing {
   }
 
   setSelectedTool (tool) {
-    const category = this.getToolCategory(tool)
+    const category = this.getToolCategory(tool).name
     if (category) {
       this.selectedToolCategory = category
-      this.selectedTools['category'] = tool
+      this.selectedTools[category] = tool
     }
     else {
       console.warn("Tried to select invalid tool " + tool)
