@@ -11,6 +11,8 @@ export default class PlantHedge extends Plant {
   hedgePattern = u.createPatternFromImage(game.assets.images.hedge)
   hedgePatternSide = u.createPatternFromImage(game.assets.images.hedgeSide)
   depth = 2
+  hasBeenWatered = false
+  hasBeenFertilized = false
 
   constructor (pos, variant, isSprout, isIndestructible) {
     super(pos, variant, isSprout, isIndestructible)
@@ -23,11 +25,36 @@ export default class PlantHedge extends Plant {
     super.update()
 
     if (this.isSprout) {
+      this.icons = []
+      if (!this.hasBeenWatered) {
+        this.icons.push('water')
+      }
+      if (!this.hasBeenFertilized) {
+        this.icons.push('fertilizer')
+      }
+
+      // Is watered
       if (this.isBeingWatered()) {
+        this.hasBeenWatered = true
+      }
+
+      // Consume fertilizer
+      if (!this.hasBeenFertilized) {
+        if (this.consumeFertilizer('coal')) {
+          this.hasBeenFertilized = true
+          this.createFertilizerParticles()
+        }
+      }
+
+      // Grow up
+      if (this.hasBeenFertilized && this.hasBeenWatered) {
         this.growUp()
       }
     }
     else {
+      // Clear growing icons
+      this.icons = []
+
       // Grow and shrivel in response to water
       const growthSpeed = 0.04
       // If this just sprouted, grow to minimum size of 1

@@ -34,7 +34,7 @@ export default class Deployer extends Thing {
 
   createNewObject() {
     const pos = vec2.add(this.position, [0.5, 0.5])
-    if (this.type === 'ash') return new Fertilizer(pos, this.type)
+    return new Fertilizer(pos, this.type)
   }
 
   deviceTrigger() {

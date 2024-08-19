@@ -72,6 +72,7 @@ export default class PlantApple extends PlantFruit {
       }
     }
     else {
+      // Clear growing icons
       this.icons = []
     }
   }
