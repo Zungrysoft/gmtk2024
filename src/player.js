@@ -10,6 +10,7 @@ import PlantApple from './plantapple.js'
 import PlantClock from './plantclock.js'
 import PlantOrange from './plantorange.js'
 import Swipe from './swipe.js'
+import LaserField from './laserfield.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -135,6 +136,15 @@ export default class Player extends Thing {
       this.pickup.position[1] = this.position[1]
       this.pickup.velocity[0] = this.velocity[0]
       this.pickup.velocity[1] = this.velocity[1]
+
+      for (const thing of game.getThingsInAabb(this.aabb, this.position)) {
+        if (thing instanceof LaserField) {
+          const collided = u.checkAabbIntersection(this.aabb, thing.aabb, this.position, thing.position)
+          if (collided) {
+            this.pickup = null
+          }
+        }
+      }
     }
 
     // Switch tool category
