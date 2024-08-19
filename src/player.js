@@ -195,12 +195,9 @@ export default class Player extends Thing {
     const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
     this.isUsingSelectedTool = usingItem
     const holdingItem = (
-      (
-        this.pickup ||
-        ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
-      )
+      (this.pickup || ['wateringCan', 'waterGun'].includes(this.getSelectedTool()))
     )
-    if (usingItem || holdingItem) {
+    if ((usingItem || holdingItem) && Math.abs(this.velocity[0]) < runThreshold) {
       this.animation = 'grab'
     }
 
@@ -507,13 +504,17 @@ export default class Player extends Thing {
     // TODO: Play ITEM GET animation and sound
 
     const nameMap = {
+      sickle: 'Sickle',
+      wateringCan: 'Watering Can',
       waterGun: 'Water Gun',
-      wateringCan: 'Watering Can'
+      hose: 'Hose',
     }
 
     const descMap = {
+      sickle: 'Press A to destroy unrooted plants.',
+      wateringCan: 'Press A to water plants.',
       waterGun: 'Shoot water even farther!',
-      wateringCan: 'Press A to water plants.'
+      hose: 'Spray water through walls!',
     }
 
     this.unlockAnimationItemImage = tool
@@ -790,6 +791,7 @@ export default class Player extends Thing {
 
     // Draw the held sickle
     if (
+      this.animation === 'grab' &&
       ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool())
     ) {
       ctx.save()
