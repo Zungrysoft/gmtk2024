@@ -195,7 +195,7 @@ export default class Player extends Thing {
     const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
     this.isUsingSelectedTool = usingItem
     const holdingItem = (
-      usingItem && (
+      (
         this.pickup ||
         ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
       )
@@ -790,8 +790,7 @@ export default class Player extends Thing {
 
     // Draw the held sickle
     if (
-      ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool()) &&
-      this.isUsingSelectedTool
+      ['sickle', 'wateringCan', 'waterGun'].includes(this.getSelectedTool())
     ) {
       ctx.save()
       ctx.translate(...this.position)
