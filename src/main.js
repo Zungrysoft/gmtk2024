@@ -4,12 +4,9 @@ import * as webgl from 'webgl'
 import Thing from 'thing'
 import Player from './player.js'
 import PlantHedge from './planthedge.js'
-import Shop from './shop.js'
 import Background from './background.js'
-import SellZone from './sellzone.js'
 import Sprinkler from './sprinkler.js'
 import Deployer from './deployer.js'
-import Fertilizer from './fertilizer.js'
 import LaserField from './laserfield.js'
 import DrippingCeiling from './drippingceiling.js'
 import PickupMoney from './pickupMoney.js'
@@ -158,24 +155,37 @@ class Level extends Thing {
     const { tileSize } = this
 
     // Render the grid tiles as black for now
-    for (const [coordString, tileValue] of Object.entries(this.tileGrids[0])) {
-      const coord = coordString.split(',').map(x => Number(x) * tileSize)
-      const tileVisual = tileValues[tileValue]
+    const tilesWide = game.getWidth() / 48
+    const tilesTall = game.getHeight() / 48
+    const camX = game.getCamera2D().position[0]
+    const camY = game.getCamera2D().position[1]
+    const minTileX = Math.floor(camX - tilesWide/2)
+    const maxTileX = Math.ceil(camX + tilesWide/2)
+    const minTileY = Math.floor(camY - tilesTall/2)
+    const maxTileY = Math.ceil(camY + tilesTall/2)
+    
+    for (let x = minTileX; x <= maxTileX; x ++) {
+      for (let y = minTileY; y <= maxTileY; y ++) {
+        const tileValue = this.tileGrids[0][[x, y]]
+        if (tileValue) {
+          const tileVisual = tileValues[tileValue]
 
-      if (typeof tileVisual === 'string') {
-        ctx.save()
-        ctx.fillStyle = tileVisual
-        ctx.fillRect(coord[0], coord[1], tileSize, tileSize)
-        ctx.restore()
-        continue
+          if (typeof tileVisual === 'string') {
+            ctx.save()
+            ctx.fillStyle = tileVisual
+            ctx.fillRect(x, y, tileSize, tileSize)
+            ctx.restore()
+            continue
+          }
+
+          ctx.save()
+          ctx.translate(x, y)
+          ctx.translate(-8 / 48, -8 / 48)
+          ctx.scale(1 / 48, 1 / 48)
+          ctx.drawImage(tileVisual, 0, 0)
+          ctx.restore()
+        }
       }
-
-      ctx.save()
-      ctx.translate(coord[0], coord[1])
-      ctx.translate(-8 / 48, -8 / 48)
-      ctx.scale(1 / 48, 1 / 48)
-      ctx.drawImage(tileVisual, 0, 0)
-      ctx.restore()
     }
   }
 
