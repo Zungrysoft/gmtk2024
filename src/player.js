@@ -181,7 +181,7 @@ export default class Player extends Thing {
     }
 
     const onGround = this.contactDirections.down
-    const friction = usingItem ? 0.65 : 0.7
+    const friction = usingItem && holdingItem ? 0.65 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration

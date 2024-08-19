@@ -55,13 +55,25 @@ export default class PlantHedge extends Plant {
   }
 
   getShape() {
-    if (this.variant === 'l') {
+    if (this.variant === 'archRight') {
       return [
         {direction: 'up', length: 3},
         {direction: 'right', length: 2},
       ]
     }
-    if (this.variant === 'bridge') {
+    if (this.variant === 'archLeft') {
+      return [
+        {direction: 'up', length: 3},
+        {direction: 'left', length: 2},
+      ]
+    }
+    if (this.variant === 'bridgeRight') {
+      return [
+        {direction: 'up', length: 1},
+        {direction: 'right', length: 6},
+      ]
+    }
+    if (this.variant === 'bridgeLeft') {
       return [
         {direction: 'up', length: 1},
         {direction: 'left', length: 6},
