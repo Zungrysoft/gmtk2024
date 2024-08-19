@@ -29,8 +29,10 @@ export default class Shop extends Thing {
     )
 
     const cancel = (
+      game.keysPressed.ArrowUp ||
       game.keysPressed.KeyZ ||
-      game.buttonsPressed[2]
+      game.buttonsPressed[2] ||
+      game.buttonsPressed[12]
     )
 
     this.squash[0] = u.lerp(this.squash[0], 1, 0.15)
