@@ -13,6 +13,7 @@ import Fertilizer from './fertilizer.js'
 import LaserField from './laserfield.js'
 import DrippingCeiling from './drippingceiling.js'
 import PickupMoney from './pickupMoney.js'
+import PickupTool from './pickuptool.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -39,6 +40,7 @@ game.assets.images = await game.loadImages({
   fertilizerParticle: 'images/fertilizerParticle.png',
   timeRing: 'images/timeRing.png',
   wateringCan: 'images/wateringcan.png',
+  waterGun: 'images/watergun.png',
   ground: 'images/ground.png',
   dirt1: 'images/dirt1.png',
   dirt2: 'images/dirt2.png',
@@ -78,7 +80,7 @@ game.assets.images = await game.loadImages({
 })
 
 game.assets.levels = await game.loadText({
-  level1: 'levels/level1.json'
+  level1: 'levels/gameWorld.json'
 })
 
 game.assets.data = await game.loadJson({
@@ -136,6 +138,9 @@ class Level extends Thing {
       }
       if (thing.name === 'money') {
         game.addThing(new PickupMoney(pos, thing.data?.money ?? 1))
+      }
+      if (thing.name === 'tool') {
+        game.addThing(new PickupTool(pos, thing.data?.tool ?? 'wateringCan'))
       }
     }
 

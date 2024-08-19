@@ -38,11 +38,12 @@ export default class PlantApple extends PlantFruit {
 
       this.icons = []
       if (this.waterIterations < this.requiredWaterIterations) {
-        this.icons.push('water')
-
         if (this.waterIterations > 0) {
           this.setTimerDisplay(this.waterTimer / this.waterInterval)
           this.icons.push('timer')
+        }
+        if (this.waterTimer === 0) {
+          this.icons.push('water')
         }
       }
       if (this.consumedFertilizer < this.requiredFertilizer) {

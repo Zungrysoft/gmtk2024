@@ -58,15 +58,7 @@ export default class Player extends Thing {
   direction = 1
   cameraOffset = [0, 0]
   squash = [1, 1]
-  ownedTools = [
-    'sickle',
-    'seedPacketHedge',
-    'seedPacketApple',
-    'seedPacketClock',
-    'seedPacketOrange',
-    'wateringCan',
-    'waterGun'
-  ]
+  ownedTools = ['sickle']
   selectedTools = {
     seedPacket: '',
     wateringDevice: '',
@@ -182,13 +174,13 @@ export default class Player extends Thing {
     }
 
     const usingItem = game.keysDown.KeyA || game.buttonsDown[2]
-    const holdingItem = this.pickup || this.getSelectedTool() === 'wateringCan'
+    const holdingItem = this.pickup || ['wateringCan', 'waterGun'].includes(this.getSelectedTool())
     if (usingItem || holdingItem) {
       this.animation = 'grab'
     }
 
     const onGround = this.contactDirections.down
-    const friction = holdingItem || usingItem ? 0.65 : 0.7
+    const friction = usingItem ? 0.65 : 0.7
     const groundAcceleration = 3.5 / 48
     const airAcceleration = 0.5 / 48
     const acceleration = onGround ? groundAcceleration : airAcceleration
@@ -318,6 +310,11 @@ export default class Player extends Thing {
       this.unlockTool('wateringCan')
     }
 
+    // Unlock all tools cheat
+    if (game.keysDown.ShiftLeft && game.keysPressed.KeyJ) {
+      this.unlockAllToolsCheat()
+    }
+
     if (onGround && this.getSelectedTool().includes('seedPacket')) {
       this.placementPositionIndicatorScale = Math.min(this.placementPositionIndicatorScale + 0.2, 1.3)
     }
@@ -361,7 +358,7 @@ export default class Player extends Thing {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
-          const pos = vec2.add(this.position, vec2.scale([1.6, 0], this.direction))
+          const pos = vec2.add(this.position, [this.direction * 1.3, 0.3])
           this.shootWater(pos, this.direction, 0.4, 0.05 + this.velocity[0] * this.direction, 0.06)
           break
         }
@@ -373,7 +370,8 @@ export default class Player extends Thing {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
           this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 8 + 2)
-          this.shootWater(this.position, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05)
+          const pos = vec2.add(this.position, [this.direction * 0.4, 0.3])
+          this.shootWater(pos, this.direction, 0.7, 0.6 + this.velocity[0] * this.direction, 0.05)
           break
         }
       }
@@ -475,7 +473,7 @@ export default class Player extends Thing {
     return false
   }
 
-  unlockTool (tool, toolMode) {
+  unlockTool (tool) {
     if (!this.ownedTools.includes(tool)) {
       this.ownedTools.push(tool)
       this.setSelectedTool(tool)
@@ -495,6 +493,16 @@ export default class Player extends Thing {
         thing.isPaused = wasPaused.get(thing)
       })
     })
+  }
+
+  unlockAllToolsCheat () {
+    let allTools = []
+    for (const toolCategory of this.getToolCategories()) {
+      for (const tool of toolCategory.tools) {
+        allTools.push(tool)
+      }
+    }
+    this.ownedTools = allTools
   }
 
   getToolCategories () {
@@ -519,10 +527,10 @@ export default class Player extends Thing {
   }
 
   setSelectedTool (tool) {
-    const category = this.getToolCategory(tool)
+    const category = this.getToolCategory(tool).name
     if (category) {
       this.selectedToolCategory = category
-      this.selectedTools['category'] = tool
+      this.selectedTools[category] = tool
     }
     else {
       console.warn("Tried to select invalid tool " + tool)
@@ -701,10 +709,23 @@ export default class Player extends Thing {
       ctx.translate(...this.position)
       ctx.scale(...this.squash)
       ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
-      ctx.translate(this.direction, 0.15)
+      ctx.translate(this.direction * 1.15, 0.45)
       ctx.scale(this.direction, 1)
       ctx.scale(1 / 48, 1 / 48)
       this.drawSpriteFrame('wateringCan')
+      ctx.restore()
+    }
+
+    // Draw the held water gun
+    if (this.getSelectedTool() === 'waterGun') {
+      ctx.save()
+      ctx.translate(...this.position)
+      ctx.scale(...this.squash)
+      ctx.translate(0, u.map(this.squash[1], 1, 0.5, 0, 0.4, true))
+      ctx.translate(this.direction * 1.1, 0.4)
+      ctx.scale(this.direction, 1)
+      ctx.scale(1 / 48, 1 / 48)
+      this.drawSpriteFrame('waterGun')
       ctx.restore()
     }
   }
