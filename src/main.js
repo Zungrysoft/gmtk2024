@@ -32,7 +32,8 @@ game.assets.images = await game.loadImages({
   dirt4: 'images/dirt4.png',
   hedgeTest: 'images/hedgetest.png',
   caveBackground: 'images/cavebackground1.png',
-  apple: 'images/apple.png'
+  apple: 'images/apple.png',
+  dustParticle: 'images/dust.png'
 })
 
 game.assets.levels = await game.loadText({
