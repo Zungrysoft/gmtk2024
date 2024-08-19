@@ -14,6 +14,8 @@ import PickupTool from './pickuptool.js'
 import SellZone from './sellzone.js'
 import Shop from './shop.js'
 import Gate from './gate.js'
+import Tutorial from './tutorial.js'
+import Fertilizer from './fertilizer.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -84,6 +86,12 @@ game.assets.images = await game.loadImages({
   gatered: 'images/gateRed.png',
   gategreen: 'images/gateGreen.png',
   gateyellow: 'images/gateYellow.png',
+  tutorialcontrols: 'images/tutorialControls.png',
+  tutorialtool: 'images/tutorialTool.png',
+  tutorialgrab: 'images/tutorialGrab.png',
+  tutorialgrab2: 'images/tutorialGrab2.png',
+  tutorialswitch: 'images/tutorialSwitch.png',
+  tutorialshop: 'images/tutorialShop.png',
 })
 
 game.assets.levels = await game.loadText({
@@ -124,7 +132,9 @@ class Level extends Thing {
     for (const thing of things) {
       const pos = [Math.floor(thing.position[0]), Math.floor(thing.position[1])]
       if (thing.name === 'player') {
-        game.addThing(new Player(pos))
+        if (!game.getThing('player')) {
+          game.addThing(new Player(pos))
+        }
       }
       if (thing.name === 'plantHedge') {
         game.addThing(new PlantHedge(
@@ -139,6 +149,9 @@ class Level extends Thing {
       }
       if (thing.name === 'deployer') {
         game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
+      }
+      if (thing.name === 'fertilizer') {
+        game.addThing(new Fertilizer(pos, thing.data?.type ?? 'apple'))
       }
       if (thing.name === 'laserField') {
         game.addThing(new LaserField(pos, thing.data?.size ?? [1, 1]))
@@ -160,6 +173,9 @@ class Level extends Thing {
       }
       if (thing.name === 'gate') {
         game.addThing(new Gate(pos, thing.data?.color ?? 'yellow'))
+      }
+      if (thing.name === 'tutorial') {
+        game.addThing(new Tutorial(pos, thing.data?.tutorial ?? 'controls'))
       }
     }
 
