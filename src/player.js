@@ -862,6 +862,8 @@ export default class Player extends Thing {
   postDraw () {
     if (this.isUnlockAnimationActive) { return }
     if (this.isPaused) { return }
+    if (game.getThing('shopmenu')) { return }
+
     const { ctx } = game
     ctx.save()
     ctx.font = 'italic bold 64px Arial'

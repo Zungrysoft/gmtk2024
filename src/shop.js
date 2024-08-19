@@ -3,8 +3,19 @@ import * as u from 'utils'
 import Thing from 'thing'
 
 export default class Shop extends Thing {
+  sprite = 'vendingmachine'
   isActive = false
   thingWasPaused = new WeakMap()
+  scale = [1 / 48, 1 / 48]
+  animations = {
+    idle: {
+      frames: [0],
+      speed: 0,
+      frameSize: 128
+    },
+  }
+  squash = [1, 1]
+  frame = 0
 
   constructor(position) {
     super()
@@ -17,15 +28,32 @@ export default class Shop extends Thing {
       u.distance(this.position, player.position) < 5
     )
 
+    const cancel = (
+      game.keysPressed.KeyZ ||
+      game.buttonsPressed[2]
+    )
+
+    this.squash[0] = u.lerp(this.squash[0], 1, 0.15)
+    this.squash[1] = u.lerp(this.squash[1], 1, 0.15)
+
+    if (this.isActive && cancel) {
+      game.getThings().forEach(thing => {
+        thing.isPaused = this.thingWasPaused.get(thing)
+      })
+      game.getThing('shopmenu').finish()
+      this.isActive = false
+    }
+
     // Toggle shop menu open/closed
-    if (game.keysPressed.ArrowUp || game.buttonsPressed[12]) {
-      if (this.isActive) {
-        game.getThings().forEach(thing => {
-          thing.isPaused = this.thingWasPaused.get(thing)
-        })
-        game.getThing('shopmenu').finish()
-        this.isActive = false
-      } else if (isPlayerInRange) {
+    if (isPlayerInRange) {
+      if (!this.isActive) {
+        this.frame += 1
+        const t = this.frame / 20
+        this.squash[0] = u.map(Math.abs(Math.sin(t)), 0, 1, 0.8, 1, true)
+        this.squash[1] = u.map(Math.abs(Math.cos(t)), 0, 1, 0.8, 1.1, true)
+      }
+
+      if (game.keysPressed.ArrowUp || game.buttonsPressed[12]) {
         const menu = game.addThing(new ShopMenu())
         game.getThings().forEach(thing => {
           this.thingWasPaused.set(thing, thing.isPaused)
@@ -33,7 +61,12 @@ export default class Shop extends Thing {
         })
         this.isActive = true
       }
+    } else {
+      this.frame = 0
     }
+
+    this.scale[0] = this.squash[0] * 1 / 48
+    this.scale[1] = this.squash[1] * 1 / 48
   }
 
   close() {
@@ -41,6 +74,8 @@ export default class Shop extends Thing {
   }
 
   draw () {
+    this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 90) + 80)
+
     const { ctx } = game
     ctx.save()
     ctx.beginPath()
@@ -121,9 +156,7 @@ class ShopMenu extends Thing {
     if (this.canBuy) {
       if (
         game.keysPressed.KeyX ||
-          game.keysPressed.KeyZ ||
-          game.buttonsPressed[2] ||
-          game.buttonsPressed[0]
+        game.buttonsPressed[0]
       ) {
         const selection = this.items[this.selection]
         if (player.money >= selection.price) {
@@ -232,6 +265,14 @@ class ShopMenu extends Thing {
     ctx.textAlign = 'left'
     ctx.translate(48, game.getHeight() - 48)
     ctx.fillText(`$${game.getThing('player').money}`, 0, 0)
+    ctx.restore()
+
+    ctx.save()
+    ctx.fillStyle = 'white'
+    ctx.font = 'bold italic 20px Arial'
+    ctx.textAlign = 'right'
+    ctx.translate(game.getWidth() - 48, game.getHeight() - 48)
+    ctx.fillText(`Press Z to cancel`, 0, 0)
     ctx.restore()
 
     ctx.restore()
