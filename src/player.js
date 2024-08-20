@@ -348,7 +348,7 @@ export default class Player extends Thing {
     // ==============
 
     // Grab objects
-    if (game.keysPressed.KeyD || game.buttonsPressed[1]) {
+    if (game.keysPressed.KeyC || game.buttonsPressed[1]) {
       let nextPickup
       const grabPosition = [
         this.position[0] + this.direction * 0.5,
