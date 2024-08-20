@@ -14,6 +14,7 @@ import Swipe from './swipe.js'
 import LaserField from './laserfield.js'
 import PlantFan from './plantFan.js'
 import PlantBanana from './plantbanana.js'
+import FireShot from './fireshot.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -85,6 +86,8 @@ export default class Player extends Thing {
   keyColors = []
   sickleFrames = 0
   isUsingTool = false
+  windFrames = 0
+  windFramesVertical = 0
 
   constructor (position) {
     super()
@@ -94,6 +97,7 @@ export default class Player extends Thing {
 
   update () {
     this.timer += 1
+    this.windFramesVertical --
 
     if (this.isUnlockAnimationActive) {
       this.animation = 'unlock'
@@ -129,6 +133,9 @@ export default class Player extends Thing {
     this.move()
     this.animate()
 
+    if (this.pickup?.isDead) {
+      this.pickup = null
+    }
     if (this.pickup) {
       const snappiness = 0.7
       this.pickup.position[0] = u.lerp(
@@ -200,9 +207,14 @@ export default class Player extends Thing {
 
     const runThreshold = 0.165
 
+    const rightKeyDown = game.keysDown.ArrowRight || game.buttonsDown[15]
+    const leftKeyDown = game.keysDown.ArrowLeft || game.buttonsDown[14]
+
     // Switch running / walking / idle animation depending on speed
-    this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'walk' : 'run'
-    if (Math.abs(this.velocity[0]) < 0.08) {
+    const isRunning = Math.abs(this.velocity[0]) >= runThreshold || this.windFrames > 0
+    const isResistingWind = this.windFrames > 0 && (rightKeyDown || leftKeyDown)
+    this.animation = isRunning ? 'run' : 'walk'
+    if (Math.abs(this.velocity[0]) < 0.08 && !isResistingWind) {
       this.animation = 'idle'
       this.runFrames = 0
     } else {
@@ -222,20 +234,20 @@ export default class Player extends Thing {
     }
     if (this.velocity[1] < 0) {
       this.animation = (
-        Math.abs(this.velocity[0]) < runThreshold
-          ? 'jump'
-          : 'runJump'
+        isRunning
+          ? 'runJump'
+          : 'jump'
       )
     }
     if (this.velocity[1] > 0.03) {
       this.animation = (
-        Math.abs(this.velocity[0]) < runThreshold
-          ? 'fall'
-          : 'runFall'
+        isRunning
+          ? 'runFall'
+          : 'fall'
       )
     }
     if (this.velocity[1] > 0.06) {
-      this.animation = Math.abs(this.velocity[0]) < runThreshold ? 'fall' : 'runFall'
+      this.animation = isRunning ? 'runFall' : 'fall'
     }
 
     const onGround = this.contactDirections.down
@@ -332,13 +344,13 @@ export default class Player extends Thing {
       this.squash[0] = 0.5
       soundmanager.playSound('jump', 0.05, [0.8, 1])
     }
-    if (!(game.keysDown.KeyX || game.buttonsDown[0]) && this.velocity[1] < 0) {
+    if (!(game.keysDown.KeyX || game.buttonsDown[0]) && this.velocity[1] < 0 && this.windFramesVertical <= 0) {
       this.velocity[1] *= 0.7
     }
 
     // Move left and right, on ground speed is naturally clamped by
     // friction but in the air we have to artificially clamp it
-    if (game.keysDown.ArrowRight || game.buttonsDown[15]) {
+    if (rightKeyDown) {
       this.velocity[0] += acceleration
       if (!onGround) {
         this.velocity[0] = Math.min(this.velocity[0], maxSpeed)
@@ -347,7 +359,7 @@ export default class Player extends Thing {
         this.direction = u.sign(this.velocity[0]) || this.direction
       }
     }
-    if (game.keysDown.ArrowLeft || game.buttonsDown[14]) {
+    if (leftKeyDown) {
       this.velocity[0] -= acceleration
       if (!onGround) {
         this.velocity[0] = Math.max(this.velocity[0], -maxSpeed)
@@ -442,7 +454,7 @@ export default class Player extends Thing {
   }
 
   isToolHeld(tool) {
-    if (['wateringCan', 'waterGun', 'hose'].includes(tool)) {
+    if (['wateringCan', 'waterGun', 'hose', 'flamethrower'].includes(tool)) {
       return true
     }
     if (tool.includes('seedPacket')) {
@@ -499,7 +511,7 @@ export default class Player extends Thing {
       this.isUsingTool = true
     }
 
-    // Hose: Powerful stream, pierces walls
+    // Hose: Weak stream, pierces walls
     if (selectedTool === 'hose') {
       for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
         if (this.wateringDeviceCooldowns[i] === 0) {
@@ -512,6 +524,18 @@ export default class Player extends Thing {
       this.isUsingTool = true
     }
 
+    // Flamethrower: Ultimate horticultural genocide
+    if (selectedTool === 'flamethrower') {
+      for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
+        if (this.wateringDeviceCooldowns[i] === 0) {
+          this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
+          const pos = vec2.add(this.position, [this.direction * 1.3, 0.2])
+          this.shootWater(pos, this.direction, 1, 0.4 + (this.velocity[0] * this.direction), 0.1, -0.1, true, true)
+          break
+        }
+      }
+      this.isUsingTool = true
+    }
 
     // Seed packet: Plants new plants
     else if (selectedTool.includes('seedPacket')) {
@@ -532,7 +556,7 @@ export default class Player extends Thing {
     }
   }
 
-  shootWater(position, direction, scale, speed, spread, verticalSpeed=-0.1, pierce=false) {
+  shootWater(position, direction, scale, speed, spread, verticalSpeed=-0.1, pierce=false, isFire=false) {
     // const r1 = Math.random()
     // const r2 = Math.random()
     // const vx = (Math.sqrt(r1)*2 - 1) * 0.06
@@ -551,7 +575,13 @@ export default class Player extends Thing {
     const dx = (Math.random()*2 - 1) * speed * 0.5
     const pos = vec2.add(position, [dx, 0])
 
-    game.addThing(new WaterShot(pos, vel, scale, pierce, this))
+    if (isFire) {
+      game.addThing(new FireShot(pos, vel, scale))
+    }
+    else {
+      game.addThing(new WaterShot(pos, vel, scale, pierce, this))
+    }
+    
   }
 
   getPlacementPosition() {
@@ -623,6 +653,7 @@ export default class Player extends Thing {
 
     const nameMap = {
       sickle: 'Sickle',
+      flamethrower: 'Flamethrower',
       wateringCan: 'Watering Can',
       waterGun: 'Water Gun',
       hose: 'Hose',
@@ -630,6 +661,7 @@ export default class Player extends Thing {
 
     const descMap = {
       sickle: 'Destroys unrooted plants',
+      flamethrower: 'Incinerates unrooted plants',
       wateringCan: 'Waters plants',
       waterGun: 'Shoots water even farther!',
       hose: 'Sprays water through walls!',
