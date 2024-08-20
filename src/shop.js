@@ -1,5 +1,6 @@
 import * as game from 'game'
 import * as u from 'utils'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 
 export default class Shop extends Thing {
@@ -154,6 +155,7 @@ class ShopMenu extends Thing {
           else if (selection.givenKey) {
             player.unlockKey(selection.givenKey)
           }
+          soundmanager.playSound('buy', 0.5)
           this.regenerateShop()
         }
         else {

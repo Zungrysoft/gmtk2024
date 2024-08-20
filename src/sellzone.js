@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 
 export default class SellZone extends Thing {
@@ -27,6 +28,7 @@ export default class SellZone extends Thing {
       ) {
         thing.isDead = true
         player.money += thing.value
+        soundmanager.playSound('sell', 0.5)
         game.addThing(new MoneyPopup(thing.value, vec2.add(this.position, [0, -1])))
       }
     }

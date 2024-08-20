@@ -229,6 +229,8 @@ export default class PlantHedge extends Plant {
     else {
       this.isDead = true
 
+      soundmanager.playSound('killplant', 0.15)
+
       // Particle effect on each segment of body
       const segs = this.getHedgeSegments()
       for (const seg of segs) {

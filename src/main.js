@@ -145,7 +145,21 @@ game.assets.sounds = await game.loadAudio({
   drip: 'sounds/water-dripping-63539.wav',
   drip1: 'sounds/water-dripping-63539.wav',
   drip2: 'sounds/water-dripping-63539.wav',
-  sprinkle: 'sounds/spray-87676.mp3'
+  sprinkle: 'sounds/spray-87676.mp3',
+  uitoggle1: 'sounds/uitoggle1.wav',
+  uitoggle2: 'sounds/uitoggle2.wav',
+  sell: 'sounds/Cash register 5.wav',
+  buy: 'sounds/Item purchase 21.wav',
+  sickle: 'sounds/sickle.wav',
+  getcoin: 'sounds/getcoin.wav',
+  killplant: 'sounds/killplant.wav',
+  growplant: 'sounds/growplant.wav',
+  plantplant: 'sounds/plantplant.wav',
+  fire: 'sounds/fire.wav',
+  fire1: 'sounds/fire.wav',
+  fire2: 'sounds/fire.wav',
+  upgrade: 'sounds/upgrade.wav',
+  resetclick: 'sounds/resetclick.wav'
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 
