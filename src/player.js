@@ -118,6 +118,7 @@ export default class Player extends Thing {
     }
 
     if (game.getThing('shopmenu')) {
+      game.assets.sounds.drive.pause()
       this.updateTimers()
       this.animate()
       return
