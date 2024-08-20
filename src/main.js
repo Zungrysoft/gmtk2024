@@ -146,6 +146,7 @@ game.assets.sounds = await game.loadAudio({
   drip1: 'sounds/water-dripping-63539.wav',
   drip2: 'sounds/water-dripping-63539.wav',
   sprinkle: 'sounds/spray-87676.mp3',
+  sprinklerSprinkle: 'sounds/spray-87676.mp3',
   uitoggle1: 'sounds/uitoggle1.wav',
   uitoggle2: 'sounds/uitoggle2.wav',
   sell: 'sounds/Cash register 5.wav',
