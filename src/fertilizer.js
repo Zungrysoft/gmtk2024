@@ -1,12 +1,21 @@
 import Pickupable from './pickupable.js'
+import * as vec2 from 'vector2'
 
 export default class Fertilizer extends Pickupable {
   animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }
   }
 
-  constructor(position, type, isAttached=false) {
+  constructor(position, type, isAttached=false, isGiant=false) {
     super(position, isAttached)
+
+    if (isGiant) {
+      this.isGiant = true
+      this.scale *= 2
+      this.aabb = [-0.9, -0.9, 0.9, 0.9]
+      this.isPickupable = false
+      this.position = vec2.add(this.position, [0.5, 0.5])
+    }
     
     // Types
     if (type === 'ash') {

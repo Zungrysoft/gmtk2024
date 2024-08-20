@@ -225,7 +225,12 @@ class Level extends Thing {
         game.addThing(new DeployerSwitch(pos, thing.data?.radius ?? 10))
       }
       if (thing.name === 'fertilizer') {
-        game.addThing(new Fertilizer(vec2.add(pos, [0.5, 0.5]), thing.data?.type ?? 'apple'))
+        game.addThing(new Fertilizer(
+          vec2.add(pos, [0.5, 0.5]),
+          thing.data?.type ?? 'apple',
+          false,
+          thing.data?.isGiant ?? false,
+        ))
       }
       if (thing.name === 'laserField') {
         game.addThing(new LaserField(pos, thing.data?.size ?? [1, 1]))
