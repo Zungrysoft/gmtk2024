@@ -2,7 +2,7 @@ import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Plant from './plant.js'
-import TimeRing from './timeRing.js'
+import TimeRing from './timering.js'
 import * as soundmanager from 'soundmanager'
 
 export default class PlantClock extends Plant {

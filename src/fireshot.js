@@ -1,9 +1,7 @@
 import * as game from 'game'
-import * as u from 'utils'
 import * as vec2 from 'vector2'
-import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
-import FireParticle from './fireparticle.js'
+import FireParticle from './fireParticle.js'
 import SmokeParticle from './smokeParticle.js'
 
 export default class FireShot extends Thing {
