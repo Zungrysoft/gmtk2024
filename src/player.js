@@ -15,6 +15,7 @@ import LaserField from './laserfield.js'
 import PlantFan from './plantFan.js'
 import PlantBanana from './plantbanana.js'
 import FireShot from './fireshot.js'
+import RecipeMenu from './recipemenu.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -94,6 +95,7 @@ export default class Player extends Thing {
     super()
     this.position = [...position]
     game.setThingName(this, 'player')
+    //game.addThing(new RecipeMenu())
   }
 
   update () {
@@ -178,6 +180,12 @@ export default class Player extends Thing {
     // Switch sub tool reverse
     if (game.keysPressed.KeyD || game.buttonsPressed[5]) {
       this.cycleTool(false)
+    }
+
+    if (game.keysPressed.KeyR) {
+      game.addThing(new RecipeMenu(
+        this.getOwnedToolsInCategory('seedPacket')
+      ))
     }
 
     // Use tool
@@ -741,6 +749,10 @@ export default class Player extends Thing {
         if (thing === this) { return }
         thing.isPaused = wasPaused.get(thing)
       })
+
+      if (tool.slice(0, 4) === 'seed') {
+        game.addThing(new RecipeMenu(tool))
+      }
     }
   }
 
