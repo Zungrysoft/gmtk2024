@@ -228,7 +228,11 @@ class Level extends Thing {
         game.addThing(new Dribbler(vec2.add(pos, [0.5, 0.5]), thing.data?.direction ?? 1))
       }
       if (thing.name === 'deployer') {
-        game.addThing(new Deployer(pos, thing.data?.type ?? 'apple'))
+        game.addThing(new Deployer(
+          pos,
+          thing.data?.type ?? 'apple',
+          thing.data?.isGiant ?? false,
+        ))
       }
       if (thing.name === 'deployerSwitch') {
         game.addThing(new DeployerSwitch(pos, thing.data?.radius ?? 10))
