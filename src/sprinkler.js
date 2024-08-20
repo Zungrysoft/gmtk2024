@@ -1,5 +1,5 @@
 import Pickupable from './pickupable.js'
-import WaterShot from './waterShot.js'
+import WaterShot from './watershot.js'
 import * as vec2 from 'vector2'
 import * as game from 'game'
 import * as u from 'utils'
