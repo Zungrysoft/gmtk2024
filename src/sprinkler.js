@@ -2,6 +2,7 @@ import Pickupable from './pickupable.js'
 import WaterShot from './waterShot.js'
 import * as vec2 from 'vector2'
 import * as game from 'game'
+import * as u from 'utils'
 
 export default class Sprinkler extends Pickupable {
   sprite = 'sprinkler'
@@ -25,6 +26,13 @@ export default class Sprinkler extends Pickupable {
       this.wateredSomethingTime ++
       if (this.shouldWater() && !this.isPickedUp()) {
         this.sprinklerTimer ++
+        const player = game.getThing('player')
+        const dist = player ? u.distance(player.position, this.position) : Infinity
+        if (dist < 20) {
+          player.hearsSprinkler = (
+            Math.min(player.hearsSprinkler || Infinity, dist / 20)
+          )
+        }
         if (this.sprinklerTimer % 3 === 0) {
           let vel = vec2.scale(vec2.normalize([
             Math.sin(this.sprinklerTimer / 25) * 0.6,

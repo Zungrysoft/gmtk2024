@@ -88,6 +88,7 @@ export default class Player extends Thing {
   isUsingTool = false
   windFrames = 0
   windFramesVertical = 0
+  hearsSprinkler = 0
 
   constructor (position) {
     super()
@@ -436,8 +437,8 @@ export default class Player extends Thing {
       this.wateringDeviceCooldowns[i] = Math.max(this.wateringDeviceCooldowns[i] - 1, 0)
     }
 
-    const sprinkle = game.assets.sounds.sprinkle
     if (this.isUsingTool && ['wateringCan', 'waterGun', 'hose'].includes(this.getSelectedTool())) {
+      const sprinkle = game.assets.sounds.sprinkle
       sprinkle.loop = true
       let pitch = (
         this.getSelectedTool() === 'waterGun'
@@ -451,7 +452,22 @@ export default class Player extends Thing {
         soundmanager.playSound('sprinkle', 0.1, pitch)
       }
     } else {
+      const sprinkle = game.assets.sounds.sprinkle
       sprinkle.loop = false
+      sprinkle.pause()
+    }
+
+    if (this.hearsSprinkler) {
+      const sprinkle = game.assets.sounds.sprinklerSprinkle
+      sprinkle.loop = true
+      const volume = u.inverseSquareMap(this.hearsSprinkler, 0, 1, 0.1, 0, true)
+      if (sprinkle.paused) {
+        sprinkle.play()
+      }
+      sprinkle.volume = volume
+      this.hearsSprinkler = 0
+    } else {
+      const sprinkle = game.assets.sounds.sprinklerSprinkle
       sprinkle.pause()
     }
 
