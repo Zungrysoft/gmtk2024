@@ -51,7 +51,7 @@ export default class Pickupable extends Thing {
     if (super.checkCollision(x, y, z)) {
       return true
     }
-    return collisionutils.checkCollision(this.aabb, x, y, true)
+    return collisionutils.checkCollision(this.aabb, x, y, true, true)
   }
 
   isPickedUp () {
