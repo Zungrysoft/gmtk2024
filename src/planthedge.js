@@ -12,7 +12,6 @@ export default class PlantHedge extends Plant {
   hedgePattern = u.createPatternFromImage(game.assets.images.hedge)
   hedgePatternSide = u.createPatternFromImage(game.assets.images.hedgeSide)
   depth = 2
-  hasBeenWatered = false
   receivedFertilizers = []
 
   constructor (pos, variant, isSprout, isIndestructible) {
@@ -27,16 +26,11 @@ export default class PlantHedge extends Plant {
 
     if (this.isSprout) {
       this.icons = []
-      if (!this.hasBeenWatered) {
-        this.icons.push('water')
-      }
       if (!this.receivedFertilizers.includes('coal')) {
         this.icons.push('fertilizer')
       }
-
-      // Is watered
-      if (this.isBeingWatered()) {
-        this.hasBeenWatered = true
+      else {
+        this.icons.push('water')
       }
 
       // Consume fertilizer
@@ -50,7 +44,7 @@ export default class PlantHedge extends Plant {
       }
 
       // Grow up
-      if (this.receivedFertilizers.includes('coal') && this.hasBeenWatered) {
+      if (this.receivedFertilizers.includes('coal') && this.isBeingWatered()) {
         this.growUp()
 
         // Set variant
@@ -221,23 +215,27 @@ export default class PlantHedge extends Plant {
   }
 
   destroy() {
-    this.isDead = true
+    if (this.isSprout) {
+      super.destroy()
+    }
+    else {
+      this.isDead = true
 
-    // Particle effect on each segment of body
-    const segs = this.getHedgeSegments()
-    for (const seg of segs) {
-      const box = seg.hitBox
-      const area = Math.abs((box[2] - box[0]) * (box[3] - box[1]))
-      for (let i = 0; i < 3 * area; i ++) {
-        const pos = [
-          u.map(Math.random(), 0, 1, box[0], box[2]),
-          u.map(Math.random(), 0, 1, box[1], box[3]),
-        ]
-        const vel = [(Math.random()-0.5)* 0.1, Math.random()*-0.05 - 0.1]
-        game.addThing(new DestroyLeafParticle(pos, vel))
+      // Particle effect on each segment of body
+      const segs = this.getHedgeSegments()
+      for (const seg of segs) {
+        const box = seg.hitBox
+        const area = Math.abs((box[2] - box[0]) * (box[3] - box[1]))
+        for (let i = 0; i < 3 * area; i ++) {
+          const pos = [
+            u.map(Math.random(), 0, 1, box[0], box[2]),
+            u.map(Math.random(), 0, 1, box[1], box[3]),
+          ]
+          const vel = [(Math.random()-0.5)* 0.1, Math.random()*-0.05 - 0.1]
+          game.addThing(new DestroyLeafParticle(pos, vel))
+        }
       }
     }
-    
   }
 
   draw () {

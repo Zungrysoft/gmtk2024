@@ -1,6 +1,7 @@
 import Pickupable from './pickupable.js'
 import WaterShot from './waterShot.js'
 import * as game from 'game'
+import * as vec2 from 'vector2'
 
 export default class Dribbler extends Pickupable {
   sprite = 'dribbler'
@@ -9,6 +10,7 @@ export default class Dribbler extends Pickupable {
   }
   sprinklerTimer = 0
   enabled = true
+  wateredSomethingTime = 0
 
   constructor(position, direction=1, isAttached) {
     super(position, isAttached)
@@ -27,16 +29,33 @@ export default class Dribbler extends Pickupable {
     this.scale = [1/48 * this.direction, 1/48]
 
     // Sprinkle water
-    if (this.enabled && !this.isPickedUp()) {
-      this.sprinklerTimer ++
-      if (this.sprinklerTimer % 4 === 0) {
-        const vel = [(0.28 + Math.random()*0.1) * this.direction, Math.random() * -0.1]
-        game.addThing(new WaterShot(this.position, vel, 0.4))
+    if (this.enabled) {
+      this.wateredSomethingTime ++
+      if (this.shouldWater() && !this.isPickedUp()) {
+        this.sprinklerTimer ++
+        if (this.sprinklerTimer % 4 === 0) {
+          const vel = [(0.28 + Math.random()*0.1) * this.direction, Math.random() * -0.1]
+          game.addThing(new WaterShot(this.position, vel, 0.4, false, this))
+        }
       }
     }
     if (this.isPickedUp()) {
       this.enabled = true
     }
+  }
+
+  shouldWater() {
+    if (this.wateredSomethingTime < 60 * 1) {
+      return true
+    }
+    if (vec2.distance(this.position, game.getThing('player').position) < 25) {
+      return true
+    }
+    return false
+  }
+
+  wateredSomething() {
+    this.wateredSomethingTime = 0
   }
 
   deviceTrigger() {

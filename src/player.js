@@ -436,7 +436,7 @@ export default class Player extends Thing {
   }
 
   isToolHeld(tool) {
-    if (['wateringCan', 'waterGun'].includes(tool)) {
+    if (['wateringCan', 'waterGun', 'hose'].includes(tool)) {
       return true
     }
     if (tool.includes('seedPacket')) {
@@ -492,6 +492,20 @@ export default class Player extends Thing {
       this.isUsingTool = true
     }
 
+    // Hose: Powerful stream, pierces walls
+    if (selectedTool === 'hose') {
+      for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
+        if (this.wateringDeviceCooldowns[i] === 0) {
+          this.wateringDeviceCooldowns[i] = Math.floor(Math.random() * 9 + 2)
+          const pos = vec2.add(this.position, [this.direction * 1.0, 0.1])
+          this.shootWater(pos, this.direction, 0.5, 0.03 + (this.velocity[0] * this.direction), 0.07, 0.1, true)
+          break
+        }
+      }
+      this.isUsingTool = true
+    }
+
+
     // Seed packet: Plants new plants
     else if (selectedTool.includes('seedPacket')) {
       const placementPos = this.getPlacementPosition()
@@ -510,7 +524,7 @@ export default class Player extends Thing {
     }
   }
 
-  shootWater(position, direction, scale, speed, spread) {
+  shootWater(position, direction, scale, speed, spread, verticalSpeed=-0.1, pierce=false) {
     // const r1 = Math.random()
     // const r2 = Math.random()
     // const vx = (Math.sqrt(r1)*2 - 1) * 0.06
@@ -518,7 +532,7 @@ export default class Player extends Thing {
     // this.velocity = vec2.add(this.velocity, [vx, vy])
 
     // Randomly vary velocity
-    let vel = direction > 0 ? [speed, -0.1] : [-speed, -0.1]
+    let vel = direction > 0 ? [speed, verticalSpeed] : [-speed, verticalSpeed]
     const r1 = Math.random()
     const r2 = Math.random()
     const vx = (Math.sqrt(r1)*2 - 1) * spread * direction
@@ -529,7 +543,7 @@ export default class Player extends Thing {
     const dx = (Math.random()*2 - 1) * speed * 0.5
     const pos = vec2.add(position, [dx, 0])
 
-    game.addThing(new WaterShot(pos, vel, scale))
+    game.addThing(new WaterShot(pos, vel, scale, pierce, this))
   }
 
   getPlacementPosition() {
