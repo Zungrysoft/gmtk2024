@@ -302,7 +302,7 @@ export default class Player extends Thing {
       game.assets.sounds.drive.playbackRate = (
         u.map(groundSpeed, 0, runThreshold, 0.7, 1)
       )
-      game.assets.sounds.drive.volume = u.map(groundSpeed, 0, runThreshold, 0, 0.12)
+      game.assets.sounds.drive.volume = u.map(groundSpeed, 0, runThreshold, 0, 0.12, true)
     } else {
       game.assets.sounds.drive.loop = false
       game.assets.sounds.drive.pause()
