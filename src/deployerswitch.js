@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as vec2 from 'vector2'
 import * as u from 'utils'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 import Deployer from './deployer.js'
 
@@ -27,6 +28,7 @@ export default class DeployerSwitch extends Thing {
     if (u.checkAabbIntersection(this.aabb, player.aabb, this.position, player.position)) {
       if (this.downTime === 0) {
         // Reactivate deployers
+        soundmanager.playSound('resetclick', 0.2)
         this.activateDeployers()
       }
       this.downTime = 25

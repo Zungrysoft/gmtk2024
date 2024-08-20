@@ -130,7 +130,7 @@ game.assets.images = await game.loadImages({
 })
 
 game.assets.levels = await game.loadText({
-  level1: 'levels/testWorld.json'
+  level1: 'levels/gameWorld.json'
 })
 
 game.assets.data = await game.loadJson({
@@ -158,6 +158,8 @@ game.assets.sounds = await game.loadAudio({
   fire: 'sounds/fire.wav',
   fire1: 'sounds/fire.wav',
   fire2: 'sounds/fire.wav',
+  upgrade: 'sounds/upgrade.wav',
+  resetclick: 'sounds/resetclick.wav'
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 

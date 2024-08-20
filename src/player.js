@@ -657,6 +657,8 @@ export default class Player extends Thing {
     }
 
     // TODO: Play ITEM GET animation and sound
+    soundmanager.playSound('upgrade', 0.5)
+    game.assets.sounds.drive.pause()
 
     const nameMap = {
       sickle: 'Sickle',
@@ -664,6 +666,12 @@ export default class Player extends Thing {
       wateringCan: 'Watering Can',
       waterGun: 'Water Gun',
       hose: 'Hose',
+      seedPacketHedge: 'Hedge Seeds',
+      seedPacketApple: 'Apple Seeds',
+      seedPacketOrange: 'Orange Seeds',
+      seedPacketBanana: 'Banana Seeds',
+      seedPacketClock: 'Clock Flower Seeds',
+      seedPacketFan: 'Fan Flower Seeds',
     }
 
     const descMap = {
@@ -672,6 +680,12 @@ export default class Player extends Thing {
       wateringCan: 'Waters plants',
       waterGun: 'Shoots water even farther!',
       hose: 'Sprays water through walls!',
+      seedPacketHedge: 'Plant them to grow hedges!',
+      seedPacketApple: 'Plant them to grow apples!',
+      seedPacketOrange: 'Plant them to grow oranges!',
+      seedPacketBanana: 'Plant them to grow bananas!',
+      seedPacketClock: 'Plant them to grow clock flowers!',
+      seedPacketFan: 'Platn them to grow fan flowers',
     }
 
     this.unlockAnimationItemImage = tool
