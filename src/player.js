@@ -106,8 +106,10 @@ export default class Player extends Thing {
       this.animate()
 
       if (
-        Object.values(game.keysPressed).some(Boolean) ||
-        Object.values(game.buttonsPressed).some(Boolean)
+        !this.getTimer('unlockWait') && (
+          Object.values(game.keysPressed).some(Boolean) ||
+          Object.values(game.buttonsPressed).some(Boolean)
+        )
       ) {
         this.isUnlockAnimationActive = false
         this.unlockAnimationCancel()
@@ -694,6 +696,7 @@ export default class Player extends Thing {
     // TODO: Play ITEM GET animation and sound
     soundmanager.playSound('upgrade', 0.5)
     game.assets.sounds.drive.pause()
+    this.setTimer('unlockWait', 90)
 
     const nameMap = {
       sickle: 'Sickle',
@@ -1001,9 +1004,11 @@ export default class Player extends Thing {
       ctx.font = 'italic bold 24px Arial'
       ctx.fillStyle = '#000B28'
       const contStr = 'Press any key to continue...'
-      ctx.fillText(contStr, 4, 4)
-      ctx.fillStyle = 'white'
-      ctx.fillText(contStr, 0, 0)
+      if (!this.getTimer('unlockWait')) {
+        ctx.fillText(contStr, 4, 4)
+        ctx.fillStyle = 'white'
+        ctx.fillText(contStr, 0, 0)
+      }
       ctx.restore()
 
       return
