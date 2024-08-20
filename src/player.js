@@ -15,6 +15,7 @@ import LaserField from './laserfield.js'
 import PlantFan from './plantFan.js'
 import PlantBanana from './plantbanana.js'
 import FireShot from './fireshot.js'
+import RecipeMenu from './recipemenu.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -94,6 +95,7 @@ export default class Player extends Thing {
     super()
     this.position = [...position]
     game.setThingName(this, 'player')
+    //game.addThing(new RecipeMenu())
   }
 
   update () {
@@ -106,8 +108,10 @@ export default class Player extends Thing {
       this.animate()
 
       if (
-        Object.values(game.keysPressed).some(Boolean) ||
-        Object.values(game.buttonsPressed).some(Boolean)
+        !this.getTimer('unlockWait') && (
+          Object.values(game.keysPressed).some(Boolean) ||
+          Object.values(game.buttonsPressed).some(Boolean)
+        )
       ) {
         this.isUnlockAnimationActive = false
         this.unlockAnimationCancel()
@@ -118,6 +122,7 @@ export default class Player extends Thing {
     }
 
     if (game.getThing('shopmenu')) {
+      game.assets.sounds.drive.pause()
       this.updateTimers()
       this.animate()
       return
@@ -175,6 +180,12 @@ export default class Player extends Thing {
     // Switch sub tool reverse
     if (game.keysPressed.KeyD || game.buttonsPressed[5]) {
       this.cycleTool(false)
+    }
+
+    if (game.keysPressed.KeyR) {
+      game.addThing(new RecipeMenu(
+        this.getOwnedToolsInCategory('seedPacket')
+      ))
     }
 
     // Use tool
@@ -693,6 +704,7 @@ export default class Player extends Thing {
     // TODO: Play ITEM GET animation and sound
     soundmanager.playSound('upgrade', 0.5)
     game.assets.sounds.drive.pause()
+    this.setTimer('unlockWait', 90)
 
     const nameMap = {
       sickle: 'Sickle',
@@ -737,6 +749,10 @@ export default class Player extends Thing {
         if (thing === this) { return }
         thing.isPaused = wasPaused.get(thing)
       })
+
+      if (tool.slice(0, 4) === 'seed') {
+        game.addThing(new RecipeMenu(tool))
+      }
     }
   }
 
@@ -1000,9 +1016,11 @@ export default class Player extends Thing {
       ctx.font = 'italic bold 24px Arial'
       ctx.fillStyle = '#000B28'
       const contStr = 'Press any key to continue...'
-      ctx.fillText(contStr, 4, 4)
-      ctx.fillStyle = 'white'
-      ctx.fillText(contStr, 0, 0)
+      if (!this.getTimer('unlockWait')) {
+        ctx.fillText(contStr, 4, 4)
+        ctx.fillStyle = 'white'
+        ctx.fillText(contStr, 0, 0)
+      }
       ctx.restore()
 
       return

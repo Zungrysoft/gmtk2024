@@ -129,12 +129,16 @@ class ShopMenu extends Thing {
       this.selection += 1
       if (this.selection > this.items.length - 1) {
         this.selection = this.items.length - 1
+      } else {
+        soundmanager.playSound('uitoggle2', 0.15, [1.0, 1.1])
       }
     }
     if (left) {
       this.selection -= 1
       if (this.selection < 0) {
         this.selection = 0
+      } else {
+        soundmanager.playSound('uitoggle2', 0.15, [0.7, 0.8])
       }
     }
 
@@ -160,6 +164,7 @@ class ShopMenu extends Thing {
         }
         else {
           // TODO: Error Sound
+          soundmanager.playSound('error', 0.15)
         }
       }
     }

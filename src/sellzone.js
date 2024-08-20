@@ -8,9 +8,10 @@ export default class SellZone extends Thing {
   aabb = [-1, -1, 1, 1]
   scale = 1 / 48
   animations = {
-    idle: { frames: [0], speed: 0, frameSize: 48 }
+    idle: { frames: [0], speed: 0, frameSize: 96 }
   }
   depth = -100
+  sprite = 'sellZone'
 
   constructor (position = [0, 0]) {
     super()
@@ -34,8 +35,10 @@ export default class SellZone extends Thing {
     }
   }
 
+  /*
   draw () {
     const { ctx } = game
+    /*
     ctx.save()
     ctx.fillStyle = 'green'
     ctx.globalAlpha = 0.5
@@ -64,6 +67,7 @@ export default class SellZone extends Thing {
 
     ctx.restore()
   }
+    */
 }
 
 class MoneyPopup extends Thing {

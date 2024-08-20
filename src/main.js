@@ -130,6 +130,7 @@ game.assets.images = await game.loadImages({
   leafParticle: 'images/leafParticle.png',
   switch: 'images/switch.png',
   switchDown: 'images/switchDown.png',
+  sellZone: 'images/sellzone.png'
 })
 
 game.assets.levels = await game.loadText({
@@ -170,7 +171,8 @@ game.assets.sounds = await game.loadAudio({
   getpoints1: 'sounds/getpoints.wav',
   getpoints2: 'sounds/getpoints.wav',
   getpoints3: 'sounds/getpoints.wav',
-  getpoints4: 'sounds/getpoints.wav'
+  getpoints4: 'sounds/getpoints.wav',
+  error: 'sounds/error.wav'
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 
