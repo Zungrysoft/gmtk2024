@@ -187,7 +187,25 @@ export default class Player extends Thing {
     this.squash[0] = u.lerp(this.squash[0], 1, 0.15)
     this.squash[1] = u.lerp(this.squash[1], 1, 0.15)
 
+    const lastVisualMoney = this.visualMoney
     this.visualMoney = u.lerp(this.visualMoney, this.money, 0.1)
+    if (
+      Math.round(this.visualMoney) > Math.round(lastVisualMoney) &&
+      this.visualMoney < this.money
+    ) {
+      const pitch = Math.min(
+        u.squareMap(this.money - this.visualMoney, 1, 100, 0.75, 1),
+        2.5
+      )
+      const sounds = [
+        'getpoints',
+        'getpoints1',
+        'getpoints2',
+        'getpoints3',
+        'getpoints4',
+      ]
+      soundmanager.playSound(sounds, 0.025, [pitch, pitch])
+    }
 
     // Camera handling, make sure to offset the camera to look ahead
     // in the direction the player is currently moving or looking
@@ -573,7 +591,7 @@ export default class Player extends Thing {
         if (selectedTool === 'seedPacketBanana') game.addThing(new PlantBanana(placementPos))
         if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
         if (selectedTool === 'seedPacketFan') game.addThing(new PlantFan(placementPos))
-        soundmanager.playSound('plantplant', 0.15)
+        soundmanager.playSound('realplantplant', 0.05)
       }
       this.isUsingTool = true
     }
