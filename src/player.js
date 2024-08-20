@@ -105,6 +105,10 @@ export default class Player extends Thing {
     this.timer += 1
     this.windFramesVertical --
 
+    if (game.assets.sounds.music1.paused) {
+      soundmanager.playMusic('music1', 0.05)
+    }
+
     if (this.isUnlockAnimationActive) {
       this.animation = 'unlock'
       this.updateTimers()
