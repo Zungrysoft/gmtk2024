@@ -57,7 +57,7 @@ export default class Scene {
     }
   }
 
-  spatialHash = new SpatialHash()
+  spatialHash = new SpatialHash(32)
   screenShakes = []
 
   /** Things can assign themselves to this object so that other things

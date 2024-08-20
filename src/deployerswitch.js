@@ -11,7 +11,7 @@ export default class DeployerSwitch extends Thing {
   animations = {
     idle: { frames: [0], speed: 0, frameSize: 48 }
   }
-  depth = 7
+  depth = -40
   downTime = 0
 
   constructor (position, radius) {
