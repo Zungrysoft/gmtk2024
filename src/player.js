@@ -2,6 +2,7 @@ import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
 import * as collisionutils from './collisionutils.js'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 import Plant from './plant.js'
 import PlantHedge from './planthedge.js'
@@ -238,6 +239,22 @@ export default class Player extends Thing {
     }
 
     const onGround = this.contactDirections.down
+
+    const groundSpeed = Math.abs(this.velocity[0])
+    if (groundSpeed > 0.005 && onGround) {
+      game.assets.sounds.drive.loop = true
+      if (game.assets.sounds.drive.paused) {
+        soundmanager.playSound('drive', 0.065)
+      }
+      game.assets.sounds.drive.playbackRate = (
+        u.map(groundSpeed, 0, runThreshold, 0.7, 1)
+      )
+      game.assets.sounds.drive.volume = u.map(groundSpeed, 0, runThreshold, 0, 0.12)
+    } else {
+      game.assets.sounds.drive.loop = false
+      game.assets.sounds.drive.pause()
+    }
+
     const usingItem = this.isUsingTool || (this.getHeldTool() === 'sickle' && this.sickleFrames > 0)
 
     let holdingItem = Boolean(this.pickup)
@@ -281,6 +298,7 @@ export default class Player extends Thing {
     this.coyoteFrames -= 1
     if (onGround) {
       if (this.coyoteFrames < 3) {
+        soundmanager.playSound('land', 0.03, [0.7, 0.8])
         this.squash[1] = 0.5
         for (let i = 0; i < 3; i += 1) {
           const dir = u.choose([1, -1])
@@ -312,6 +330,7 @@ export default class Player extends Thing {
       this.coyoteFrames = 0
       this.squash[1] = 1.5
       this.squash[0] = 0.5
+      soundmanager.playSound('jump', 0.04, [0.8, 1])
     }
     if (!(game.keysDown.KeyX || game.buttonsDown[0]) && this.velocity[1] < 0) {
       this.velocity[1] *= 0.7
@@ -397,6 +416,22 @@ export default class Player extends Thing {
     this.sickleFrames --
     for (let i = 0; i < this.wateringDeviceCooldowns.length; i ++) {
       this.wateringDeviceCooldowns[i] = Math.max(this.wateringDeviceCooldowns[i] - 1, 0)
+    }
+
+    const sprinkle = game.assets.sounds.sprinkle
+    if (this.isUsingTool && ['wateringCan', 'waterGun'].includes(this.getSelectedTool())) {
+      sprinkle.loop = true
+      const pitch = (
+        this.getSelectedTool() === 'waterGun'
+        ? 1.2
+        : 0.9
+      )
+      if (sprinkle.paused) {
+        soundmanager.playSound('sprinkle', 0.1, pitch)
+      }
+    } else {
+      sprinkle.loop = false
+      sprinkle.pause()
     }
   }
 

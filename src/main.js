@@ -2,6 +2,7 @@ import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
 import * as webgl from 'webgl'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 import Player from './player.js'
 import PlantHedge from './planthedge.js'
@@ -132,6 +133,17 @@ game.assets.data = await game.loadJson({
   plantingRequirements: 'data/plantingRequirements.json',
   toolCategories: 'data/toolCategories.json',
 })
+
+game.assets.sounds = await game.loadAudio({
+  jump: 'sounds/jump.wav',
+  land: 'sounds/Shooting Bow&Arrow 13.wav',
+  drive: 'sounds/engine-6000.mp3',
+  drip: 'sounds/water-dripping-63539.wav',
+  drip1: 'sounds/water-dripping-63539.wav',
+  drip2: 'sounds/water-dripping-63539.wav',
+  sprinkle: 'sounds/spray-87676.mp3'
+})
+soundmanager.setSoundsTable(game.assets.sounds)
 
 const tileValues = {
   1: game.assets.images.dirt1,
