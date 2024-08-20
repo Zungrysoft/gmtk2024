@@ -731,6 +731,7 @@ export default class Player extends Thing {
       seedPacketApple: 'Apple Seeds',
       seedPacketOrange: 'Orange Seeds',
       seedPacketBanana: 'Banana Seeds',
+      seedPacketBlueberry: 'Blueberry Seeds',
       seedPacketClock: 'Clock Flower Seeds',
       seedPacketFan: 'Fan Flower Seeds',
     }
@@ -745,8 +746,9 @@ export default class Player extends Thing {
       seedPacketApple: 'Plant them to grow apples!',
       seedPacketOrange: 'Plant them to grow oranges!',
       seedPacketBanana: 'Plant them to grow bananas!',
+      seedPacketBlueberry: 'Plant them to grow blueberries!',
       seedPacketClock: 'Plant them to grow clock flowers!',
-      seedPacketFan: 'Platn them to grow fan flowers',
+      seedPacketFan: 'Plant them to grow fan flowers!',
     }
 
     this.unlockAnimationItemImage = tool

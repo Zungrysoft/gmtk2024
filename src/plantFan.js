@@ -96,12 +96,13 @@ export default class PlantFan extends Plant {
           )
         }
 
-        const things = game.getThingsNear(...this.position, 20).filter(x => x instanceof Player || x instanceof Pickupable)
+        let things = game.getThingsNear(...this.position, 20)
+        things = things.filter(x => x instanceof Player || (x instanceof Pickupable && !x.isPickedUp()))
         for (const thing of things) {
           if (u.checkAabbIntersection(this.getWindAabb(), thing.aabb, this.position, thing.position)) {
             const dist = vec2.distance(this.position, thing.position)
             const blowFactor = u.map(dist, 0, 10, 0.2, 0, true)
-            const deltaVelocity = vec2.scale(vec2.normalize(this.getBlowVelocity()), blowFactor)
+            const deltaVelocity = vec2.scale(this.getBlowVelocity(), blowFactor)
             // const dotProduct = vec2.dotProduct(vec2.normalize(deltaVelocity), vec2.normalize(thing.velocity)) < 0
             // const dotScale = u.squareMap(dotProduct, -0.8, 1, 0, 1, true)
             // thing.velocity = vec2.add(thing.velocity, vec2.scale(deltaVelocity, dotScale))
@@ -142,7 +143,7 @@ export default class PlantFan extends Plant {
   }
 
   getBlowVelocity() {
-    const speed = 0.1
+    const speed = 1
     if (this.variant === 'left') {
       return [-speed, 0]
     }
@@ -150,7 +151,7 @@ export default class PlantFan extends Plant {
       return [speed, 0]
     }
     else {
-      return [0, -speed]
+      return [0, -speed * 0.3]
     }
   }
 

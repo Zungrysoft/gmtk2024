@@ -21,6 +21,7 @@ import Fertilizer from './fertilizer.js'
 import Dribbler from './dribbler.js'
 import DeployerSwitch from './deployerswitch.js'
 import PlantFan from './plantFan.js'
+import PlantClock from './plantclock.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -221,6 +222,14 @@ class Level extends Thing {
       }
       if (thing.name === 'plantFan') {
         game.addThing(new PlantFan(
+          pos,
+          thing.data?.variant ?? 'basic',
+          thing.data?.isSprout ?? false,
+          thing.data?.isIndestructible ?? true,
+        ))
+      }
+      if (thing.name === 'plantClock') {
+        game.addThing(new PlantClock(
           pos,
           thing.data?.variant ?? 'basic',
           thing.data?.isSprout ?? false,

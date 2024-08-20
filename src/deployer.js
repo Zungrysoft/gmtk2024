@@ -46,9 +46,9 @@ export default class Deployer extends Thing {
     return new Fertilizer(pos, this.type, false, this.isGiant)
   }
 
-  deviceTrigger() {
-    this.deployObject()
-  }
+  // deviceTrigger() {
+  //   this.deployObject()
+  // }
 
   draw () {
     const { ctx } = game

@@ -78,19 +78,19 @@ export default class PlantClock extends Plant {
 
   getInterval() {
     if (this.variant === 'timer2') {
-      return 60 * 10
+      return 60 * 13
     }
     else if (this.variant === 'timer3') {
-      return 60 * 30
+      return 60 * 27
     }
     else if (this.variant === 'timer4') {
-      return 60 * 60
+      return 60 * 41
     }
     else if (this.variant === 'timer5') {
-      return 60 * 60 * 5
+      return 60 * 83
     }
     else {
-      return 60 * 5
+      return 60 * 7
     }
   }
 
