@@ -77,16 +77,16 @@ export default class Shop extends Thing {
   draw () {
     this.drawSprite(...this.position, 0, u.map(this.squash[1], 1, 0.5, 0, 90) + 80)
 
-    const { ctx } = game
-    ctx.save()
-    ctx.beginPath()
-    ctx.fillStyle = 'white'
-    ctx.font = 'italic bold 32px Arial'
-    ctx.textAlign = 'center'
-    ctx.translate(...this.position)
-    ctx.scale(1 / 48, 1 / 48)
-    ctx.fillText('SHOP', 0, 0)
-    ctx.restore()
+    // const { ctx } = game
+    // ctx.save()
+    // ctx.beginPath()
+    // ctx.fillStyle = 'white'
+    // ctx.font = 'italic bold 32px Arial'
+    // ctx.textAlign = 'center'
+    // ctx.translate(...this.position)
+    // ctx.scale(1 / 48, 1 / 48)
+    // ctx.fillText('SHOP', 0, 0)
+    // ctx.restore()
   }
 }
 
