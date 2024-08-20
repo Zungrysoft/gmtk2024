@@ -27,6 +27,12 @@ document.title = 'Growbot'
 game.setWidth(1280)
 game.setHeight(720)
 game.createCanvas2D()
+const { ctx } = game
+ctx.save()
+ctx.fillStyle = 'white'
+ctx.font = 'italic bold 64px Arial'
+ctx.fillText('Loading...', 64, game.getHeight() - 64)
+ctx.restore()
 
 game.assets.images = await game.loadImages({
   guy: 'images/guy3.png',
