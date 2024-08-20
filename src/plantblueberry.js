@@ -1,16 +1,16 @@
 import * as game from 'game'
 import PlantFruit from './plantfruit.js'
 
-export default class PlantApple extends PlantFruit {
-  sprite = game.assets.images.plantAppleSprout
+export default class PlantBlueberry extends PlantFruit {
+  sprite = game.assets.images.plantBlueberrySprout
   grownSprite = game.assets.images.plantApple
-  waterInterval = 600
+  waterInterval = 60*20
   requiredWaterIterations = 3
-  requiredFertilizer = 1
+  requiredFertilizer = 2
   waterTimer = 0
   waterIterations = 0
   consumedFertilizer = 0
-  fruitType = 'apple'
+  fruitType = 'blueberry'
 
   revertToSprout() {
     super.revertToSprout()
@@ -35,6 +35,7 @@ export default class PlantApple extends PlantFruit {
         else if (this.waterIterations > 0) {
           this.setTimerDisplay(this.waterTimer / this.waterInterval)
           this.icons.push('timer')
+          this.icons.push('noWater')
         }
       }
       if (this.consumedFertilizer < this.requiredFertilizer) {
@@ -45,14 +46,21 @@ export default class PlantApple extends PlantFruit {
       }
 
       // Is watered
-      if (this.isBeingWatered() && this.waterTimer === 0) {
-        this.waterTimer = this.waterInterval
-        this.waterIterations += 1
+      if (this.isBeingWatered()) {
+        if (this.waterTimer === 0) {
+          this.waterTimer = this.waterInterval
+          this.waterIterations += 1
+        }
+        else {
+          // Blueberries don't want too much water
+          // Reset timer if watered during waiting period
+          this.waterTimer = this.waterInterval
+        }
       }
 
       // Consume fertilizer
       if (this.consumedFertilizer < this.requiredFertilizer) {
-        if (this.consumeFertilizer('ash')) {
+        if (this.consumeFertilizer('banana')) {
           this.consumedFertilizer ++
           this.createFertilizerParticles()
         }

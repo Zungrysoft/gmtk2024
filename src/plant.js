@@ -154,6 +154,9 @@ export default class Plant extends Thing {
       const segment = Math.ceil(u.clamp(this.timerDisplay, 0, 1) * segments)
       const timerImage = game.assets.images["timer" + segment]
       ctx.drawImage(timerImage, ...this.position, 1, 1)
+      if (this.icons.includes('timerBlocked')) {
+        ctx.drawImage(game.assets.images.timerBlocked, ...this.position, 1, 1)
+      }
       ctx.restore()
     }
 

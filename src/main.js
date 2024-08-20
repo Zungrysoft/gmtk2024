@@ -131,7 +131,8 @@ game.assets.images = await game.loadImages({
   leafParticle: 'images/leafParticle.png',
   switch: 'images/switch.png',
   switchDown: 'images/switchDown.png',
-  sellZone: 'images/sellzone.png'
+  sellZone: 'images/sellzone.png',
+  timerBlocked: 'images/timerBlocked.png'
 })
 
 game.assets.levels = await game.loadText({

@@ -16,6 +16,7 @@ import PlantFan from './plantFan.js'
 import PlantBanana from './plantbanana.js'
 import FireShot from './fireshot.js'
 import RecipeMenu from './recipemenu.js'
+import PlantBlueberry from './plantblueberry.js'
 
 export default class Player extends Thing {
   sprite = game.assets.images.guy
@@ -615,6 +616,7 @@ export default class Player extends Thing {
         if (selectedTool === 'seedPacketApple') game.addThing(new PlantApple(placementPos))
         if (selectedTool === 'seedPacketOrange') game.addThing(new PlantOrange(placementPos))
         if (selectedTool === 'seedPacketBanana') game.addThing(new PlantBanana(placementPos))
+        if (selectedTool === 'seedPacketBlueberry') game.addThing(new PlantBlueberry(placementPos))
         if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
         if (selectedTool === 'seedPacketFan') game.addThing(new PlantFan(placementPos))
         soundmanager.playSound('realplantplant', 0.05)
