@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 import Plant from './plant.js'
 import WaterDroplet from './waterdroplet.js'
@@ -89,7 +90,12 @@ export default class WaterShot extends Thing {
   spawnDroplets() {
     // Make sure player is nearby to actually see the particles
     const player = game.getThing('player')
-    if (vec2.squareDistance(player.position, this.position) < 18) {
+    const dist = vec2.squareDistance(player.position, this.position)
+    if (dist < 18) {
+      soundmanager.playSound(
+        ['drip', 'drip1', 'drip2'],
+        u.inverseSquareMap(dist, 0, 18, 0.3, 0)
+      )
       for (let i = 0; i < 8*this.scaleMultiplier; i ++) {
         game.addThing(new WaterDroplet(this.position, Math.sqrt(this.scaleMultiplier)))
       }

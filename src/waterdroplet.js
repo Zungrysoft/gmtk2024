@@ -19,8 +19,11 @@ export default class WaterDroplet extends Thing {
   }
 
   update () {
-    this.position = vec2.add(this.position, this.velocity)
-    this.velocity = vec2.lerp(this.velocity, [0, 0], 0.06)
+    //this.position = vec2.add(this.position, this.velocity)
+    this.position[0] += this.velocity[0]
+    this.position[1] += this.velocity[1]
+    this.velocity[0] = u.lerp(this.velocity[0], 0, 0.06)
+    this.velocity[1] = u.lerp(this.velocity[1], 0, 0.06)
     this.scale -= (1/48)/30
     if (this.scale <= 0) {
       this.isDead = true
