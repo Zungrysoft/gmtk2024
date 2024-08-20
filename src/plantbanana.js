@@ -4,7 +4,7 @@ import PlantFruit from './plantfruit.js'
 export default class PlantBanana extends PlantFruit {
   sprite = game.assets.images.plantBananaSprout
   grownSprite = game.assets.images.plantApple
-  waterInterval = 200
+  waterInterval = 180
   requiredWaterIterations = 10
   requiredApples = 3
   requiredOranges = 3

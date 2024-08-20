@@ -126,13 +126,16 @@ game.assets.images = await game.loadImages({
   tutorialmode: 'images/tutorialMode.png',
   tutorialmode2: 'images/tutorialMode2.png',
   tutorialwin: 'images/tutorialWin.png',
+  tutorialarch: 'images/tutorialArch.png',
+  tutorialfan: 'images/tutorialFan.png',
   vendingmachine: 'images/vendingmachine.png',
   swipe: 'images/swipe.png',
   leafParticle: 'images/leafParticle.png',
   switch: 'images/switch.png',
   switchDown: 'images/switchDown.png',
   sellZone: 'images/sellzone.png',
-  timerBlocked: 'images/timerBlocked.png'
+  timerBlocked: 'images/timerBlocked.png',
+  fanPlantIcon: 'images/fanPlantIcon.png'
 })
 
 game.assets.levels = await game.loadText({

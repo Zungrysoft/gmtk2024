@@ -8,46 +8,74 @@ const recipes = [
     name: 'Apple Tree',
     id: 'seedPacketApple',
     description: [
-      'Takes any fertilizer.',
-      'Produces one apple and dies.'
+      'Produces sellable apples.',
+      'Plants need water and fertilizer to grow.',
+      'Water 3 times, waiting 10 seconds in between.',
+      'Provide one ash fertilizer.',
     ],
     image: ['plantApple', 'apple']
-  },
-  {
-    name: 'Hedge',
-    id: 'seedPacketHedge',
-    description: [
-      'Takes any fertilizer.',
-      'Produces one apple and dies.'
-    ],
-    image: 'hedge'
   },
   {
     name: 'Orange Tree',
     id: 'seedPacketOrange',
     description: [
-      'Takes any fertilizer.',
-      'Produces one apple and dies.'
+      'Produces more valuable oranges.',
+      'Water 5 times, waiting 8 seconds in between.',
+      'Provide three apples as fertilizer.',
     ],
     image: ['plantApple', 'orange']
-  },
-  {
-    name: 'Clock Flower',
-    id: 'seedPacketClock',
-    description: [
-      'Takes any fertilizer.',
-      'Produces one apple and dies.'
-    ],
-    image: 'plantClock'
   },
   {
     name: 'Banana Tree',
     id: 'seedPacketBanana',
     description: [
-      'Takes any fertilizer.',
-      'Produces one apple and dies.'
+      'Produces very valuable bananas.',
+      'Water 10 times, waiting 3 seconds in between.',
+      'Provide 3 apples and 3 oranges as fertilizer.',
     ],
     image: ['plantApple', 'banana']
+  },
+  {
+    name: 'Blueberry Tree',
+    id: 'seedPacketBlueberry',
+    description: [
+      'Produces monstrously valuable blueberries.',
+      'Water 3 times, waiting 20 seconds in between.',
+      'Provide two bananas as fertilizer.',
+      'Do not overwater! Overwatering resets timer!',
+    ],
+    image: ['plantApple', 'blueberry']
+  },
+  {
+    name: 'Hedge',
+    id: 'seedPacketHedge',
+    description: [
+      'Gets taller when watered.',
+      'To Grow: Provide one coal fertilizer, then water.'
+    ],
+    image: 'hedge'
+  },
+  {
+    name: 'Clock Flower',
+    id: 'seedPacketClock',
+    description: [
+      'Toggles nearby sprinklers on a timer.',
+      'To Grow: Provide one ash fertilizer, then water.',
+      'Provide extra ash to increase timer period:',
+      '  7s, 13s, 27s, 41s, 83s'
+    ],
+    image: 'plantClock'
+  },
+  {
+    name: 'Fan Flower',
+    id: 'seedPacketFan',
+    description: [
+      'Blows a gust of wind when watered.',
+      'To Grow: Provide one ether, and either',
+      '  one ash or one golden powder. Then water.',
+      'Ingredients determine fan direction.'
+    ],
+    image: 'fanPlantIcon'
   },
 ]
 
