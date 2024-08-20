@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as vec2 from 'vector2'
 import * as u from 'utils'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 
 export default class Gate extends Thing {
@@ -27,6 +28,7 @@ export default class Gate extends Thing {
       u.checkAabbIntersection([-2, -1, 3, 4], player.aabb, this.position, player.position)
     ) {
       this.opened = true
+      soundmanager.playSound('upgrade', 0.5)
     }
     if (this.opened) {
       this.openAmount = Math.min(this.openAmount + 0.03, 1)

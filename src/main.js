@@ -156,11 +156,18 @@ game.assets.sounds = await game.loadAudio({
   killplant: 'sounds/killplant.wav',
   growplant: 'sounds/growplant.wav',
   plantplant: 'sounds/plantplant.wav',
+  realplantplant: 'sounds/realplantplant.wav',
   fire: 'sounds/fire.wav',
   fire1: 'sounds/fire.wav',
   fire2: 'sounds/fire.wav',
   upgrade: 'sounds/upgrade.wav',
-  resetclick: 'sounds/resetclick.wav'
+  resetclick: 'sounds/resetclick.wav',
+  opengate: 'sounds/opengate.wav',
+  getpoints: 'sounds/getpoints.wav',
+  getpoints1: 'sounds/getpoints.wav',
+  getpoints2: 'sounds/getpoints.wav',
+  getpoints3: 'sounds/getpoints.wav',
+  getpoints4: 'sounds/getpoints.wav'
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 
