@@ -16,13 +16,15 @@ export default class WaterShot extends Thing {
   lifeTime = 300
   scale = 1/48
 
-  constructor (position, velocity, scale) {
+  constructor (position, velocity, scale, pierce=false, parent=null) {
     super()
     this.position = [...position]
     this.velocity = [...velocity]
 
     this.scaleMultiplier = scale
     this.scale *= this.scaleMultiplier
+    this.pierce = pierce
+    this.parent = parent
   }
 
   update () {
@@ -69,12 +71,15 @@ export default class WaterShot extends Thing {
           if (thing instanceof Plant) {
             game.addThing(new WaterDeliverer(thing, 10))
           }
+          if (this.parent?.wateredSomething) {
+            this.parent.wateredSomething()
+          }
         }
       }
     }
 
     // Detect solid ground and destroy self
-    if (game.getThing('level').checkWorldTileCollision(...this.position)) {
+    if (!this.pierce && game.getThing('level').checkWorldTileCollision(...this.position)) {
       this.isDead = true
       this.spawnDroplets()
     }

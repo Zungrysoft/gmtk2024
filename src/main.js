@@ -19,6 +19,7 @@ import Tutorial from './tutorial.js'
 import Fertilizer from './fertilizer.js'
 import Dribbler from './dribbler.js'
 import DeployerSwitch from './deployerswitch.js'
+import PlantFan from './plantFan.js'
 
 document.title = 'Game'
 game.setWidth(1280)
@@ -56,6 +57,7 @@ game.assets.images = await game.loadImages({
   sickle: 'images/sickle.png',
   wateringCan: 'images/wateringcan.png',
   waterGun: 'images/watergun.png',
+  hose: 'images/hose.png',
   ground: 'images/ground.png',
   dirt1: 'images/dirt1.png',
   dirt2: 'images/dirt2.png',
@@ -77,6 +79,7 @@ game.assets.images = await game.loadImages({
   ash: 'images/ash.png',
   coal: 'images/coal.png',
   ether: 'images/ether.png',
+  powder: 'images/powder.png',
   deployer: 'images/deployer.png',
   timer0: 'images/timer0.png',
   timer1: 'images/timer1.png',
@@ -165,6 +168,14 @@ class Level extends Thing {
       }
       if (thing.name === 'plantHedge') {
         game.addThing(new PlantHedge(
+          pos,
+          thing.data?.variant ?? 'basic',
+          thing.data?.isSprout ?? false,
+          thing.data?.isIndestructible ?? true,
+        ))
+      }
+      if (thing.name === 'plantFan') {
+        game.addThing(new PlantFan(
           pos,
           thing.data?.variant ?? 'basic',
           thing.data?.isSprout ?? false,

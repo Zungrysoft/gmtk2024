@@ -21,6 +21,10 @@ export default class Fertilizer extends Pickupable {
       this.type = 'ether'
       this.sprite = 'ether'
     }
+    else if (type === 'powder') {
+      this.type = 'powder'
+      this.sprite = 'powder'
+    }
     else if (type === 'orange') {
       this.type = 'orange'
       this.sprite = 'orange'
@@ -30,6 +34,11 @@ export default class Fertilizer extends Pickupable {
       this.type = 'banana'
       this.sprite = 'banana'
       this.value = 750
+    }
+    else if (type === 'blueberry') {
+      this.type = 'blueberry'
+      this.sprite = 'blueberry'
+      this.value = 50000
     }
     else {
       this.type = 'apple'

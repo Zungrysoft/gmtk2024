@@ -22,39 +22,48 @@ export default class PlantFan extends Plant {
     this.time ++
 
     if (this.isSprout) {
+      const hasBaseFertilizer = this.receivedFertilizers.includes('ether')
+      const hasAltFertilizer = this.receivedFertilizers.includes('ash') || this.receivedFertilizers.includes('powder')
+
+      // Growing Icons
       this.icons = []
-      if (!this.hasBeenWatered) {
-        this.icons.push('water')
-      }
-      if (!(this.receivedFertilizers.includes('ether') && this.receivedFertilizers.length >= 2)) {
+      if ((!hasBaseFertilizer) || (!hasAltFertilizer)) {
         this.icons.push('fertilizer')
       }
-
-      // Is watered
-      if (this.isBeingWatered()) {
-        this.hasBeenWatered = true
+      else {
+        this.icons.push('water')
       }
 
       // Consume fertilizer
-      for (const fert of ['ash', 'coal', 'ether']) {
-        if (!this.receivedFertilizers.includes(fert)) {
-          if (this.consumeFertilizer(fert)) {
-            this.receivedFertilizers.push(fert)
-            this.createFertilizerParticles()
-          }
+      if (!hasBaseFertilizer) {
+        if (this.consumeFertilizer('ether')) {
+          this.receivedFertilizers.push('ether')
+          this.createFertilizerParticles()
+        }
+      }
+      if (!hasAltFertilizer) {
+        if (this.consumeFertilizer('ash')) {
+          this.receivedFertilizers.push('ash')
+          this.createFertilizerParticles()
+        }
+        else if (this.consumeFertilizer('powder')) {
+          this.receivedFertilizers.push('powder')
+          this.createFertilizerParticles()
         }
       }
 
       // Grow up
-      if (this.receivedFertilizers.includes('ether') && this.receivedFertilizers.length >= 2 && this.hasBeenWatered) {
+      if (this.isBeingWatered() && hasBaseFertilizer && hasAltFertilizer) {
         this.growUp()
 
         // Set variant
-        if (u.compareLists(this.receivedFertilizers, ['ether', 'ash'])) {
-          this.variant = 'left'
-        }
-        else if (u.compareLists(this.receivedFertilizers, ['ash', 'ether'])) {
-          this.variant = 'right'
+        if (this.receivedFertilizers.includes('ash')) {
+          if (u.compareLists(this.receivedFertilizers, ['ether', 'ash'])) {
+            this.variant = 'left'
+          }
+          else if (u.compareLists(this.receivedFertilizers, ['ash', 'ether'])) {
+            this.variant = 'right'
+          }
         }
         else {
           this.variant = 'basic'
@@ -81,8 +90,16 @@ export default class PlantFan extends Plant {
 
         const things = game.getThingsNear(...this.position, 20).filter(x => x instanceof Player || x instanceof Pickupable)
         for (const thing of things) {
-          if (u.checkAabbIntersection(this.getAabb(), thing.aabb, this.position, thing.position)) {
-            thing.velocity = vec2.add(thing.velocity, this.getBlowVelocity())
+          if (u.checkAabbIntersection(this.getWindAabb(), thing.aabb, this.position, thing.position)) {
+            const dist = vec2.distance(this.position, thing.position)
+            const blowFactor = u.map(dist, 0, 10, 0.4, 0)
+            const deltaVelocity = vec2.scale(vec2.normalize(this.getBlowVelocity()), blowFactor)
+            const dotProduct = vec2.dotProduct(vec2.normalize(deltaVelocity), vec2.normalize(thing.velocity)) < 0
+            const dotScale = u.squareMap(dotProduct, -0.8, 1, 0, 1, true)
+            thing.velocity = vec2.add(thing.velocity, vec2.scale(deltaVelocity, dotScale))
+            if (this.variant === 'basic' && !thing.onGround && thing.coyoteFrames) {
+              thing.coyoteFrames = 0
+            }
           }
         }
       }
@@ -97,7 +114,7 @@ export default class PlantFan extends Plant {
     return [[this.position[0], this.position[1], this.position[0] + 1, this.position[1] + 1]]
   }
 
-  getAabb() {
+  getWindAabb() {
     if (this.variant === 'left') {
       return [-10, 0, 1, 1]
     }
