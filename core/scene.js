@@ -80,7 +80,9 @@ export default class Scene {
         thing.onDeath()
         const layer = this.layers[Math.round(this.depthMemory.get(thing)) || 0]
         if (layer) layer.splice(layer.indexOf(thing), 1)
-        this.spatialHash.remove(thing)
+        if (thing.aabb) {
+          this.spatialHash.remove(thing)
+        }
         this.depthMemory.delete(thing)
 
         // We don't have to increment the index, as the other things "fall into"
@@ -93,9 +95,11 @@ export default class Scene {
         }
 
         // If position changed, update Thing's hitbox in spatial hash
-        const [xLast, yLast] = this.spatialHash.getHitbox(thing)
-        if (xLast !== thing.position[0] + thing.aabb[0] || yLast !== thing.position[1] + thing.aabb[1]) {
-          this.spatialHash.update(thing, ...u.aabbToXywh(u.aabb2D(thing.aabb), thing.position))
+        if (thing.aabb) {
+          const [xLast, yLast] = this.spatialHash.getHitbox(thing)
+          if (xLast !== thing.position[0] + thing.aabb[0] || yLast !== thing.position[1] + thing.aabb[1]) {
+            this.spatialHash.update(thing, ...u.aabbToXywh(u.aabb2D(thing.aabb), thing.position))
+          }
         }
 
         i += 1
@@ -191,7 +195,9 @@ export default class Scene {
       throw new Error('Trying to add non-Thing!')
     }
     this.things.push(thing)
-    this.spatialHash.add(thing, ...u.aabbToXywh(u.aabb2D(thing.aabb), thing.position))
+    if (thing.aabb) {
+      this.spatialHash.add(thing, ...u.aabbToXywh(u.aabb2D(thing.aabb), thing.position))
+    }
     this.updateDepth(thing, 0)
     return thing
   }

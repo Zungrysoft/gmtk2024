@@ -6,6 +6,7 @@ import Thing from 'thing'
 export default class WaterDroplet extends Thing {
   sprite = game.assets.images.waterDroplet
   scale = 1/48
+  aabb = undefined
   
   constructor (position, intensity) {
     super()

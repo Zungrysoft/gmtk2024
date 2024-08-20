@@ -7,6 +7,7 @@ export default class FireParticle extends Thing {
   sprite = game.assets.images.fireParticle
   baseScale = 1/48 * 1.5
   alpha = 1
+  aabb = undefined
   
   constructor (position, velocity) {
     super()

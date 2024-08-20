@@ -7,6 +7,7 @@ export default class DestroyLeafParticle extends Thing {
   sprite = game.assets.images.leafParticle
   scale = 1/48 * 0.6
   alpha = 1
+  aabb = undefined
   
   constructor (position, velocity) {
     super()
