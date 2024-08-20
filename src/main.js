@@ -351,7 +351,7 @@ class Level extends Thing {
     }
     const plants = game.getThingsNear(...pos, 1).filter(e => e.collideWithAabb && e !== thing)
     for (const plant of plants) {
-      if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], pos)) {
+      if (plant.collideWithAabb([0.05, 0.05, 0.95, 0.95], tileCoord)) {
         return false
       }
       if (plant.position[0] === pos[0] && plant.position[1] === pos[1]) {

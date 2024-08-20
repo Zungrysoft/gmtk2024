@@ -43,6 +43,9 @@ export default class PlantBanana extends PlantFruit {
       if (this.consumedApples < this.requiredApples || this.consumedOranges < this.requiredOranges) {
         this.icons.push('fertilizer')
       }
+      if (!this.isFruitClear()) {
+        this.icons.push('blocked')
+      }
 
       // Is watered
       if (this.isBeingWatered() && this.waterTimer === 0) {
@@ -68,7 +71,9 @@ export default class PlantBanana extends PlantFruit {
       if (this.waterIterations >= this.requiredWaterIterations) {
         if (this.consumedApples >= this.requiredApples) {
           if (this.consumedOranges >= this.requiredOranges) {
-            this.growUp()
+            if (this.isFruitClear()) {
+              this.growUp()
+            }
           }
         }
       }

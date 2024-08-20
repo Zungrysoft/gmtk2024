@@ -7,7 +7,7 @@ import Fertilizer from './fertilizer.js'
 export default class PlantFruit extends Plant {
   aabb = [-10, -10, 10, 10]
   linkedFruit = null
-  fruitGrowOffset = [0.5, -1.4]
+  fruitGrowOffset = [0.5, -1.5]
 
   growUp() {
     super.growUp()
@@ -61,6 +61,10 @@ export default class PlantFruit extends Plant {
     if (this.linkedFruit && this.linkedFruit.isAttached) {
       this.linkedFruit.isAttached = false
     }
+  }
+
+  isFruitClear() {
+    return game.getThing('level').isTileClear(vec2.add(this.position, this.fruitGrowOffset))
   }
 
   draw () {

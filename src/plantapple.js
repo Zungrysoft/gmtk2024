@@ -4,7 +4,7 @@ import PlantFruit from './plantfruit.js'
 export default class PlantApple extends PlantFruit {
   sprite = game.assets.images.plantAppleSprout
   grownSprite = game.assets.images.plantApple
-  waterInterval = 600
+  waterInterval = 60
   requiredWaterIterations = 3
   requiredFertilizer = 1
   waterTimer = 0
@@ -40,6 +40,9 @@ export default class PlantApple extends PlantFruit {
       if (this.consumedFertilizer < this.requiredFertilizer) {
         this.icons.push('fertilizer')
       }
+      if (!this.isFruitClear()) {
+        this.icons.push('blocked')
+      }
 
       // Is watered
       if (this.isBeingWatered() && this.waterTimer === 0) {
@@ -58,7 +61,9 @@ export default class PlantApple extends PlantFruit {
       // Grow up
       if (this.waterIterations >= this.requiredWaterIterations) {
         if (this.consumedFertilizer >= this.requiredFertilizer) {
-          this.growUp()
+          if (this.isFruitClear()) {
+            this.growUp()
+          }
         }
       }
     }
