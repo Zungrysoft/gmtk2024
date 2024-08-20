@@ -13,10 +13,11 @@ export default class Deployer extends Thing {
   deployedObject = null
   depth = 8
 
-  constructor (position, type) {
+  constructor (position, type, isGiant=false) {
     super()
     this.position = [...position]
     this.type = type
+    this.isGiant = isGiant
   }
 
   update () {
@@ -42,7 +43,7 @@ export default class Deployer extends Thing {
     if (this.type === 'sprinkler') {
       return new Sprinkler(pos)
     }
-    return new Fertilizer(pos, this.type)
+    return new Fertilizer(pos, this.type, false, this.isGiant)
   }
 
   deviceTrigger() {
@@ -53,7 +54,8 @@ export default class Deployer extends Thing {
     const { ctx } = game
 
     ctx.save()
-    ctx.drawImage(this.sprite, ...vec2.add(this.position, [0, -0.4]), 1, 1)
+    const sc = this.isGiant ? 2 : 1
+    ctx.drawImage(this.sprite, ...vec2.add(this.position, [0, -0.4]), sc, sc)
     ctx.restore()
   }
 }
