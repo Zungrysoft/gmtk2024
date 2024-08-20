@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
+import * as soundmanager from 'soundmanager'
 import Plant from './plant.js'
 import DestroyLeafParticle from './destroyleafparticle.js'
 
