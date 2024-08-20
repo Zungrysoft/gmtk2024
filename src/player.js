@@ -92,6 +92,7 @@ export default class Player extends Thing {
   windFramesVertical = 0
   hearsSprinkler = 0
   hearsFan = 0
+  noClip = false
 
   constructor (position) {
     super()
@@ -182,6 +183,10 @@ export default class Player extends Thing {
     // Switch sub tool reverse
     if (game.keysPressed.KeyD || game.buttonsPressed[5]) {
       this.cycleTool(false)
+    }
+
+    if (game.keysPressed.KeyN) {
+      this.noClip = !this.noClip
     }
 
     if (game.keysPressed.KeyR || game.buttonsPressed[8] || game.buttonsPressed[9]) {
@@ -330,7 +335,27 @@ export default class Player extends Thing {
     const maxSpeed = groundAcceleration * friction / (1 - friction)
 
     // Apply gravity
-    this.velocity[1] += 1 / 48
+    if (!this.noClip) {
+      this.velocity[1] += 1 / 48
+    } else {
+      const upKeyDown = game.keysDown.ArrowUp //|| game.buttonsDown[15]
+      const downKeyDown = game.keysDown.ArrowDown //|| game.buttonsDown[14]
+      const speed = 0.25
+      this.velocity[0] *= 0.8
+      this.velocity[1] *= 0.8
+      if (upKeyDown) {
+        this.velocity[1] = -speed
+      }
+      if (downKeyDown) {
+        this.velocity[1] = speed
+      }
+      if (rightKeyDown) {
+        this.velocity[0] = speed
+      }
+      if (leftKeyDown) {
+        this.velocity[0] = -speed
+      }
+    }
 
     // Chug along when running
     if (this.runFrames > 0 && onGround) {
@@ -380,30 +405,32 @@ export default class Player extends Thing {
       this.velocity[1] *= 0.7
     }
 
-    // Move left and right, on ground speed is naturally clamped by
-    // friction but in the air we have to artificially clamp it
-    if (rightKeyDown) {
-      this.velocity[0] += acceleration
-      if (!onGround) {
-        this.velocity[0] = Math.min(this.velocity[0], maxSpeed)
+    if (!this.noClip) {
+      // Move left and right, on ground speed is naturally clamped by
+      // friction but in the air we have to artificially clamp it
+      if (rightKeyDown) {
+        this.velocity[0] += acceleration
+        if (!onGround) {
+          this.velocity[0] = Math.min(this.velocity[0], maxSpeed)
+        }
+        if (!usingItem) {
+          this.direction = u.sign(this.velocity[0]) || this.direction
+        }
       }
-      if (!usingItem) {
-        this.direction = u.sign(this.velocity[0]) || this.direction
+      if (leftKeyDown) {
+        this.velocity[0] -= acceleration
+        if (!onGround) {
+          this.velocity[0] = Math.max(this.velocity[0], -maxSpeed)
+        }
+        if (!usingItem) {
+          this.direction = u.sign(this.velocity[0]) || this.direction
+        }
       }
-    }
-    if (leftKeyDown) {
-      this.velocity[0] -= acceleration
-      if (!onGround) {
-        this.velocity[0] = Math.max(this.velocity[0], -maxSpeed)
-      }
-      if (!usingItem) {
-        this.direction = u.sign(this.velocity[0]) || this.direction
-      }
-    }
 
-    // Apply friction
-    if (onGround) {
-      this.velocity[0] *= friction
+      // Apply friction
+      if (onGround) {
+        this.velocity[0] *= friction
+      }
     }
     
     // ==============
@@ -1253,6 +1280,9 @@ export default class Player extends Thing {
   }
 
   checkCollision (x = this.position[0], y = this.position[1], z = 0) {
+    if (this.noClip) {
+      return false
+    }
     if (super.checkCollision(x, y, z)) {
       return true
     }
