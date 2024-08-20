@@ -180,7 +180,8 @@ game.assets.sounds = await game.loadAudio({
   getpoints4: 'sounds/getpoints.wav',
   feedplant: 'sounds/feedplant.wav',
   error: 'sounds/error.wav',
-  fan: 'sounds/fan.mp3'
+  fan: 'sounds/fan.mp3',
+  energy: 'sounds/energy.wav'
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 

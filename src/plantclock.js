@@ -3,6 +3,7 @@ import * as u from 'utils'
 import * as vec2 from 'vector2'
 import Plant from './plant.js'
 import TimeRing from './timeRing.js'
+import * as soundmanager from 'soundmanager'
 
 export default class PlantClock extends Plant {
   aabb = [-10, -10, 10, 10]
@@ -72,7 +73,19 @@ export default class PlantClock extends Plant {
           }
         }
         game.addThing(new TimeRing(vec2.add(this.position, [0.5, 0.5]), effectRadius))
+        this.soundEffect()
       }
+    }
+  }
+
+  soundEffect() {
+    const player = game.getThing('player')
+    const dist = vec2.squareDistance(player.position, this.position)
+    if (dist < 18) {
+      soundmanager.playSound(
+        ['energy'],
+        u.inverseSquareMap(dist, 0, 18, 0.3, 0)
+      )
     }
   }
 
