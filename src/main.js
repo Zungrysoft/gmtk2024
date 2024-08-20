@@ -172,7 +172,7 @@ class Level extends Thing {
         ))
       }
       if (thing.name === 'sprinkler') {
-        game.addThing(new Sprinkler(vec2.add(pos, [0.5, 0.5])))
+        game.addThing(new Sprinkler(vec2.add(pos, [0.5, 0.5]), thing.data?.power ?? 1))
       }
       if (thing.name === 'dribbler') {
         game.addThing(new Dribbler(vec2.add(pos, [0.5, 0.5]), thing.data?.direction ?? 1))

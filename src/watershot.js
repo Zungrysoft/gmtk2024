@@ -48,24 +48,6 @@ export default class WaterShot extends Thing {
       this.sprite = game.assets.images.waterShotSpeed1
     }
 
-    // Detect plants and water them
-    const things = game.getThingsNear(...this.position, 1).filter(e => e.overlapWithAabb)
-    for (const thing of things) {
-      if (thing.overlapWithAabb(this.aabb, this.position)) {
-        this.isDead = true
-        this.spawnDroplets()
-        if (thing instanceof Plant) {
-          game.addThing(new WaterDeliverer(thing, 10))
-        }
-      }
-    }
-
-    // Detect solid ground and destroy self
-    if (game.getThing('level').checkWorldTileCollision(...this.position)) {
-      this.isDead = true
-      this.spawnDroplets()
-    }
-
     // Detect laser fields
     for (const thing of game.getThingsInAabb(this.aabb, this.position)) {
       if (thing instanceof LaserField) {
@@ -75,6 +57,26 @@ export default class WaterShot extends Thing {
           this.spawnDroplets()
         }
       }
+    }
+
+    // Detect plants and water them
+    if (!this.isDead) {
+      const things = game.getThingsNear(...this.position, 1).filter(e => e.overlapWithAabb)
+      for (const thing of things) {
+        if (thing.overlapWithAabb(this.aabb, this.position)) {
+          this.isDead = true
+          this.spawnDroplets()
+          if (thing instanceof Plant) {
+            game.addThing(new WaterDeliverer(thing, 10))
+          }
+        }
+      }
+    }
+
+    // Detect solid ground and destroy self
+    if (game.getThing('level').checkWorldTileCollision(...this.position)) {
+      this.isDead = true
+      this.spawnDroplets()
     }
 
     // Limit lifetime

@@ -124,12 +124,16 @@ export default class PlantHedge extends Plant {
     }
     if (this.variant === 'custom1') {
       return [
-        {direction: 'up', length: 1},
-        {direction: 'left', length: 2},
+        {direction: 'up', length: 4},
+        {direction: 'right', length: 7},
         {direction: 'up', length: 2},
-        {direction: 'left', length: 2},
-        {direction: 'down', length: 3},
+      ]
+    }
+    if (this.variant === 'custom2') {
+      return [
+        {direction: 'up', length: 6},
         {direction: 'left', length: 1},
+        {direction: 'up', length: 6},
       ]
     }
     return [{direction: 'up', length: 6}]

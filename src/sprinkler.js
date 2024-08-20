@@ -11,6 +11,11 @@ export default class Sprinkler extends Pickupable {
   sprinklerTimer = 0
   enabled = true
 
+  constructor(position, power=1, isAttached=false) {
+    super(position, isAttached)
+    this.power = power
+  }
+
   update() {
     super.update()
 
@@ -18,10 +23,11 @@ export default class Sprinkler extends Pickupable {
     if (this.enabled && !this.isPickedUp()) {
       this.sprinklerTimer ++
       if (this.sprinklerTimer % 3 === 0) {
-        const vel = vec2.scale(vec2.normalize([
+        let vel = vec2.scale(vec2.normalize([
           Math.sin(this.sprinklerTimer / 25) * 0.6,
           Math.random()*-0.2 - 0.4
         ]), 0.4)
+        vel[1] *= this.power
         game.addThing(new WaterShot(this.position, vel, 0.4))
       }
     }
