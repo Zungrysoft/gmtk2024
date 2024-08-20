@@ -2,6 +2,7 @@ import Pickupable from './pickupable.js'
 import WaterShot from './waterShot.js'
 import * as game from 'game'
 import * as vec2 from 'vector2'
+import * as u from 'utils'
 
 export default class Dribbler extends Pickupable {
   sprite = 'dribbler'
@@ -33,6 +34,13 @@ export default class Dribbler extends Pickupable {
       this.wateredSomethingTime ++
       if (this.shouldWater() && !this.isPickedUp()) {
         this.sprinklerTimer ++
+        const player = game.getThing('player')
+        const dist = player ? u.distance(player.position, this.position) : Infinity
+        if (dist < 20) {
+          player.hearsSprinkler = (
+            Math.min(player.hearsSprinkler || Infinity, dist / 20)
+          )
+        }
         if (this.sprinklerTimer % 4 === 0) {
           const vel = [(0.28 + Math.random()*0.1) * this.direction, Math.random() * -0.1]
           game.addThing(new WaterShot(this.position, vel, 0.4, false, this))

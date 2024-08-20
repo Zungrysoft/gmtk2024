@@ -24,6 +24,7 @@ export default class Plant extends Thing {
   timerDisplay = 0
   isIndestructible = false
   icons = []
+  squash = [1, 1]
 
   constructor (pos, variant='basic', isSprout=true, isIndestructible=false) {
     super()
@@ -35,6 +36,11 @@ export default class Plant extends Thing {
 
   update() {
     this.timeSinceWatered ++
+
+    this.squash[0] = u.lerp(this.squash[0], 1, 0.15)
+    this.squash[1] = u.lerp(this.squash[1], 1, 0.15)
+    this.scale[0] = this.squash[0]
+    this.scale[1] = this.squash[1]
   }
 
   water() {
@@ -48,6 +54,8 @@ export default class Plant extends Thing {
   growUp() {
     this.isSprout = false
     soundmanager.playSound('growplant', 0.15)
+    this.squash[0] = 0.5
+    this.squash[1] = 1.5
   }
 
   revertToSprout() {
@@ -104,6 +112,7 @@ export default class Plant extends Thing {
   createFertilizerParticles(count=6, intensity=1) {
     for (let i = 0; i < count; i ++) {
       game.addThing(new FertilizerParticle(vec2.add(this.position, [0.5, 0.5]), intensity))
+      soundmanager.playSound('feedplant', 0.2)
     }
   }
 

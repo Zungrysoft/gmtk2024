@@ -88,6 +88,14 @@ export default class PlantFan extends Plant {
           game.addThing(new WindyLeafParticle(pos, vel))
         }
 
+        const player = game.getThing('player')
+        const dist = player ? u.distance(player.position, this.position) : Infinity
+        if (dist < 20) {
+          player.hearsFan = (
+            Math.min(player.hearsFan || Infinity, dist / 20)
+          )
+        }
+
         const things = game.getThingsNear(...this.position, 20).filter(x => x instanceof Player || x instanceof Pickupable)
         for (const thing of things) {
           if (u.checkAabbIntersection(this.getWindAabb(), thing.aabb, this.position, thing.position)) {

@@ -13,6 +13,6 @@ export default class PickupMoney extends Pickup {
   collect() {
     super.collect()
     game.getThing('player').money += this.money
-    soundmanager.playSound('getcoin', 0.2)
+    //soundmanager.playSound('getcoin', 0.2)
   }
 }

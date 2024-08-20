@@ -90,6 +90,7 @@ export default class Player extends Thing {
   windFrames = 0
   windFramesVertical = 0
   hearsSprinkler = 0
+  hearsFan = 0
 
   constructor (position) {
     super()
@@ -498,6 +499,20 @@ export default class Player extends Thing {
     } else {
       const sprinkle = game.assets.sounds.sprinklerSprinkle
       sprinkle.pause()
+    }
+
+    if (this.hearsFan) {
+      const fanSound = game.assets.sounds.fan
+      fanSound.loop = true
+      const volume = u.inverseSquareMap(this.hearsFan, 0, 1, 0.2, 0, true)
+      if (fanSound.paused) {
+        fanSound.play()
+      }
+      fanSound.volume = volume
+      this.hearsFan = 0
+    } else {
+      const fanSound = game.assets.sounds.fan
+      fanSound.pause()
     }
 
     if (this.isUsingTool && this.getSelectedTool() === 'flamethrower' && this.timer % 16 == 0) {
