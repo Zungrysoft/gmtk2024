@@ -92,13 +92,19 @@ export default class PlantFan extends Plant {
         for (const thing of things) {
           if (u.checkAabbIntersection(this.getWindAabb(), thing.aabb, this.position, thing.position)) {
             const dist = vec2.distance(this.position, thing.position)
-            const blowFactor = u.map(dist, 0, 10, 0.4, 0)
+            const blowFactor = u.map(dist, 0, 10, 0.4, 0, true)
             const deltaVelocity = vec2.scale(vec2.normalize(this.getBlowVelocity()), blowFactor)
             const dotProduct = vec2.dotProduct(vec2.normalize(deltaVelocity), vec2.normalize(thing.velocity)) < 0
             const dotScale = u.squareMap(dotProduct, -0.8, 1, 0, 1, true)
             thing.velocity = vec2.add(thing.velocity, vec2.scale(deltaVelocity, dotScale))
             if (this.variant === 'basic' && !thing.onGround && thing.coyoteFrames) {
               thing.coyoteFrames = 0
+            }
+            if (this.variant !== 'basic') {
+              thing.windFrames = 4
+            }
+            else {
+              thing.windVertical = 4
             }
           }
         }
