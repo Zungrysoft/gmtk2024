@@ -348,7 +348,7 @@ export default class Player extends Thing {
     // ==============
 
     // Grab objects
-    if (game.keysPressed.KeyD || game.buttonsPressed[1]) {
+    if (game.keysPressed.KeyC || game.buttonsPressed[1]) {
       let nextPickup
       const grabPosition = [
         this.position[0] + this.direction * 0.5,
@@ -945,7 +945,7 @@ export default class Player extends Thing {
     ctx.font = 'italic bold 64px Arial'
     ctx.translate(64, 128)
     const moneyScale = (
-      u.inverseSquareMap(Math.abs(this.money - this.visualMoney), 0, 5, 1, 1.3)
+      u.inverseSquareMap(Math.abs(this.money - this.visualMoney), 0, 5, 1, 1.3, true)
     )
     ctx.scale(moneyScale, moneyScale)
     ctx.fillStyle = '#000B28'
