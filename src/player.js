@@ -244,7 +244,7 @@ export default class Player extends Thing {
     if (groundSpeed > 0.005 && onGround) {
       game.assets.sounds.drive.loop = true
       if (game.assets.sounds.drive.paused) {
-        soundmanager.playSound('drive', 0.05)
+        soundmanager.playSound('drive', 0.045)
       }
       game.assets.sounds.drive.playbackRate = (
         u.map(groundSpeed, 0, runThreshold, 0.7, 1)
@@ -298,7 +298,7 @@ export default class Player extends Thing {
     this.coyoteFrames -= 1
     if (onGround) {
       if (this.coyoteFrames < 3) {
-        soundmanager.playSound('land', 0.03, [0.7, 0.8])
+        soundmanager.playSound('land', 0.04, [0.7, 0.8])
         this.squash[1] = 0.5
         for (let i = 0; i < 3; i += 1) {
           const dir = u.choose([1, -1])
@@ -330,7 +330,7 @@ export default class Player extends Thing {
       this.coyoteFrames = 0
       this.squash[1] = 1.5
       this.squash[0] = 0.5
-      soundmanager.playSound('jump', 0.04, [0.8, 1])
+      soundmanager.playSound('jump', 0.05, [0.8, 1])
     }
     if (!(game.keysDown.KeyX || game.buttonsDown[0]) && this.velocity[1] < 0) {
       this.velocity[1] *= 0.7
@@ -368,6 +368,7 @@ export default class Player extends Thing {
 
     // Grab objects
     if (game.keysPressed.KeyC || game.buttonsPressed[1]) {
+      const lastPickup = this.pickup
       let nextPickup
       const grabPosition = [
         this.position[0] + this.direction * 0.5,
@@ -381,6 +382,11 @@ export default class Player extends Thing {
         }
       }
       this.pickup = nextPickup
+      if (this.pickup) {
+        soundmanager.playSound('plantplant', 0.08)
+      } else if (lastPickup) {
+        soundmanager.playSound('plantplant', 0.08, [0.6, 0.8])
+      }
     }
 
     // Unlock all tools cheat
@@ -462,6 +468,7 @@ export default class Player extends Thing {
           }
         }
       }
+      soundmanager.playSound('sickle', 0.15)
       game.addThing(new Swipe(this))
       this.sickleFrames = 10
     }
@@ -519,6 +526,7 @@ export default class Player extends Thing {
         if (selectedTool === 'seedPacketBanana') game.addThing(new PlantBanana(placementPos))
         if (selectedTool === 'seedPacketClock') game.addThing(new PlantClock(placementPos))
         if (selectedTool === 'seedPacketFan') game.addThing(new PlantFan(placementPos))
+        soundmanager.playSound('plantplant', 0.15)
       }
       this.isUsingTool = true
     }
@@ -760,10 +768,10 @@ export default class Player extends Thing {
 
     this.setTimer('swapHotbar', 10)
     if (reverse) {
-      soundmanager.playSound('uitoggle1', 0.1, [0.7, 0.8])
+      soundmanager.playSound('uitoggle1', 0.15, [0.7, 0.8])
       this.setTimer('swapHotbarReverse', 10)
     } else {
-      soundmanager.playSound('uitoggle1', 0.1, [1.0, 1.1])
+      soundmanager.playSound('uitoggle1', 0.15, [1.0, 1.1])
     }
   }
 
@@ -819,9 +827,9 @@ export default class Player extends Thing {
     this.setTimer('cycleTool', 10)
 
     if (reverse) {
-      soundmanager.playSound('uitoggle2', 0.1, [0.7, 0.8])
+      soundmanager.playSound('uitoggle2', 0.15, [0.7, 0.8])
     } else {
-      soundmanager.playSound('uitoggle2', 0.1, [1.0, 1.1])
+      soundmanager.playSound('uitoggle2', 0.15, [1.0, 1.1])
     }
   }
 

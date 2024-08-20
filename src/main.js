@@ -126,7 +126,7 @@ game.assets.images = await game.loadImages({
 })
 
 game.assets.levels = await game.loadText({
-  level1: 'levels/gameWorld.json'
+  level1: 'levels/testWorld.json'
 })
 
 game.assets.data = await game.loadJson({
@@ -143,7 +143,14 @@ game.assets.sounds = await game.loadAudio({
   drip2: 'sounds/water-dripping-63539.wav',
   sprinkle: 'sounds/spray-87676.mp3',
   uitoggle1: 'sounds/uitoggle1.wav',
-  uitoggle2: 'sounds/uitoggle2.wav'
+  uitoggle2: 'sounds/uitoggle2.wav',
+  sell: 'sounds/Cash register 5.wav',
+  buy: 'sounds/Item purchase 21.wav',
+  sickle: 'sounds/sickle.wav',
+  getcoin: 'sounds/getcoin.wav',
+  killplant: 'sounds/killplant.wav',
+  growplant: 'sounds/growplant.wav',
+  plantplant: 'sounds/plantplant.wav'
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 

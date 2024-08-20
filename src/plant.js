@@ -1,6 +1,7 @@
 import * as game from 'game'
 import * as u from 'utils'
 import * as vec2 from 'vector2'
+import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 import Fertilizer from './fertilizer.js'
 import FertilizerParticle from './fertilizerParticle.js'
@@ -46,6 +47,7 @@ export default class Plant extends Thing {
 
   growUp() {
     this.isSprout = false
+    soundmanager.playSound('growplant', 0.15)
   }
 
   revertToSprout() {
@@ -118,6 +120,8 @@ export default class Plant extends Thing {
       const vel = [(Math.random()-0.5)* 0.2, Math.random()*-0.1 - 0.2]
       game.addThing(new DestroyLeafParticle(pos, vel))
     }
+
+    soundmanager.playSound('killplant', 0.15)
   }
 
   draw() {
