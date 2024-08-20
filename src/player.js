@@ -437,19 +437,26 @@ export default class Player extends Thing {
     }
 
     const sprinkle = game.assets.sounds.sprinkle
-    if (this.isUsingTool && ['wateringCan', 'waterGun'].includes(this.getSelectedTool())) {
+    if (this.isUsingTool && ['wateringCan', 'waterGun', 'hose'].includes(this.getSelectedTool())) {
       sprinkle.loop = true
-      const pitch = (
+      let pitch = (
         this.getSelectedTool() === 'waterGun'
         ? 1.2
         : 0.9
       )
+      if (this.getSelectedTool() === 'hose') {
+        pitch = 0.7
+      }
       if (sprinkle.paused) {
         soundmanager.playSound('sprinkle', 0.1, pitch)
       }
     } else {
       sprinkle.loop = false
       sprinkle.pause()
+    }
+
+    if (this.isUsingTool && this.getSelectedTool() === 'flamethrower' && this.timer % 16 == 0) {
+      soundmanager.playSound(['fire', 'fire1', 'fire2'], 0.035)
     }
   }
 

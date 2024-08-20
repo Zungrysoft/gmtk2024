@@ -154,7 +154,10 @@ game.assets.sounds = await game.loadAudio({
   getcoin: 'sounds/getcoin.wav',
   killplant: 'sounds/killplant.wav',
   growplant: 'sounds/growplant.wav',
-  plantplant: 'sounds/plantplant.wav'
+  plantplant: 'sounds/plantplant.wav',
+  fire: 'sounds/fire.wav',
+  fire1: 'sounds/fire.wav',
+  fire2: 'sounds/fire.wav',
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 
