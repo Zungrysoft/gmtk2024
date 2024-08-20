@@ -23,7 +23,7 @@ import DeployerSwitch from './deployerswitch.js'
 import PlantFan from './plantFan.js'
 import PlantClock from './plantclock.js'
 
-document.title = 'Game'
+document.title = 'Growbot'
 game.setWidth(1280)
 game.setHeight(720)
 game.createCanvas2D()
