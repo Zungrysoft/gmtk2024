@@ -184,7 +184,7 @@ export default class Player extends Thing {
       this.cycleTool(false)
     }
 
-    if (game.keysPressed.KeyR) {
+    if (game.keysPressed.KeyR || game.buttonsPressed[8] || game.buttonsPressed[9]) {
       game.addThing(new RecipeMenu(
         this.getOwnedToolsInCategory('seedPacket')
       ))

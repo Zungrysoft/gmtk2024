@@ -142,7 +142,13 @@ export default class RecipeMenu extends Thing {
     }
 
     const cancel = (
-      game.keysPressed.KeyZ || game.buttonsPressed[2]
+      game.keysPressed.KeyZ ||
+      game.keysPressed.KeyR ||
+      game.buttonsPressed[2] ||
+      game.buttonsPressed[0] ||
+      game.buttonsPressed[12] ||
+      game.buttonsPressed[8] ||
+      game.buttonsPressed[9]
     )
 
     if (cancel && !this.getTimer('canDie')) {

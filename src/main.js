@@ -128,6 +128,7 @@ game.assets.images = await game.loadImages({
   tutorialwin: 'images/tutorialWin.png',
   tutorialarch: 'images/tutorialArch.png',
   tutorialfan: 'images/tutorialFan.png',
+  tutorialrecipes: 'images/tutorialRecipes.png',
   vendingmachine: 'images/vendingmachine.png',
   swipe: 'images/swipe.png',
   leafParticle: 'images/leafParticle.png',
