@@ -141,7 +141,9 @@ game.assets.sounds = await game.loadAudio({
   drip: 'sounds/water-dripping-63539.wav',
   drip1: 'sounds/water-dripping-63539.wav',
   drip2: 'sounds/water-dripping-63539.wav',
-  sprinkle: 'sounds/spray-87676.mp3'
+  sprinkle: 'sounds/spray-87676.mp3',
+  uitoggle1: 'sounds/uitoggle1.wav',
+  uitoggle2: 'sounds/uitoggle2.wav'
 })
 soundmanager.setSoundsTable(game.assets.sounds)
 

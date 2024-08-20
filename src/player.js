@@ -244,7 +244,7 @@ export default class Player extends Thing {
     if (groundSpeed > 0.005 && onGround) {
       game.assets.sounds.drive.loop = true
       if (game.assets.sounds.drive.paused) {
-        soundmanager.playSound('drive', 0.065)
+        soundmanager.playSound('drive', 0.05)
       }
       game.assets.sounds.drive.playbackRate = (
         u.map(groundSpeed, 0, runThreshold, 0.7, 1)
@@ -760,7 +760,10 @@ export default class Player extends Thing {
 
     this.setTimer('swapHotbar', 10)
     if (reverse) {
+      soundmanager.playSound('uitoggle1', 0.1, [0.7, 0.8])
       this.setTimer('swapHotbarReverse', 10)
+    } else {
+      soundmanager.playSound('uitoggle1', 0.1, [1.0, 1.1])
     }
   }
 
@@ -814,6 +817,12 @@ export default class Player extends Thing {
     // TODO: Play item cycle sound
 
     this.setTimer('cycleTool', 10)
+
+    if (reverse) {
+      soundmanager.playSound('uitoggle2', 0.1, [0.7, 0.8])
+    } else {
+      soundmanager.playSound('uitoggle2', 0.1, [1.0, 1.1])
+    }
   }
 
   draw () {
