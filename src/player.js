@@ -293,7 +293,7 @@ export default class Player extends Thing {
     if (groundSpeed > 0.005 && onGround) {
       game.assets.sounds.drive.loop = true
       if (game.assets.sounds.drive.paused) {
-        soundmanager.playSound('drive', 0.045)
+        soundmanager.playSound('drive', 0.025)
       }
       game.assets.sounds.drive.playbackRate = (
         u.map(groundSpeed, 0, runThreshold, 0.7, 1)

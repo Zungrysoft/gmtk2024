@@ -55,6 +55,7 @@ export default class PlantBlueberry extends PlantFruit {
           // Blueberries don't want too much water
           // Reset timer if watered during waiting period
           this.waterTimer = this.waterInterval
+          this.icons.push('timerBlocked')
         }
       }
 
