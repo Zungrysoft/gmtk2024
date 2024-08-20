@@ -22,6 +22,8 @@ import Dribbler from './dribbler.js'
 import DeployerSwitch from './deployerswitch.js'
 import PlantFan from './plantFan.js'
 import PlantClock from './plantclock.js'
+import Pickup from './pickup.js'
+import Completion from './completion.js'
 
 document.title = 'Growbot'
 game.setWidth(1280)
@@ -297,7 +299,12 @@ class Level extends Thing {
       if (thing.name === 'tutorial') {
         game.addThing(new Tutorial(pos, thing.data?.tutorial ?? 'controls'))
       }
+      if (thing.name === 'completion') {
+        game.addThing(new Completion(pos))
+      }
     }
+
+    game.getThing('player').totalPickups = game.getThings().filter(x => x instanceof Pickup).length
 
     // Set this Thing's name to level so that it can be accessed by
     // other Things

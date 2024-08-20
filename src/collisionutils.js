@@ -2,6 +2,7 @@ import * as game from 'game'
 import * as u from 'utils'
 import Plant from './plant.js'
 import LaserField from './laserfield.js'
+import Fertilizer from './fertilizer.js'
 
 export function checkWorldPointCollision (x, y) {
   if (game.getThing('level').checkWorldTileCollision(x, y)) {
@@ -9,7 +10,7 @@ export function checkWorldPointCollision (x, y) {
   }
 }
 
-export function checkCollision (aabb, x, y, collideWithLaserField=false) {
+export function checkCollision (aabb, x, y, collideWithLaserField=false, isPickupable=false) {
   for (const thing of game.getThingsInAabb(aabb, [x, y])) {
     if (thing.collideWithAabb) {
       const thingHit = thing.collideWithAabb(aabb, [x, y])
@@ -25,7 +26,16 @@ export function checkCollision (aabb, x, y, collideWithLaserField=false) {
     }
   }
 
-  const [wl, hu, wr, hd] = aabb
+  let [wl, hu, wr, hd] = aabb
+
+  // Stupid hack
+  if (isPickupable) {
+    const amt = 0.15
+    wl += amt
+    // hu += amt
+    wr -= amt
+    // hd -= amt
+  }
 
   return (
     checkWorldPointCollision(x + wr, y) ||

@@ -41,7 +41,7 @@ export default class Dribbler extends Pickupable {
             Math.min(player.hearsSprinkler || Infinity, dist / 20)
           )
         }
-        if (this.sprinklerTimer % 4 === 0) {
+        if (this.sprinklerTimer % 8 === 0) {
           const vel = [(0.28 + Math.random()*0.1) * this.direction, Math.random() * -0.1]
           game.addThing(new WaterShot(this.position, vel, 0.4, false, this))
         }

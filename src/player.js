@@ -62,6 +62,8 @@ export default class Player extends Thing {
   aabb = [-0.25, -0.25, 0.25, 1]
   jumpBuffer = 0
   time = 0
+  foundPickups = 0
+  totalPickups = 0
   coyoteFrames = 0
   direction = 1
   cameraOffset = [0, 0]
