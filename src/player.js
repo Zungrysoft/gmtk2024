@@ -931,7 +931,7 @@ export default class Player extends Thing {
     ctx.font = 'italic bold 64px Arial'
     ctx.translate(64, 128)
     const moneyScale = (
-      u.inverseSquareMap(Math.abs(this.money - this.visualMoney), 0, 5, 1, 1.3)
+      u.inverseSquareMap(Math.abs(this.money - this.visualMoney), 0, 5, 1, 1.3, true)
     )
     ctx.scale(moneyScale, moneyScale)
     ctx.fillStyle = '#000B28'
