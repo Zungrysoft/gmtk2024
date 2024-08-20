@@ -29,6 +29,7 @@ export default class Pickup extends Thing {
 
   collect() {
     this.isDead = true
+    game.getThing('player').foundPickups ++
   }
 
   draw() {
