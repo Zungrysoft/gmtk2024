@@ -107,9 +107,9 @@ export default class PlantFan extends Plant {
             // const dotScale = u.squareMap(dotProduct, -0.8, 1, 0, 1, true)
             // thing.velocity = vec2.add(thing.velocity, vec2.scale(deltaVelocity, dotScale))
             thing.velocity = vec2.add(thing.velocity, deltaVelocity)
-            if (this.variant === 'basic' && !thing.onGround && thing.coyoteFrames) {
-              thing.coyoteFrames = 0
-            }
+            // if (this.variant === 'basic' && !thing.onGround && thing.coyoteFrames) {
+            //   thing.coyoteFrames = 0
+            // }
             if (this.variant !== 'basic') {
               thing.windFrames = 4
             }
