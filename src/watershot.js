@@ -5,7 +5,7 @@ import * as soundmanager from 'soundmanager'
 import Thing from 'thing'
 import Plant from './plant.js'
 import WaterDroplet from './waterdroplet.js'
-import WaterDeliverer from './waterdeliverer.js'
+import WaterDeliverer from './waterDeliverer.js'
 import LaserField from './laserfield.js'
 
 export default class WaterShot extends Thing {
