@@ -31,7 +31,7 @@ const recipes = [
     description: [
       'Produces very valuable bananas.',
       'Water 10 times, waiting 3 seconds in between.',
-      'Provide 3 apples and 3 oranges as fertilizer.',
+      'Provide three oranges as fertilizer.',
     ],
     image: ['plantApple', 'banana']
   },

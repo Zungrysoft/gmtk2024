@@ -132,13 +132,13 @@ export default class PlantFan extends Plant {
 
   getWindAabb() {
     if (this.variant === 'left') {
-      return [-10, 0, 1, 1]
+      return [-10, 0, 0.8, 1]
     }
     else if (this.variant === 'right') {
-      return [0, 0, 11, 1]
+      return [0.2, 0, 11, 1]
     }
     else {
-      return [0, -10, 1, 1]
+      return [0, -10, 1, 0.8]
     }
   }
 

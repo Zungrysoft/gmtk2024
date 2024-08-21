@@ -202,7 +202,7 @@ class ShopMenu extends Thing {
       },
       {
         name: 'Green Key',
-        price: 150000,
+        price: 110000,
         description: 'Unlocks the Green Gate',
         image: 'keygreen',
         givenKey: 'green',
