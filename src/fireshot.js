@@ -35,7 +35,7 @@ export default class FireShot extends Thing {
       const things = game.getThingsNear(...this.position, 1).filter(e => e.overlapWithAabb)
       for (const thing of things) {
         if (thing.overlapWithAabb(this.aabb, this.position)) {
-          if (!thing.isIndestructible) {
+          if (!thing.isIndestructible && thing.destroy) {
             thing.destroy()
           }
           this.isDead = true
