@@ -4,6 +4,7 @@ import * as game from 'game'
 
 export default class Tutorial extends Thing {
   depth = -50
+  aabb = null
 
   constructor(position, tutorial) {
     super()

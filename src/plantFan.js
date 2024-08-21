@@ -81,19 +81,19 @@ export default class PlantFan extends Plant {
 
       // Blowing
       if (this.timeLeft > 0) {
-        // Particles
-        if (Math.random() < 0.1) {
-          const vel = vec2.scale(vec2.normalize(this.getBlowVelocity()), 0.2)
-          const pos = vec2.add(this.position, [Math.random(), Math.random() - 0.3])
-          game.addThing(new WindyLeafParticle(pos, vel))
-        }
-
         const player = game.getThing('player')
         const dist = player ? u.distance(player.position, this.position) : Infinity
         if (dist < 20) {
           player.hearsFan = (
             Math.min(player.hearsFan || Infinity, dist / 20)
           )
+
+          // Particles
+          if (Math.random() < 0.1) {
+            const vel = vec2.scale(vec2.normalize(this.getBlowVelocity()), 0.2)
+            const pos = vec2.add(this.position, [Math.random(), Math.random() - 0.3])
+            game.addThing(new WindyLeafParticle(pos, vel))
+          }
         }
 
         let things = game.getThingsNear(...this.position, 20)
