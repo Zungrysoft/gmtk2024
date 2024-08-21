@@ -14,7 +14,7 @@ export default class WaterShot extends Thing {
     idle: { frames: [0], speed: 0, frameSize: 48 }
   }
   aabb = [-0.3, -0.3, 0.3, 0.3]
-  lifeTime = 300
+  lifeTime = 60 * 3
   scale = 1/48
 
   constructor (position, velocity, scale, pierce=false, parent=null) {
@@ -87,7 +87,7 @@ export default class WaterShot extends Thing {
 
     // Limit lifetime
     this.lifeTime --
-    if (this.time < 0) {
+    if (this.lifeTime < 0) {
       this.isDead = true
     }
   }
