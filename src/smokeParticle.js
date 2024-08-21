@@ -8,6 +8,7 @@ export default class SmokeParticle extends Thing {
   scale = 1/48 * 1.3
   alpha = 1
   depth = -10
+  aabb = undefined
   
   constructor (position, velocity) {
     super()
