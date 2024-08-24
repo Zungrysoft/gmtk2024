@@ -5,7 +5,7 @@ export default class PlantBanana extends PlantFruit {
   sprite = game.assets.images.plantBananaSprout
   grownSprite = game.assets.images.plantApple
   waterInterval = 180
-  requiredWaterIterations = 10
+  requiredWaterIterations = 7
   requiredApples = 0
   requiredOranges = 3
   waterTimer = 0

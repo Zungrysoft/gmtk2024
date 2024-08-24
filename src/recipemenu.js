@@ -30,7 +30,7 @@ const recipes = [
     id: 'seedPacketBanana',
     description: [
       'Produces very valuable bananas.',
-      'Water 10 times, waiting 3 seconds in between.',
+      'Water 7 times, waiting 3 seconds in between.',
       'Provide three oranges as fertilizer.',
     ],
     image: ['plantApple', 'banana']
