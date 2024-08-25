@@ -3,6 +3,7 @@ import * as u from 'utils'
 import Plant from './plant.js'
 import LaserField from './laserfield.js'
 import Fertilizer from './fertilizer.js'
+import PlantHedge from './planthedge.js'
 
 export function checkWorldPointCollision (x, y) {
   if (game.getThing('level').checkWorldTileCollision(x, y)) {
@@ -13,7 +14,16 @@ export function checkWorldPointCollision (x, y) {
 export function checkCollision (aabb, x, y, collideWithLaserField=false, isPickupable=false) {
   for (const thing of game.getThingsInAabb(aabb, [x, y])) {
     if (thing.collideWithAabb) {
-      const thingHit = thing.collideWithAabb(aabb, [x, y])
+      const useAabb = [...aabb]
+
+      // Stupid hack to make hedges able to push pickupables off ledges
+      if (isPickupable && thing instanceof PlantHedge) {
+        const amt = 0.15
+        useAabb[0] -= amt
+        useAabb[2] += amt
+      }
+
+      const thingHit = thing.collideWithAabb(useAabb, [x, y])
       if (thingHit) {
         return true
       }
@@ -27,15 +37,6 @@ export function checkCollision (aabb, x, y, collideWithLaserField=false, isPicku
   }
 
   let [wl, hu, wr, hd] = aabb
-
-  // Stupid hack
-  if (isPickupable) {
-    const amt = 0.15
-    wl += amt
-    // hu += amt
-    wr -= amt
-    // hd -= amt
-  }
 
   return (
     checkWorldPointCollision(x + wr, y) ||
