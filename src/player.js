@@ -152,16 +152,7 @@ export default class Player extends Thing {
       this.pickup = null
     }
     if (this.pickup) {
-      const snappiness = 0.7
-      this.pickup.position[0] = u.lerp(
-        this.pickup.position[0],
-        this.position[0] + this.direction * 0.8,
-        snappiness
-      )
-      this.pickup.position[1] = this.position[1]
-      this.pickup.velocity[0] = this.velocity[0]
-      this.pickup.velocity[1] = this.velocity[1]
-
+      // Drop the item if we touch a laser field
       for (const thing of game.getThingsInAabb(this.aabb, this.position)) {
         if (thing instanceof LaserField) {
           const collided = u.checkAabbIntersection(this.aabb, thing.aabb, this.position, thing.position)
@@ -169,6 +160,16 @@ export default class Player extends Thing {
             this.pickup = null
           }
         }
+      }
+    }
+    if (this.pickup) {
+      // Drop the item if it's gotten too far away
+      const holdPosition = [
+        this.position[0] + this.direction * 0.8,
+        this.position[1],
+      ]
+      if (vec2.distance(this.pickup.position, holdPosition) > 2.5) {
+        this.pickup = null
       }
     }
 

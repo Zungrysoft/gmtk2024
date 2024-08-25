@@ -12,6 +12,7 @@ export default class Pickupable extends Thing {
   isPickupable = true
   isAttached = false
   scale = 1 / 48
+  wasPickedUp = false
 
   constructor (position = [0, 0], isAttached = false) {
     super()
@@ -21,21 +22,29 @@ export default class Pickupable extends Thing {
   }
 
   update () {
-    const [xLast, yLast] = this.position
-    let a = 0
-    let r = 1 / 16
-    while (this.checkCollision()) {
-      this.position[0] = xLast + Math.cos(a) * r
-      this.position[1] = yLast + Math.sin(a) * r
-      a += Math.PI * 2 / 4
-      if (a > Math.PI * 2) {
-        a -= Math.PI * 2
-        r += r < 0.25 ? 1 / 48 : 0.25
-      }
+
+    const player = game.getThing('player')
+
+    // Move
+    if (this.isPickedUp()) {
+      // If item is currently held, it will try to move towards the player's hands
+      const desiredPosition = [
+        player.position[0] + player.direction * 0.8,
+        player.position[1],
+      ]
+      this.velocity = vec2.scale(vec2.subtract(desiredPosition, this.position), 0.8)
     }
+    else if (this.wasPickedUp) {
+      // If item is dropped, inherit player's velocity for throwing
+      this.velocity = [...player.velocity]
+    }
+    this.wasPickedUp = this.isPickedUp()
+
+    this.getUnstuck()
 
     super.update()
-    if (!this.isAttached) {
+    
+    if (!this.isAttached && !this.isPickedUp()) {
       this.velocity[1] += 0.005
     }
     if (this.contactDirections.down) {
@@ -52,6 +61,21 @@ export default class Pickupable extends Thing {
       return true
     }
     return collisionutils.checkCollision(this.aabb, x, y, true, true)
+  }
+
+  getUnstuck() {
+    const [xLast, yLast] = this.position
+    let a = 0
+    let r = 1 / 16
+    while (this.checkCollision()) {
+      this.position[0] = xLast + Math.cos(a) * r
+      this.position[1] = yLast + Math.sin(a) * r
+      a += Math.PI * 2 / 4
+      if (a > Math.PI * 2) {
+        a -= Math.PI * 2
+        r += r < 0.25 ? 1 / 48 : 0.25
+      }
+    }
   }
 
   isPickedUp () {
