@@ -81,7 +81,7 @@ export default class PlantClock extends Plant {
   soundEffect() {
     const player = game.getThing('player')
     const dist = vec2.squareDistance(player.position, this.position)
-    if (dist < 18) {
+    if (dist < 26) {
       soundmanager.playSound(
         ['energy'],
         u.inverseSquareMap(dist, 0, 18, 0.3, 0)
