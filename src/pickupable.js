@@ -49,14 +49,6 @@ export default class Pickupable extends Thing {
         ]
       }
 
-      // If it is STILL blocked, use a position just behind the player
-      // if (collisionutils.checkCollision(this.aabb, ...desiredPosition, true, true)) {
-      //   desiredPosition = [
-      //     player.position[0] + player.direction * -0.2,
-      //     player.position[1],
-      //   ]
-      // }
-
       this.velocity = vec2.scale(vec2.subtract(desiredPosition, this.position), 0.8)
     }
     else if (this.wasPickedUp) {
