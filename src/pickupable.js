@@ -28,10 +28,35 @@ export default class Pickupable extends Thing {
     // Move
     if (this.isPickedUp()) {
       // If item is currently held, it will try to move towards the player's hands
-      const desiredPosition = [
+      let desiredPosition = [
         player.position[0] + player.direction * 0.8,
         player.position[1],
       ]
+
+      // If desired position is blocked, use backup desired position of holding the item close to the chest
+      const desiredDist = vec2.distance(this.position, desiredPosition)
+      const middlePosition = vec2.lerp(this.position, desiredPosition, 0.5)
+      if (desiredDist > 0.5 && collisionutils.checkCollision(this.aabb, ...desiredPosition, true, true)) {
+        desiredPosition = [
+          Math.floor(player.position[0]) + 0.5,
+          player.position[1],
+        ]
+      }
+      if (desiredDist > 1.2 && collisionutils.checkCollision(this.aabb, ...middlePosition, true, true)) {
+        desiredPosition = [
+          Math.floor(player.position[0]) + 0.5,
+          player.position[1],
+        ]
+      }
+
+      // If it is STILL blocked, use a position just behind the player
+      // if (collisionutils.checkCollision(this.aabb, ...desiredPosition, true, true)) {
+      //   desiredPosition = [
+      //     player.position[0] + player.direction * -0.2,
+      //     player.position[1],
+      //   ]
+      // }
+
       this.velocity = vec2.scale(vec2.subtract(desiredPosition, this.position), 0.8)
     }
     else if (this.wasPickedUp) {

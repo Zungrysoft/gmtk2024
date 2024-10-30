@@ -220,12 +220,11 @@ class Level extends Thing {
 
     // Spawn level things
     const things = data.layers[0].things
+    let playerPos = [0, 0]
     for (const thing of things) {
       const pos = [Math.floor(thing.position[0]), Math.floor(thing.position[1])]
       if (thing.name === 'player') {
-        if (!game.getThing('player')) {
-          game.addThing(new Player(pos))
-        }
+        playerPos = [...pos]
       }
       if (thing.name === 'plantHedge') {
         game.addThing(new PlantHedge(
@@ -303,6 +302,9 @@ class Level extends Thing {
         game.addThing(new Completion(pos))
       }
     }
+
+    // Spawn player
+    game.addThing(new Player(playerPos))
 
     game.getThing('player').totalPickups = game.getThings().filter(x => x instanceof Pickup).length
 

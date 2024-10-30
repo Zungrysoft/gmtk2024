@@ -12,7 +12,7 @@ export default class Fertilizer extends Pickupable {
     if (isGiant) {
       this.isGiant = true
       this.scale *= 2
-      this.aabb = [-0.9, -0.9, 0.9, 0.9]
+      this.aabb = [-0.8, -0.9, 0.8, 0.9]
       this.isPickupable = false
       this.position = vec2.add(this.position, [0.5, 0.5])
     }
