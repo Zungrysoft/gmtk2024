@@ -878,10 +878,14 @@ export default class Player extends Thing {
     const toolCategories = this.getToolCategories()
     for (let i = 0; i < toolCategories.length; i ++) {
       if (toolCategories[i].name === category) {
-        return [...(
-          new Set(toolCategories[i].tools)
-          .intersection(new Set(this.ownedTools))
-        )]
+        let ret = [];
+        const ownedTools = new Set(this.ownedTools)
+        for (const tool of toolCategories[i].tools) {
+          if (ownedTools.has(tool)) {
+            ret.push(tool)
+          }
+        }
+        return ret;
       }
     }
     return []
