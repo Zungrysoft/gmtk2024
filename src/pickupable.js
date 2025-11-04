@@ -33,6 +33,14 @@ export default class Pickupable extends Thing {
         player.position[1],
       ]
 
+      // If desired position is blocked by a short ceiling, try moving it downward
+      if (collisionutils.checkCollision(this.aabb, ...desiredPosition, true, true)) {
+        const desiredPositionLower = vec2.add(desiredPosition, [0, 0.5]);
+        if (!collisionutils.checkCollision(this.aabb, ...desiredPositionLower, true, true)) {
+          desiredPosition = desiredPositionLower;
+        }
+      }
+
       // If desired position is blocked, use backup desired position of holding the item close to the chest
       const desiredDist = vec2.distance(this.position, desiredPosition)
       const middlePosition = vec2.lerp(this.position, desiredPosition, 0.5)
