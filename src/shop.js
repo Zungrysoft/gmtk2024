@@ -174,7 +174,7 @@ class ShopMenu extends Thing {
     this.items = [
       {
         name: 'Watering Can',
-        price: 2,
+        price: 3,
         description: 'Waters plants',
         image: 'wateringCan',
         givenTool: 'wateringCan',
