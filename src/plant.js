@@ -6,6 +6,7 @@ import Thing from 'thing'
 import Fertilizer from './fertilizer.js'
 import FertilizerParticle from './fertilizerParticle.js'
 import DestroyLeafParticle from './destroyleafparticle.js'
+import FireParticle from './fireParticle.js'
 
 export default class Plant extends Thing {
   validTileTypes = []
@@ -120,17 +121,22 @@ export default class Plant extends Thing {
     this.timerDisplay = n
   }
 
-  destroy() {
+  destroy(fire = false) {
     this.isDead = true
 
     // Particle effect
     for (let i = 0; i < 8; i ++) {
       const pos = vec2.add(this.position, [0.5, 1])
       const vel = [(Math.random()-0.5)* 0.2, Math.random()*-0.1 - 0.2]
-      game.addThing(new DestroyLeafParticle(pos, vel))
+      this.destroyParticle(pos, vel, fire)
     }
 
     soundmanager.playSound('killplant', 0.15)
+  }
+
+  destroyParticle(pos, vel, fire) {
+    const particle = fire ? new FireParticle(pos, vel) : new DestroyLeafParticle(pos, vel)
+    game.addThing(particle)
   }
 
   draw() {

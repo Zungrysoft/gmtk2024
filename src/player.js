@@ -572,13 +572,28 @@ export default class Player extends Thing {
     if (selectedTool === 'sickle' && pressed) {
       // Simple implementation for now
       const plants = game.getThingsNear(...this.position, 2).filter(x => x instanceof Plant)
+      const hitPos = vec2.add(this.position, [this.direction * 0.7, 0]);
+      let plantWasHit = false;
       for (const plant of plants) {
-        if (plant.overlapWithAabb([-0.3, -0.3, 0.3, 0.3], vec2.add(this.position, [this.direction * 0.7, 0]))) {
+        if (plant.overlapWithAabb([-0.3, -0.3, 0.3, 0.3], hitPos)) {
           if (plant.isIndestructible) {
-            // TODO: Play sound effect indicating failure to destroy plant
+            soundmanager.playSound('planthit', 0.5, [1.1, 1.2])
           }
           else {
             plant.destroy()
+          }
+          plantWasHit = true;
+          break;
+        }
+      }
+      if (!plantWasHit) {
+        const tile = game.getThing('level').getTileAt(...vec2.add(hitPos, [0, 0.2]));
+        if (tile) {
+          if (tile === 16) {
+            soundmanager.playSound('stonehit', 0.13, [0.9, 1.0])
+          }
+          else {
+            soundmanager.playSound('dirthit', 0.13, [0.7, 0.8])
           }
         }
       }
@@ -817,6 +832,12 @@ export default class Player extends Thing {
       }
     }
     this.ownedTools = allTools
+    this.selectedToolCategory = 'seedPacket'
+    this.selectedTools = {
+      seedPacket: 'seedPacketHedge',
+      wateringDevice: 'wateringCan',
+      trimmer: 'sickle',
+    }
   }
 
   unlockKey(color) {

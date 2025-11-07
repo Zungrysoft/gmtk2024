@@ -36,10 +36,11 @@ export default class FireShot extends Thing {
       for (const thing of things) {
         if (thing.overlapWithAabb(this.aabb, this.position)) {
           if (!thing.isIndestructible && thing.destroy) {
-            thing.destroy()
+            thing.destroy(true)
           }
           this.isDead = true
           this.spawnParticles()
+          break;
         }
       }
     }

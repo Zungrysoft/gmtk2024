@@ -231,9 +231,9 @@ export default class PlantHedge extends Plant {
     ]
   }
 
-  destroy() {
+  destroy(fire = false) {
     if (this.isSprout) {
-      super.destroy()
+      super.destroy(fire)
     }
     else {
       this.isDead = true
@@ -251,7 +251,7 @@ export default class PlantHedge extends Plant {
             u.map(Math.random(), 0, 1, box[1], box[3]),
           ]
           const vel = [(Math.random()-0.5)* 0.1, Math.random()*-0.05 - 0.1]
-          game.addThing(new DestroyLeafParticle(pos, vel))
+          this.destroyParticle(pos, vel, fire)
         }
       }
     }

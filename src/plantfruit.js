@@ -56,8 +56,8 @@ export default class PlantFruit extends Plant {
     ]
   }
 
-  destroy() {
-    super.destroy()
+  destroy(fire = false) {
+    super.destroy(fire)
     if (this.linkedFruit && this.linkedFruit.isAttached) {
       this.linkedFruit.isAttached = false
     }
